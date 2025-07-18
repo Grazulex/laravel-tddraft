@@ -6,22 +6,44 @@ declare(strict_types=1);
  * Advanced usage example for Laravel TDDraft
  *
  * This example demonstrates advanced patterns and best practices
- * for using Laravel TDDraft in complex Laravel applications.
+ * for using Laravel TDDraft in complex Laravel applications with
+ * the current three-command system and reference tracking.
  */
 echo "Laravel TDDraft - Advanced Usage Example\n";
 echo "=========================================\n\n";
 
-echo "This example covers advanced TDDraft patterns and best practices.\n\n";
+echo "This example covers advanced TDDraft patterns, reference tracking,\n";
+echo "and promotion workflows for complex applications.\n\n";
 
-// Example 1: Complex Test Scenarios
-echo "1. Complex Test Scenarios\n";
-echo "-------------------------\n";
-echo "Create tests/TDDraft/E2E/OrderProcessingTest.php\n\n";
+// Example 1: Advanced Test Creation with References
+echo "1. Advanced Test Creation with tdd:make\n";
+echo "---------------------------------------\n";
+echo "Create complex tests with organized structure:\n\n";
+
+echo "# Create E2E test in subdirectory\n";
+echo "php artisan tdd:make \"Complete order workflow\" --path=E2E --type=feature\n\n";
+
+echo "# Create API integration test\n";
+echo "php artisan tdd:make \"Payment gateway integration\" --path=Integrations/Payment --type=unit\n\n";
+
+echo "# Create performance test\n";
+echo "php artisan tdd:make \"Database query performance\" --path=Performance --class=DatabasePerformanceTest\n\n";
+
+echo "Generated test with enhanced tracking:\n";
 
 $complexTest = <<<'PHP'
 <?php
 
 declare(strict_types=1);
+
+/**
+ * TDDraft Test: Complete order workflow
+ * 
+ * Reference: tdd-20250718151230-E2e987
+ * Type: feature
+ * Created: 2025-07-18 15:12:30
+ * Path: tests/TDDraft/E2E/CompleteOrderWorkflowTest.php
+ */
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
@@ -32,8 +54,8 @@ use App\Mail\OrderConfirmationMail;
 
 uses(RefreshDatabase::class);
 
-it('processes complete order workflow end-to-end', function (): void {
-    // Arrange: Set up test data
+it('complete order workflow', function (): void {
+    // Arrange: Set up test data with factories
     Mail::fake();
     
     $user = User::factory()->create([
@@ -48,7 +70,7 @@ it('processes complete order workflow end-to-end', function (): void {
 
     // Act: Simulate complete order process
     $response = $this->actingAs($user)
-        ->post('/orders', [
+        ->post('/api/orders', [
             'items' => [
                 [
                     'product_id' => $product->id,
@@ -63,7 +85,12 @@ it('processes complete order workflow end-to-end', function (): void {
         ]);
 
     // Assert: Verify complete workflow
-    $response->assertStatus(201);
+    $response->assertStatus(201)
+        ->assertJsonStructure([
+            'data' => [
+                'id', 'total', 'status', 'items'
+            ]
+        ]);
     
     $order = Order::where('user_id', $user->id)->first();
     expect($order)->not->toBeNull();
@@ -77,16 +104,34 @@ it('processes complete order workflow end-to-end', function (): void {
     Mail::assertSent(OrderConfirmationMail::class, function ($mail) use ($user) {
         return $mail->hasTo($user->email);
     });
-})->group('tddraft');
+})
+->group('tddraft', 'feature', 'tdd-20250718151230-E2e987', 'e2e', 'orders')
+->todo('Implement complete order processing workflow');
 PHP;
 
-echo "Complex E2E test example:\n";
 echo $complexTest . "\n\n";
 
-// Example 2: Test Organization
-echo "2. Test Organization Strategies\n";
+// Example 2: Advanced Testing Strategies  
+echo "2. Advanced Testing Strategies with References\n";
+echo "----------------------------------------------\n";
+echo "Run targeted test subsets using reference tracking:\n\n";
+
+echo "# Run all E2E tests\n";
+echo "php artisan tdd:test --group=e2e\n\n";
+
+echo "# Run specific feature by reference\n";
+echo "php artisan tdd:test --group=tdd-20250718151230-E2e987\n\n";
+
+echo "# Run all payment-related tests\n";
+echo "php artisan tdd:test --filter=payment\n\n";
+
+echo "# Run performance tests only\n";
+echo "php artisan tdd:test --group=performance --parallel\n\n";
+
+// Example 3: Test Organization
+echo "3. Enterprise Test Organization\n";
 echo "-------------------------------\n";
-echo "Organize tests by feature modules:\n\n";
+echo "Structure tests by domain and feature:\n\n";
 
 echo "tests/TDDraft/\n";
 echo "├── Auth/\n";
@@ -318,6 +363,134 @@ PHP;
 
 echo $performanceExample . "\n\n";
 
+// Example 8: Advanced Graduation Workflow
+echo "8. Advanced Graduation Workflow\n";
+echo "-------------------------------\n";
+echo "Systematic approach to promoting tests from TDDraft to CI:\n\n";
+
+echo "# Step 1: Review test readiness\n";
+echo "php artisan tdd:test --group=tdd-20250718151230-E2e987\n\n";
+
+echo "# Step 2: Automated graduation script (create as: scripts/graduate-test.sh)\n";
+$graduationScript = <<<'BASH'
+#!/bin/bash
+# Graduate TDDraft test to main suite with reference preservation
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <test-reference>"
+    echo "Example: $0 tdd-20250718151230-E2e987"
+    exit 1
+fi
+
+REFERENCE=$1
+SOURCE_DIR="tests/TDDraft"
+TARGET_DIR=""
+
+# Find the test file by reference
+TEST_FILE=$(grep -r "Reference: $REFERENCE" $SOURCE_DIR | cut -d: -f1)
+
+if [ -z "$TEST_FILE" ]; then
+    echo "Error: Test with reference $REFERENCE not found"
+    exit 1
+fi
+
+echo "Found test: $TEST_FILE"
+
+# Determine target directory based on test type
+if grep -q "Type: feature" "$TEST_FILE"; then
+    TARGET_DIR="tests/Feature"
+elif grep -q "Type: unit" "$TEST_FILE"; then
+    TARGET_DIR="tests/Unit"
+else
+    echo "Error: Cannot determine test type"
+    exit 1
+fi
+
+# Extract filename
+FILENAME=$(basename "$TEST_FILE")
+TARGET_PATH="$TARGET_DIR/$FILENAME"
+
+# Move file
+echo "Moving $TEST_FILE to $TARGET_PATH"
+mkdir -p "$TARGET_DIR"
+mv "$TEST_FILE" "$TARGET_PATH"
+
+# Update groups (remove 'tddraft' but keep reference)
+sed -i "s/->group('tddraft', /->group(/g" "$TARGET_PATH"
+
+echo "✅ Test graduated successfully!"
+echo "Reference $REFERENCE preserved for tracking"
+echo "Run: pest $TARGET_PATH to verify"
+BASH;
+
+echo $graduationScript . "\n\n";
+
+echo "# Step 3: Verification workflow\n";
+echo "# Test the graduated test in isolation\n";
+echo "pest tests/Feature/CompleteOrderWorkflowTest.php\n\n";
+
+echo "# Run full feature suite to ensure no conflicts\n";
+echo "pest tests/Feature/\n\n";
+
+echo "# Run complete test suite\n";
+echo "pest\n\n";
+
+echo "# Optional: Track graduated tests by reference\n";
+echo "grep -r \"tdd-20250718151230-E2e987\" tests/Feature/ # Find graduated test\n\n";
+
+// Example 9: Reference Tracking and Audit Trail
+echo "9. Reference Tracking and Audit Trail\n";
+echo "-------------------------------------\n";
+echo "Maintain audit trail of test evolution:\n\n";
+
+$auditExample = <<<'PHP'
+// Create audit tracking script: scripts/audit-test-lineage.php
+<?php
+
+declare(strict_types=1);
+
+// Find all tests with specific reference pattern
+function findTestsByReference(string $reference): array
+{
+    $testDirs = ['tests/TDDraft', 'tests/Feature', 'tests/Unit'];
+    $results = [];
+    
+    foreach ($testDirs as $dir) {
+        if (!is_dir($dir)) continue;
+        
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir)
+        );
+        
+        foreach ($files as $file) {
+            if ($file->getExtension() !== 'php') continue;
+            
+            $content = file_get_contents($file->getRealPath());
+            if (strpos($content, "Reference: $reference") !== false) {
+                $results[] = [
+                    'file' => $file->getRealPath(),
+                    'status' => strpos($file->getRealPath(), 'TDDraft') ? 'draft' : 'graduated',
+                    'type' => $this->extractTestType($content)
+                ];
+            }
+        }
+    }
+    
+    return $results;
+}
+
+// Usage: php scripts/audit-test-lineage.php tdd-20250718151230-E2e987
+PHP;
+
+echo $auditExample . "\n\n";
+
 echo "✅ Advanced TDDraft Usage Complete!\n";
-echo "These patterns help you build robust, maintainable test suites.\n";
+echo "\nKey Advanced Features Covered:\n";
+echo "• Reference-based test tracking and graduation\n";
+echo "• Enterprise-level test organization strategies\n";
+echo "• Automated graduation workflows with audit trails\n";
+echo "• Performance monitoring and CI/CD integration\n";
+echo "• Custom helpers and advanced test patterns\n\n";
+echo "These patterns help you build robust, maintainable test suites\n";
+echo "with full traceability from draft to production.\n\n";
 echo "For more information, see the complete documentation in docs/\n";

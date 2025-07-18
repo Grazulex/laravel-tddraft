@@ -7,11 +7,19 @@ This guide shows you how to use Laravel TDDraft for Test-Driven Development in y
 Laravel TDDraft helps you practice Test-Driven Development (TDD) by providing a separate testing environment for draft tests. This allows you to:
 
 - Write experimental tests without affecting your main test suite
-- Practice the Red-Green-Refactor cycle
+- Practice the Red-Green-Refactor cycle  
 - Keep draft tests separate from production tests
 - Maintain a clean test suite for CI/CD
+- Track test evolution from draft to production with unique references
 
-## TDD Workflow
+## TDDraft to CI Workflow
+
+<div align="center">
+  <img src="../chart.png" alt="TDDraft to CI Test Promotion Workflow" width="600">
+  <p><em>The complete workflow from draft testing to CI integration</em></p>
+</div>
+
+## TDD Workflow with Laravel TDDraft
 
 ### 1. Initialize TDDraft
 
@@ -23,19 +31,38 @@ php artisan tdd:init
 
 This creates the necessary directory structure and configuration.
 
-### 2. Write Your First Draft Test
+### 2. Create Draft Tests
 
-Create a new test file in `tests/TDDraft/`:
+Use the `tdd:make` command to create new draft tests with unique tracking:
+
+```bash
+# Create a feature test
+php artisan tdd:make "User can register"
+
+# Create a unit test  
+php artisan tdd:make "Password validation" --type=unit
+
+# Create test in a subdirectory
+php artisan tdd:make "API authentication" --path=Auth/Api
+```
+
+This generates a test file with unique reference tracking:
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-// tests/TDDraft/UserCanRegisterTest.php
+/**
+ * TDDraft Test: User can register
+ * 
+ * Reference: tdd-20250718142530-Abc123
+ * Type: feature
+ * Created: 2025-07-18 14:25:30
+ */
 
-it('allows a user to register with valid data', function (): void {
-    // This test should start failing (RED phase)
+it('user can register', function (): void {
+    // TODO: Implement your test scenario here
     $response = $this->post('/register', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
@@ -47,53 +74,46 @@ it('allows a user to register with valid data', function (): void {
     $this->assertDatabaseHas('users', [
         'email' => 'john@example.com',
     ]);
-})->group('tddraft');
+})
+->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
+->todo('Implement the test scenario for: user can register');
 ```
 
-### 3. Run Your Draft Tests
+### 3. Run Draft Tests
 
-Run only your draft tests to see them fail (RED phase):
+Use the dedicated command to run only your draft tests:
 
 ```bash
-pest --testsuite=tddraft
+# Run all draft tests
+php artisan tdd:test
+
+# Run with filtering
+php artisan tdd:test --filter="user registration"
+
+# Run with coverage
+php artisan tdd:test --coverage
 ```
 
-### 4. Implement the Feature
+### 4. Follow TDD Red-Green-Refactor
 
-Write the minimal code to make the test pass (GREEN phase):
+1. **RED**: Test fails initially (expected)
+2. **GREEN**: Implement minimal code to make test pass
+3. **REFACTOR**: Clean up code while keeping tests passing
 
-```php
-// In your controller, routes, etc.
-// Implement the registration functionality
-```
+### 5. Graduate to Main Test Suite
 
-### 5. Run Tests Again
-
-Verify your implementation:
+When your draft test is ready for production, promote it using the reference tracking:
 
 ```bash
-pest --testsuite=tddraft
-```
+# Step 1: Move the test file
+mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/Auth/UserRegistrationTest.php
 
-### 6. Refactor
+# Step 2: Update the groups (remove 'tddraft', keep reference)
+# Change: ->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
+# To:     ->group('feature', 'tdd-20250718142530-Abc123')
 
-Clean up your code while keeping tests passing (REFACTOR phase).
-
-### 7. Graduate to Main Test Suite
-
-When your draft test is solid and the feature is complete, move the test to your main test suite:
-
-```bash
-# Move the test file
-mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/UserCanRegisterTest.php
-```
-
-Edit the moved test to remove the `tddraft` group:
-
-```php
-it('allows a user to register with valid data', function (): void {
-    // ... test implementation
-}); // Remove ->group('tddraft')
+# Step 3: Verify in main test suite
+pest tests/Feature/Auth/UserRegistrationTest.php
 ```
 
 ## Test Organization
@@ -161,30 +181,42 @@ it('sends welcome email after successful registration', function (): void {
 
 ## Running Tests
 
-### Run Only Draft Tests
+### Primary Commands
 
 ```bash
+# Run only draft tests (recommended)
+php artisan tdd:test
+
+# Run with options
+php artisan tdd:test --filter="registration" --coverage
+php artisan tdd:test --parallel --stop-on-failure
+```
+
+### Alternative Pest Commands
+
+```bash
+# Run only draft tests
 pest --testsuite=tddraft
-```
 
-### Run Only Main Tests (Excludes Drafts)
-
-```bash
+# Run only main tests (excludes drafts)
 pest
-# or explicitly
-pest --testsuite=default
-```
 
-### Run All Tests
-
-```bash
+# Run all tests including drafts
 pest --testsuite=default,tddraft
 ```
 
-### Run with Coverage
+### Advanced Filtering with References
 
 ```bash
-pest --testsuite=tddraft --coverage
+# Filter by test type
+php artisan tdd:test --group=feature
+pest --testsuite=tddraft --group=unit
+
+# Filter by specific reference
+pest --testsuite=tddraft --group=tdd-20250718142530-Abc123
+
+# Run specific test by name
+php artisan tdd:test --filter="user can register"
 ```
 
 ## Best Practices

@@ -223,40 +223,63 @@ pest --testsuite=tddraft --group=tdd-20250718142530-Abc123
 
 ### Exit Codes
 
-- `0`: Success - TDDraft initialized successfully
-- `1`: Error - Something went wrong during initialization
+- `0`: Success - All TDDraft tests passed or completed successfully
+- `Non-zero`: Some tests failed (this is normal during TDD red phase)
+
+The command provides encouraging messages for failing tests, as this is expected during the TDD "red" phase.
 
 ### Example Output
 
 ```
-🚀 Initializing Laravel TDDraft...
-📂 Created /path/to/project/tests/TDDraft
-📝 Created .gitkeep in TDDraft directory
-📋 PHPUnit configuration needs to be updated to separate TDDraft tests.
+🧪 Running TDDraft tests...
 
-Do you want to automatically update phpunit.xml? (yes/no) [yes]:
-> yes
+   PASS  Tests\TDDraft\UserCanRegisterTest
+  ✓ user can register
 
-📋 Created backup: phpunit.xml.tddraft-backup-2024-01-15-10-30-45
-✅ Updated phpunit.xml testsuites configuration with defaultTestSuite
+   FAIL  Tests\TDDraft\PasswordValidationTest  
+  ⨯ password must be at least 8 characters
 
-📋 Pest configuration needs to be updated to exclude TDDraft from main test suite.
+Tests:  1 passed, 1 failed
+Time:   0.15s
 
-Do you want to automatically update tests/Pest.php? (yes/no) [yes]:
-> yes
+⚠️  Some TDDraft tests failed (this is normal during TDD red phase)
+```
 
-📋 Created backup: tests/Pest.php.tddraft-backup-2024-01-15-10-30-45
-✅ Updated tests/Pest.php to exclude TDDraft directory
+## Command Integration and Workflow
 
-Do you want to create an example TDDraft test to get started? (yes/no) [yes]:
-> yes
+The three commands work together to provide a complete TDD experience:
 
-📝 Created example draft: tests/TDDraft/ExampleDraftTest.php
+### 1. Setup Phase: `tdd:init`
+- Configures your Laravel project for TDDraft
+- Sets up directory structure and test isolation
+- Creates backup files before making changes
 
-✅ TDDraft initialized successfully!
+### 2. Development Phase: `tdd:make` + `tdd:test`
+- Create draft tests with `tdd:make`
+- Iterate on implementation while running `tdd:test`
+- Use unique references to track test evolution
 
-Next steps:
-  • Create your first draft: Write tests in tests/TDDraft/
-  • Run drafts only: pest --testsuite=tddraft
-  • Run normal tests: pest (TDDraft excluded)
+### 3. Promotion Phase: Manual graduation
+- Move mature tests from `tests/TDDraft/` to main test suite
+- Remove `tddraft` group but keep unique reference
+- Integrate into CI/CD pipeline
+
+### Cross-Command Reference System
+
+Each test created with `tdd:make` includes:
+- **Unique reference**: `tdd-YYYYMMDDHHMMSS-RANDOM`
+- **Type tag**: `feature` or `unit`
+- **TDDraft marker**: `tddraft` group
+
+This enables flexible filtering across all commands:
+
+```bash
+# Run specific test by reference
+php artisan tdd:test --filter="tdd-20250718142530-Abc123"
+
+# Run all feature drafts
+pest --testsuite=tddraft --group=feature
+
+# Run all unit drafts
+pest --testsuite=tddraft --group=unit
 ```
