@@ -14,17 +14,36 @@ declare(strict_types=1);
 
 it('should fail initially - this is normal for TDDraft!', function (): void {
     // This test intentionally fails to demonstrate the TDD "red" phase
+    // 1. Write the test (red phase)
+    // 2. Make it pass (green phase) 
+    // 3. Promote it to your CI test suite (tests/Feature/)
     expect(false)->toBeTrue('This draft needs implementation!');
-})->group('tddraft');
+})->group('tddraft', 'feature', 'example-red-phase')
+->todo('Replace this with your actual failing test');
 
 it('can be promoted when ready', function (): void {
-    // When this passes, you can promote it with:
-    // php artisan tdd:promote tests/TDDraft/ExampleDraftTest.php
+    // When this passes, you can promote it by:
+    // 1. Moving file to tests/Feature/ or tests/Unit/
+    // 2. Removing 'tddraft' group, keeping the reference for tracking
+    // 3. Update group: ->group('feature', 'example-green-phase')
     expect(true)->toBeTrue();
-})->group('tddraft');
+})->group('tddraft', 'feature', 'example-green-phase')
+->todo('This test is ready to be promoted');
 
-// You can also use the fluent draft() syntax (when implemented):
-// draft('user can register')
-//     ->given('a guest user')
-//     ->when('they submit valid registration data')
-//     ->then('they should be registered and logged in');
+// You can also use the fluent syntax for more complex scenarios:
+// it('user can register with valid data', function (): void {
+//     // Arrange
+//     $userData = [
+//         'name' => 'John Doe',
+//         'email' => 'john@example.com',
+//         'password' => 'password123',
+//     ];
+//     
+//     // Act
+//     $response = $this->post('/register', $userData);
+//     
+//     // Assert
+//     $response->assertStatus(201);
+//     $this->assertDatabaseHas('users', ['email' => 'john@example.com']);
+// })->group('tddraft', 'feature', 'example-registration')
+//   ->todo('Implement user registration functionality');

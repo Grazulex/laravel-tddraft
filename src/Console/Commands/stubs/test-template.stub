@@ -1,0 +1,23 @@
+/**
+ * TDDraft Test: {{name}}
+ * 
+ * Reference: {{uniqueRef}}
+ * Type: {{type}}
+ * Created: {{created}}
+ * 
+ * This is a draft test for Test-Driven Development.
+ * When ready, promote this test to tests/{{typeUcfirst}}/ directory.
+ */
+
+it('{{testName}}', function (): void {
+    // TODO: Implement your test scenario here
+    
+    // This test starts in the "red" phase - it should fail initially
+    // 1. Write the test (red phase)
+    // 2. Make it pass (green phase) 
+    // 3. Promote it to your CI test suite (tests/{{typeUcfirst}}/)
+    
+    expect(true)->toBeTrue('Replace this with your actual test implementation');
+})
+->group('tddraft', '{{type}}', '{{uniqueRef}}')
+->todo('Implement the test scenario for: {{description}}');

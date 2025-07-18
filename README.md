@@ -63,18 +63,43 @@ This command will:
 
 ## 🛠 Usage
 
+### Create Draft Tests
+
+Create new TDDraft tests with unique tracking:
+
+```bash
+# Create a feature test
+php artisan tdd:make "User can register"
+
+# Create a unit test  
+php artisan tdd:make "Password validation" --type=unit
+
+# Create test in a subdirectory
+php artisan tdd:make "API authentication" --path=Auth/Api
+
+# Create with custom class name
+php artisan tdd:make "Complex scenario" --class=MyCustomTest
+```
+
 ### Write Draft Tests
 
-Create test files in the `tests/TDDraft/` directory:
+The generated test files include unique references and proper grouping:
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-// tests/TDDraft/UserCanRegisterTest.php
+/**
+ * TDDraft Test: User can register
+ * 
+ * Reference: tdd-20250718142530-Abc123
+ * Type: feature
+ * Created: 2025-07-18 14:25:30
+ */
 
-it('allows user registration with valid data', function (): void {
+it('user can register', function (): void {
+    // TODO: Implement your test scenario here
     $response = $this->post('/register', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
@@ -86,7 +111,9 @@ it('allows user registration with valid data', function (): void {
     $this->assertDatabaseHas('users', [
         'email' => 'john@example.com',
     ]);
-})->group('tddraft');
+})
+->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
+->todo('Implement the test scenario for: user can register');
 ```
 
 ### Run Tests Separately
@@ -95,7 +122,23 @@ it('allows user registration with valid data', function (): void {
 # Run only main tests (excludes TDDraft)
 pest
 
-# Run only TDDraft tests
+# Run only TDDraft tests (new shortcut!)
+php artisan tdd:test
+
+# Run TDDraft tests with options
+php artisan tdd:test --filter="user registration"
+php artisan tdd:test --coverage
+php artisan tdd:test --parallel
+php artisan tdd:test --stop-on-failure
+
+# Filter by type
+pest --testsuite=tddraft --group=feature
+pest --testsuite=tddraft --group=unit
+
+# Filter by specific reference
+pest --testsuite=tddraft --group=tdd-20250718142530-Abc123
+
+# Alternative: use pest directly
 pest --testsuite=tddraft
 
 # Run all tests including TDDraft
@@ -107,11 +150,15 @@ pest --testsuite=default,tddraft
 When your draft test is ready, move it to your main test suite:
 
 ```bash
-# Move the test file
+# The test file contains the reference for tracking
+# Reference: tdd-20250718142530-Abc123
+
+# Move the test file (keep the reference for tracking)
 mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/UserRegistrationTest.php
 
-# Remove the tddraft group from the test
-# Edit the file to remove ->group('tddraft')
+# Update the groups (remove tddraft, keep the reference)
+# Change: ->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
+# To:     ->group('feature', 'tdd-20250718142530-Abc123')
 ```
 
 ## 📦 Available Commands
@@ -119,6 +166,8 @@ mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/UserRegistrationTest.php
 | Command | Description |
 |---------|-------------|
 | `tdd:init` | Initialize TDDraft environment and configuration |
+| `tdd:make` | Create a new TDDraft test with unique reference tracking |
+| `tdd:test` | Run TDDraft tests only (alias for pest --testsuite=tddraft) |
 
 ## 📁 Configuration
 

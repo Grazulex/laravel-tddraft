@@ -1,6 +1,6 @@
 # Commands
 
-Laravel TDDraft currently provides one primary command for initializing your TDD environment.
+Laravel TDDraft provides several commands to help you work with Test-Driven Development and draft testing.
 
 ## tdd:init
 
@@ -87,12 +87,139 @@ After initialization, you can run tests separately:
 # Run only main tests (excludes TDDraft)
 pest
 
-# Run only TDDraft tests
+# Run only TDDraft tests  
+php artisan tdd:test
+
+# Run only TDDraft tests (alternative)
 pest --testsuite=tddraft
 
 # Run all tests including TDDraft
 pest --testsuite=default,tddraft
 ```
+
+## tdd:make
+
+Create new TDDraft tests with unique reference tracking and intelligent path management.
+
+### Usage
+
+```bash
+# Basic usage
+php artisan tdd:make "User can register"
+
+# Specify test type (feature or unit)
+php artisan tdd:make "Password validation" --type=unit
+
+# Custom path within TDDraft directory
+php artisan tdd:make "API authentication" --path=Auth/Api
+
+# Custom class name
+php artisan tdd:make "Complex scenario" --class=MyCustomTest
+```
+
+### Options
+
+- `--type=feature|unit`: Specify whether this is a feature or unit test (default: feature)
+- `--path=`: Custom subdirectory path within `tests/TDDraft/`
+- `--class=`: Custom class name for the test
+
+### What it Does
+
+1. **Generates Unique Reference**: Creates a unique tracking ID for each test
+2. **Smart Path Management**: Automatically determines file location based on options
+3. **Type Tracking**: Tags tests with their type (feature/unit) for filtering
+4. **Template Generation**: Creates test with proper structure and comments
+5. **Directory Creation**: Automatically creates subdirectories if needed
+
+### Generated Test Structure
+
+```php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * TDDraft Test: User can register
+ * 
+ * Reference: tdd-20250718142530-Abc123
+ * Type: feature
+ * Created: 2025-07-18 14:25:30
+ */
+
+it('user can register', function (): void {
+    // TODO: Implement your test scenario here
+    expect(true)->toBeTrue('Replace this with your actual test implementation');
+})
+->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
+->todo('Implement the test scenario for: user can register');
+```
+
+### Reference System
+
+Each test gets multiple groups for flexible filtering:
+
+- `tddraft`: Identifies this as a TDDraft test
+- `feature|unit`: Indicates the test type
+- `tdd-YYYYMMDDHHMMSS-RANDOM`: Unique reference for tracking
+
+### Example Output
+
+```
+✅ TDDraft test created successfully!
+📄 File: /path/to/tests/TDDraft/UserCanRegisterTest.php
+🔖 Reference: tdd-20250718142530-Abc123
+🏷️  Type: feature
+
+Next steps:
+  • Run your draft test: php artisan tdd:test --filter="User can register"
+  • Edit the test to implement your scenario
+  • When ready, promote to main suite: mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/
+```
+
+## tdd:test
+
+Run TDDraft tests with convenient options and filtering.
+
+### Usage
+
+```bash
+# Run all TDDraft tests
+php artisan tdd:test
+
+# Filter by test name
+php artisan tdd:test --filter="user registration"
+
+# Generate coverage report
+php artisan tdd:test --coverage
+
+# Run tests in parallel
+php artisan tdd:test --parallel
+
+# Stop on first failure
+php artisan tdd:test --stop-on-failure
+```
+
+### Advanced Filtering
+
+You can also use Pest's group filtering with the generated tags:
+
+```bash
+# Run only feature tests
+pest --testsuite=tddraft --group=feature
+
+# Run only unit tests  
+pest --testsuite=tddraft --group=unit
+
+# Run specific test by reference
+pest --testsuite=tddraft --group=tdd-20250718142530-Abc123
+```
+
+### Options
+
+- `--filter=`: Filter tests by name pattern
+- `--coverage`: Generate test coverage report
+- `--parallel`: Run tests in parallel for faster execution
+- `--stop-on-failure`: Stop execution on the first test failure
 
 ### Exit Codes
 
