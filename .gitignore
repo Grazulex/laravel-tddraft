@@ -1,0 +1,48 @@
+/vendor/
+/node_modules/
+/.idea/
+/.vscode/
+/.DS_Store
+Thumbs.db
+
+# Composer
+composer.phar
+composer.lock
+
+# PHPUnit
+.phpunit.result.cache
+coverage/
+.coverage_html/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+/storage/logs/
+
+# Build artifacts
+/build/
+/dist/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
