@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script pour vérifier l'état des releases Laravel Arc
+# Script pour vérifier l'état des releases Laravel TDDraft
 # Usage: ./check-releases.sh
 
 set -e

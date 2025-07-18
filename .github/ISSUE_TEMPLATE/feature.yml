@@ -1,5 +1,5 @@
 name: 💡 Feature Request
-description: Suggest a new idea or feature for Laravel Flowpipe
+description: Suggest a new idea or feature for Laravel TDDraft
 title: "[Feature] <Your short title here>"
 labels: [type:feature]
 body:
@@ -10,10 +10,10 @@ body:
       label: Area / Component
       description: Which part of the codebase is affected?
       options:
-        - generator
-        - validation
-        - docs
+        - commands
         - tests
+        - docs
+        - config
         - cli
         - internal
     validations:
@@ -25,7 +25,7 @@ body:
       label: What problem does this feature solve?
       placeholder: |
         Describe the pain point or need you're trying to address.
-        Example: "Currently there's no support for date/time fields..."
+        Example: "Currently there's no support for test promotion..."
     validations:
       required: true
 
@@ -34,6 +34,6 @@ body:
     attributes:
       label: Describe your proposed solution
       placeholder: |
-        How would you implement this feature? Include examples or expected YAML syntax if possible.
+        How would you implement this feature? Include examples or expected command syntax if possible.
     validations:
       required: true

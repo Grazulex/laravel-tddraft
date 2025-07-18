@@ -100,7 +100,7 @@ fi
 
 print_message $GREEN "✅ Workflow déclenché avec succès !"
 print_message $BLUE "🔍 Vous pouvez suivre le progress ici :"
-print_message $BLUE "   https://github.com/Grazulex/laravel-safeguard/actions/workflows/release.yml"
+print_message $BLUE "   https://github.com/Grazulex/laravel-tddraft/actions/workflows/release.yml"
 
 # Attendre un peu et vérifier le statut
 sleep 3
@@ -109,5 +109,5 @@ gh run list --workflow=release.yml --limit=1
 
 print_message $GREEN "🎉 Release v$VERSION en cours de création !"
 print_message $YELLOW "💡 Une fois terminé, la release sera disponible sur :"
-print_message $YELLOW "   - GitHub: https://github.com/Grazulex/laravel-safeguard/releases"
-print_message $YELLOW "   - Packagist: https://packagist.org/packages/grazulex/laravel-safeguard"
+print_message $YELLOW "   - GitHub: https://github.com/Grazulex/laravel-tddraft/releases"
+print_message $YELLOW "   - Packagist: https://packagist.org/packages/grazulex/laravel-tddraft"
