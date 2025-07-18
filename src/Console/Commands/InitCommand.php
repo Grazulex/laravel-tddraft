@@ -128,23 +128,26 @@ final class InitCommand extends Command
             $newContent = preg_replace($pattern, $replacement, $content);
             if ($newContent !== null) {
                 // Also ensure defaultTestSuite attribute is set
-                if (!str_contains($newContent, 'defaultTestSuite=')) {
+                if (! str_contains($newContent, 'defaultTestSuite=')) {
                     $newContent = str_replace(
                         '<phpunit ',
                         '<phpunit defaultTestSuite="default" ',
                         $newContent
                     );
-                    
+
                     // Handle case where phpunit tag is on multiple lines
-                    if (!str_contains($newContent, 'defaultTestSuite=')) {
-                        $newContent = preg_replace(
+                    if (! str_contains($newContent, 'defaultTestSuite=')) {
+                        $updatedContent = preg_replace(
                             '/(<phpunit[^>]*?)>/s',
                             '$1 defaultTestSuite="default">',
                             $newContent
                         );
+                        if ($updatedContent !== null) {
+                            $newContent = $updatedContent;
+                        }
                     }
                 }
-                
+
                 File::put($phpunitPath, $newContent);
                 $this->info('✅ Updated phpunit.xml testsuites configuration with defaultTestSuite');
             } else {
@@ -186,7 +189,7 @@ final class InitCommand extends Command
         $content = File::get($pestPath);
 
         // Check if already configured to exclude TDDraft
-        if ((str_contains($content, "->in('Feature', 'Unit')") || 
+        if ((str_contains($content, "->in('Feature', 'Unit')") ||
             str_contains($content, '->in("Feature", "Unit")')) ||
             (str_contains($content, "->in('Feature')") && str_contains($content, "->in('Unit')"))) {
             $this->comment('📋 Pest configuration already restricts to Feature/Unit');
@@ -217,14 +220,14 @@ final class InitCommand extends Command
             '/uses\([^)]+\)->in\(__DIR__\s*\.\s*[\'"]\/Feature[\'"],\s*__DIR__\s*\.\s*[\'"]\/Unit[\'"].*?\);/s',
             '/uses\([^)]+\)->in\([\'"]Feature[\'"],\s*[\'"]Unit[\'"].*?\);/s',
             '/uses\([^)]+\)->in\(__DIR__.*?\);/s',
-            '/uses\([^)]+\);/'
+            '/uses\([^)]+\);/',
         ];
 
         $matched = false;
         foreach ($patterns as $pattern) {
             if (preg_match($pattern, $content, $matches)) {
                 $originalConfig = $matches[0];
-                
+
                 // Determine replacement based on the pattern found
                 if (str_contains($originalConfig, 'pest()->extend')) {
                     // For new syntax, modify to include both Feature and Unit
@@ -238,7 +241,7 @@ final class InitCommand extends Command
                     $newUsesContent = File::get($stubPath);
                     $replacement = $newUsesContent . "\n\n// Original configuration (commented out):\n// " . $originalConfig;
                 }
-                
+
                 $newContent = str_replace($originalConfig, $replacement, $content);
                 File::put($pestPath, $newContent);
                 $this->info('✅ Updated tests/Pest.php to exclude TDDraft directory');
@@ -247,7 +250,7 @@ final class InitCommand extends Command
             }
         }
 
-        if (!$matched) {
+        if (! $matched) {
             $this->comment('📋 No standard pest() or uses() calls found in Pest.php');
             $this->comment('📋 Please manually add restrictions to exclude TDDraft');
             $this->showManualPestInstructions();
