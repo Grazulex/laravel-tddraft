@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Illuminate\Console\Command;
 use Grazulex\LaravelTddraft\Console\Commands\TestCommand;
+use Illuminate\Console\Command;
 
 it('has correct signature and description', function (): void {
     $command = new TestCommand;
@@ -60,9 +60,9 @@ it('verifies command has proper parent class', function (): void {
 });
 
 it('can check command signature structure', function (): void {
-    $command = new TestCommand();
+    $command = new TestCommand;
     $signature = $command->getName();
-    
+
     expect($signature)->toStartWith('tdd:');
     expect($signature)->toBe('tdd:test');
 });
@@ -70,18 +70,18 @@ it('can check command signature structure', function (): void {
 // Tests that actually execute some code logic
 
 it('can verify options are properly parsed', function (): void {
-    $command = new TestCommand();
-    
+    $command = new TestCommand;
+
     // Test that command initializes without throwing errors
-    expect($command)->toBeInstanceOf(\Illuminate\Console\Command::class);
-    
+    expect($command)->toBeInstanceOf(Command::class);
+
     // Test signature parsing - this will exercise Laravel's signature parsing code
     $definition = $command->getDefinition();
-    
+
     // Test that all our expected options are properly defined
     $options = $definition->getOptions();
     $optionNames = array_keys($options);
-    
+
     expect($optionNames)->toContain('filter');
     expect($optionNames)->toContain('coverage');
     expect($optionNames)->toContain('parallel');
@@ -89,24 +89,24 @@ it('can verify options are properly parsed', function (): void {
 });
 
 it('can test command construction and properties', function (): void {
-    $command = new TestCommand();
-    
+    $command = new TestCommand;
+
     // Test that command properties are set correctly
     $reflection = new ReflectionClass($command);
-    
+
     $signatureProperty = $reflection->getProperty('signature');
     $signatureProperty->setAccessible(true);
     $signature = $signatureProperty->getValue($command);
-    
+
     expect($signature)->toContain('tdd:test');
     expect($signature)->toContain('--filter=');
     expect($signature)->toContain('--coverage');
     expect($signature)->toContain('--parallel');
     expect($signature)->toContain('--stop-on-failure');
-    
+
     $descriptionProperty = $reflection->getProperty('description');
     $descriptionProperty->setAccessible(true);
     $description = $descriptionProperty->getValue($command);
-    
+
     expect($description)->toBe('Run TDDraft tests only (alias for pest --testsuite=tddraft)');
 });

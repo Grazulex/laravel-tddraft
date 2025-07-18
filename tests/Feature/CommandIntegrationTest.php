@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Grazulex\LaravelTddraft\LaravelTddraftServiceProvider;
 use Grazulex\LaravelTddraft\Console\Commands\InitCommand;
 use Grazulex\LaravelTddraft\Console\Commands\MakeCommand;
 use Grazulex\LaravelTddraft\Console\Commands\TestCommand;
-use Illuminate\Support\ServiceProvider;
+use Grazulex\LaravelTddraft\LaravelTddraftServiceProvider;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\ServiceProvider;
 
 it('can test basic Laravel TDDraft package structure', function (): void {
     expect(class_exists(LaravelTddraftServiceProvider::class))->toBeTrue();

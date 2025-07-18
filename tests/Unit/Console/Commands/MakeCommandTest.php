@@ -116,44 +116,44 @@ it('validates template variable substitution', function (): void {
 // Tests with Reflection API to actually execute code and improve coverage
 
 it('can generate unique reference using private method', function (): void {
-    $command = new MakeCommand();
+    $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('generateUniqueReference');
     $method->setAccessible(true);
-    
+
     $reference = $method->invoke($command);
-    
+
     // Updated pattern to accept both lowercase and uppercase letters
     expect($reference)->toMatch('/^tdd-\d{14}-[a-zA-Z0-9]{6}$/');
     expect($reference)->toStartWith('tdd-');
-    
+
     // Generate another to ensure uniqueness
     $reference2 = $method->invoke($command);
     expect($reference)->not()->toBe($reference2);
 });
 
 it('can determine file path using private method', function (): void {
-    $command = new MakeCommand();
+    $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('determineFilePath');
     $method->setAccessible(true);
-    
+
     // Test without custom path
     $filePath = $method->invoke($command, 'User login test', null);
     expect($filePath)->toEndWith('tests/TDDraft/UserLoginTest.php');
     expect($filePath)->toContain('tests/TDDraft');
-    
+
     // Test with custom path
     $customFilePath = $method->invoke($command, 'Auth test', 'Authentication');
     expect($customFilePath)->toContain('tests/TDDraft/Authentication/AuthTest.php');
 });
 
 it('can generate filename using private method', function (): void {
-    $command = new MakeCommand();
+    $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('generateFilename');
     $method->setAccessible(true);
-    
+
     expect($method->invoke($command, 'user can login'))->toBe('UserCanLoginTest.php');
     expect($method->invoke($command, 'password validation'))->toBe('PasswordValidationTest.php');
     expect($method->invoke($command, 'simple test'))->toBe('SimpleTest.php');
@@ -161,28 +161,28 @@ it('can generate filename using private method', function (): void {
 });
 
 it('can determine class name using private method', function (): void {
-    $command = new MakeCommand();
+    $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('determineClassName');
     $method->setAccessible(true);
-    
+
     // Test without custom class
     $className = $method->invoke($command, 'user registration', null);
     expect($className)->toBe('UserRegistrationTest');
-    
+
     // Test with custom class
     $customClassName = $method->invoke($command, 'any name', 'CustomTestClass');
     expect($customClassName)->toBe('CustomTestClass');
 });
 
 it('can generate test content using private method', function (): void {
-    $command = new MakeCommand();
+    $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('generateTestContent');
     $method->setAccessible(true);
-    
+
     $content = $method->invoke($command, 'User login test', 'feature', 'tdd-20240101120000-abc123');
-    
+
     expect($content)->toContain('TDDraft Test: User login test');
     expect($content)->toContain('Reference: tdd-20240101120000-abc123');
     expect($content)->toContain('Type: feature');

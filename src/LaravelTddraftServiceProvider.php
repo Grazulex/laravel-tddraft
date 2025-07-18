@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Grazulex\LaravelTddraft;
 
 use Grazulex\LaravelTddraft\Console\Commands\InitCommand;
+use Grazulex\LaravelTddraft\Console\Commands\ListCommand;
 use Grazulex\LaravelTddraft\Console\Commands\MakeCommand;
+use Grazulex\LaravelTddraft\Console\Commands\PromoteCommand;
 use Grazulex\LaravelTddraft\Console\Commands\TestCommand;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -30,6 +32,8 @@ final class LaravelTddraftServiceProvider extends ServiceProvider
                 InitCommand::class,
                 MakeCommand::class,
                 TestCommand::class,
+                PromoteCommand::class,
+                ListCommand::class,
             ]);
         }
 

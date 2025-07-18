@@ -105,27 +105,27 @@ it('can read example draft stub content', function (): void {
 it('creates example draft file with correct content', function (): void {
     $tddraftPath = base_path('tests/TDDraft');
     $examplePath = $tddraftPath . '/ExampleDraftTest.php';
-    
+
     // Clean up first
     if (File::exists($tddraftPath)) {
         File::deleteDirectory($tddraftPath);
     }
-    
+
     // Create directory
     File::makeDirectory($tddraftPath, 0755, true);
-    
+
     // Create example file using stub
     $stubPath = __DIR__ . '/../../../../src/Console/Commands/stubs/example-draft.stub';
     $content = File::get($stubPath);
     File::put($examplePath, $content);
-    
+
     expect(File::exists($examplePath))->toBeTrue();
-    
+
     $fileContent = File::get($examplePath);
     expect($fileContent)->toContain("->group('tddraft'");
     expect($fileContent)->toContain('example-red-phase');
     expect($fileContent)->toContain('example-green-phase');
-    
+
     // Clean up
     File::deleteDirectory($tddraftPath);
 });
@@ -133,44 +133,44 @@ it('creates example draft file with correct content', function (): void {
 // Tests with Reflection API to actually execute code and improve coverage
 
 it('can show manual phpunit instructions using private method', function (): void {
-    $command = new \Grazulex\LaravelTddraft\Console\Commands\InitCommand();
+    $command = new InitCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('showManualPhpUnitInstructions');
     $method->setAccessible(true);
-    
+
     // This method just outputs instructions, we can test it doesn't throw
-    expect(fn() => $method->invoke($command))->not()->toThrow(Exception::class);
+    expect(fn (): mixed => $method->invoke($command))->not()->toThrow(Exception::class);
 });
 
 it('can show manual pest instructions using private method', function (): void {
-    $command = new \Grazulex\LaravelTddraft\Console\Commands\InitCommand();
+    $command = new InitCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('showManualPestInstructions');
     $method->setAccessible(true);
-    
+
     // This method just outputs instructions, we can test it doesn't throw
-    expect(fn() => $method->invoke($command))->not()->toThrow(Exception::class);
+    expect(fn (): mixed => $method->invoke($command))->not()->toThrow(Exception::class);
 });
 
 // Test methods that don't use console output
 
 it('can test directory creation logic directly', function (): void {
     $tddraftPath = base_path('tests/TDDraft');
-    
+
     // Clean up first
     if (File::exists($tddraftPath)) {
         File::deleteDirectory($tddraftPath);
     }
-    
+
     expect(File::exists($tddraftPath))->toBeFalse();
-    
+
     // Manually create what the private method would do
     File::makeDirectory($tddraftPath, 0755, true);
     File::put($tddraftPath . '/.gitkeep', '');
-    
+
     expect(File::exists($tddraftPath))->toBeTrue();
     expect(File::exists($tddraftPath . '/.gitkeep'))->toBeTrue();
-    
+
     // Clean up
     File::deleteDirectory($tddraftPath);
 });
@@ -178,26 +178,26 @@ it('can test directory creation logic directly', function (): void {
 it('can test example file creation logic directly', function (): void {
     $tddraftPath = base_path('tests/TDDraft');
     $examplePath = $tddraftPath . '/ExampleDraftTest.php';
-    
+
     // Clean up and create directory
     if (File::exists($tddraftPath)) {
         File::deleteDirectory($tddraftPath);
     }
     File::makeDirectory($tddraftPath, 0755, true);
-    
+
     expect(File::exists($examplePath))->toBeFalse();
-    
+
     // Manually create what the private method would do
     $stubPath = __DIR__ . '/../../../../src/Console/Commands/stubs/example-draft.stub';
     $content = File::get($stubPath);
     File::put($examplePath, $content);
-    
+
     expect(File::exists($examplePath))->toBeTrue();
-    
+
     $fileContent = File::get($examplePath);
     expect($fileContent)->toContain('TDDraft test');
     expect($fileContent)->toContain('example-red-phase');
-    
+
     // Clean up
     File::deleteDirectory($tddraftPath);
 });

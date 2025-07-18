@@ -111,7 +111,7 @@ PHP;
 
 echo $complexTest . "\n\n";
 
-// Example 2: Advanced Testing Strategies  
+// Example 2: Advanced Testing Strategies
 echo "2. Advanced Testing Strategies with References\n";
 echo "----------------------------------------------\n";
 echo "Run targeted test subsets using reference tracking:\n\n";

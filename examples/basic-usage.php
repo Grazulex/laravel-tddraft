@@ -24,7 +24,7 @@ echo "Install Pest 3 (required):\n";
 echo "  composer require pestphp/pest --dev\n";
 echo "  php artisan pest:install\n\n";
 
-// Example 2: Environment Setup  
+// Example 2: Environment Setup
 echo "2. Environment Setup\n";
 echo "--------------------\n";
 echo "Initialize your TDDraft environment:\n";
