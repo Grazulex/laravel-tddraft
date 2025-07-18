@@ -17,14 +17,25 @@
 
 **Laravel TDDraft** helps you practice Test-Driven Development by providing a structured approach to draft testing in Laravel applications. It creates a separate testing environment for experimental tests that won't interfere with your main test suite or CI pipeline.
 
+### TDDraft → CI Workflow
+
+<div align="center">
+  <img src="chart.png" alt="TDDraft to CI Test Promotion Workflow" width="600">
+  <p><em>Visual representation of the TDDraft workflow and promotion to CI test suite</em></p>
+</div>
+
+The package enables a clean separation between experimental draft tests and production-ready CI tests, allowing you to practice TDD without affecting your deployment pipeline.
+
 ## ✨ Features
 
 - 📂 Creates dedicated `tests/TDDraft/` directory for draft tests
 - ⚙️ Automatically configures PHPUnit and Pest to exclude drafts from main test runs
 - 🧪 Native Pest 3 support with proper test isolation
-- 🔧 One-command setup with `php artisan tdd:init`
+- 🔧 Three-command workflow: `tdd:init` → `tdd:make` → `tdd:test`
 - 📋 Automatic backup of configuration files before modification
+- 🔖 Unique reference tracking for test promotion from draft to CI
 - 🎯 Built for clean TDD workflow separation
+- 🚀 Easy graduation path from draft tests to production test suite
 
 ## 🚀 Quick Start
 
@@ -147,27 +158,66 @@ pest --testsuite=default,tddraft
 
 ### Graduate Tests
 
-When your draft test is ready, move it to your main test suite:
+When your draft test is ready for production, promote it to your main test suite using the unique reference for tracking:
 
 ```bash
-# The test file contains the reference for tracking
-# Reference: tdd-20250718142530-Abc123
+# Step 1: Note the unique reference from your test file
+# Example test header:
+# /**
+#  * TDDraft Test: User can register
+#  * Reference: tdd-20250718142530-Abc123
+#  * Type: feature
+#  * Created: 2025-07-18 14:25:30
+#  */
 
-# Move the test file (keep the reference for tracking)
-mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/UserRegistrationTest.php
+# Step 2: Move the test file to your main test suite
+mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/Auth/UserRegistrationTest.php
 
-# Update the groups (remove tddraft, keep the reference)
+# Step 3: Update the test groups (remove 'tddraft', keep reference for tracking)
 # Change: ->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
 # To:     ->group('feature', 'tdd-20250718142530-Abc123')
+
+# Step 4: Run the promoted test to ensure it works in main suite
+pest tests/Feature/Auth/UserRegistrationTest.php
+
+# Step 5: Run full test suite to verify no conflicts
+pest
 ```
+
+### Tracking Test Lineage
+
+The unique reference system allows you to:
+- Track which tests originated from TDDraft
+- Monitor test evolution from draft to production
+- Maintain audit trail for compliance
+- Link CI failures back to original draft intent
 
 ## 📦 Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `tdd:init` | Initialize TDDraft environment and configuration |
-| `tdd:make` | Create a new TDDraft test with unique reference tracking |
-| `tdd:test` | Run TDDraft tests only (alias for pest --testsuite=tddraft) |
+Laravel TDDraft provides three essential commands for your TDD workflow:
+
+| Command | Description | Usage |
+|---------|-------------|-------|
+| `tdd:init` | Initialize TDDraft environment and configuration | `php artisan tdd:init` |
+| `tdd:make` | Create a new TDDraft test with unique reference tracking | `php artisan tdd:make "Test name"` |
+| `tdd:test` | Run TDDraft tests only (alias for pest --testsuite=tddraft) | `php artisan tdd:test` |
+
+### Complete TDD Workflow
+
+```bash
+# 1. Initialize your TDDraft environment
+php artisan tdd:init
+
+# 2. Create draft tests with unique tracking
+php artisan tdd:make "User can register"
+php artisan tdd:make "Password validation" --type=unit
+
+# 3. Run and iterate on your draft tests
+php artisan tdd:test
+
+# 4. When ready, promote tests to CI suite
+# (See graduation workflow below)
+```
 
 ## 📁 Configuration
 

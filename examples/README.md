@@ -2,28 +2,36 @@
 
 This directory contains practical examples demonstrating how to use Laravel TDDraft effectively in your Laravel applications.
 
+## TDDraft Workflow Overview
+
+<div align="center">
+  <img src="../chart.png" alt="TDDraft to CI Test Promotion Workflow" width="600">
+  <p><em>Complete workflow from draft testing to CI integration</em></p>
+</div>
+
 ## Examples Overview
 
 ### [basic-usage.php](basic-usage.php)
-Demonstrates the fundamental workflow of Laravel TDDraft, including:
-- Package installation and setup
-- Environment initialization with `tdd:init`
-- Writing your first draft tests
-- Running tests separately from main suite
-- TDD Red-Green-Refactor workflow
-- Graduating tests to main suite
+Demonstrates the fundamental three-command workflow of Laravel TDDraft:
+- Package installation and setup with `tdd:init`
+- Creating draft tests with `tdd:make` and unique reference tracking
+- Running tests with `tdd:test` command
+- TDD Red-Green-Refactor cycle
+- Graduating tests to main suite with reference preservation
+- Visual workflow representation with chart.png
 
 **Who should use this:** Developers new to Laravel TDDraft or TDD in general.
 
 ### [advanced-usage.php](advanced-usage.php)
-Shows advanced patterns and best practices, including:
-- Complex end-to-end test scenarios
-- Test organization strategies
+Shows advanced patterns and best practices:
+- Complex end-to-end test scenarios with unique references
+- Test organization strategies using subdirectories
 - Advanced test patterns (parameterized tests, performance testing)
 - Configuration management for different environments
-- Custom test helpers
-- CI/CD integration
-- Performance monitoring
+- Custom test helpers and traits
+- CI/CD integration with promotion workflows
+- Performance monitoring and audit trails
+- Reference-based test tracking and lineage
 
 **Who should use this:** Experienced developers building complex applications.
 
@@ -49,23 +57,26 @@ php examples/advanced-usage.php
    php artisan tdd:init
    ```
 
-2. **Write Your First Draft Test**
-   ```php
-   // tests/TDDraft/UserCanRegisterTest.php
-   it('allows user registration', function (): void {
-       $response = $this->post('/register', [
-           'name' => 'John Doe',
-           'email' => 'john@example.com',
-           'password' => 'password',
-       ]);
-       
-       $response->assertStatus(201);
-   })->group('tddraft');
+2. **Create Your First Draft Test**
+   ```bash
+   php artisan tdd:make "User can register"
    ```
 
 3. **Run Draft Tests**
    ```bash
-   pest --testsuite=tddraft
+   php artisan tdd:test
+   ```
+
+4. **Follow TDD Cycle**
+   - RED: Test fails initially (expected)
+   - GREEN: Implement minimal code
+   - REFACTOR: Clean up while keeping tests green
+
+5. **Graduate to Main Suite**
+   ```bash
+   # Move with reference tracking
+   mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/Auth/UserRegistrationTest.php
+   # Update groups: remove 'tddraft', keep reference
    ```
 
 ### Test Organization Examples
