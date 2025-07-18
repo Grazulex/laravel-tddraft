@@ -94,15 +94,62 @@ php artisan tdd:test --filter="user registration"
 php artisan tdd:test --coverage
 ```
 
-### 4. Follow TDD Red-Green-Refactor
+### 4. List and Manage Draft Tests
+
+Use the `tdd:list` command to view and manage your draft tests:
+
+```bash
+# List all draft tests
+php artisan tdd:list
+
+# Show detailed information
+php artisan tdd:list --details
+
+# Filter by test type
+php artisan tdd:list --type=feature
+php artisan tdd:list --type=unit
+
+# Filter by directory path
+php artisan tdd:list --path=Auth
+```
+
+### 5. Follow TDD Red-Green-Refactor
 
 1. **RED**: Test fails initially (expected)
 2. **GREEN**: Implement minimal code to make test pass
 3. **REFACTOR**: Clean up code while keeping tests passing
 
-### 5. Graduate to Main Test Suite
+### 5. Follow TDD Red-Green-Refactor
 
-When your draft test is ready for production, promote it using the reference tracking:
+1. **RED**: Test fails initially (expected)
+2. **GREEN**: Implement minimal code to make test pass
+3. **REFACTOR**: Clean up code while keeping tests passing
+
+### 6. Graduate to Main Test Suite
+
+When your draft test is ready for production, you have two options for promoting it:
+
+#### Option A: Automated Promotion (Recommended)
+
+Use the `tdd:promote` command with the unique reference:
+
+```bash
+# Basic promotion
+php artisan tdd:promote tdd-20250718142530-Abc123
+
+# Promote to specific directory
+php artisan tdd:promote tdd-20250718142530-Abc123 --target=Unit
+
+# Promote with custom file name
+php artisan tdd:promote tdd-20250718142530-Abc123 --new-file=UserRegistrationTest
+
+# Keep the original draft file
+php artisan tdd:promote tdd-20250718142530-Abc123 --keep-draft
+```
+
+#### Option B: Manual Promotion
+
+For manual control, you can still promote tests manually:
 
 ```bash
 # Step 1: Move the test file
@@ -187,6 +234,9 @@ it('sends welcome email after successful registration', function (): void {
 # Run only draft tests (recommended)
 php artisan tdd:test
 
+# List all draft tests
+php artisan tdd:list
+
 # Run with options
 php artisan tdd:test --filter="registration" --coverage
 php artisan tdd:test --parallel --stop-on-failure
@@ -247,11 +297,23 @@ Here's a complete example of a TDD session using Laravel TDDraft:
 
 ### 1. Create Draft Test
 
+```bash
+php artisan tdd:make "Blog post can be published" --type=feature
+```
+
 ```php
 // tests/TDDraft/BlogPostCanBePublishedTest.php
 <?php
 
 declare(strict_types=1);
+
+/**
+ * TDDraft Test: Blog post can be published
+ * 
+ * Reference: tdd-20250718142530-Abc123
+ * Type: feature
+ * Created: 2025-07-18 14:25:30
+ */
 
 it('allows publishing a draft blog post', function (): void {
     $user = User::factory()->create();
@@ -266,13 +328,13 @@ it('allows publishing a draft blog post', function (): void {
     $response->assertStatus(200);
     expect($post->fresh()->status)->toBe('published');
     expect($post->fresh()->published_at)->not->toBeNull();
-})->group('tddraft');
+})->group('tddraft', 'feature', 'tdd-20250718142530-Abc123');
 ```
 
 ### 2. Run Test (Should Fail)
 
 ```bash
-pest --testsuite=tddraft
+php artisan tdd:test --filter="Blog post can be published"
 # Test fails because route/functionality doesn't exist
 ```
 
@@ -283,18 +345,26 @@ Add route, controller method, and model logic.
 ### 4. Run Test Again
 
 ```bash
-pest --testsuite=tddraft
+php artisan tdd:test --filter="Blog post can be published"
 # Test should now pass
 ```
 
-### 5. Refactor and Graduate
-
-Clean up code, then move test to main suite:
+### 5. List and Review Tests
 
 ```bash
-mv tests/TDDraft/BlogPostCanBePublishedTest.php tests/Feature/BlogPostCanBePublishedTest.php
+php artisan tdd:list
+# Review all your draft tests and their status
 ```
 
-Remove the `->group('tddraft')` from the moved test.
+### 6. Promote Test
+
+```bash
+# Option A: Automated promotion
+php artisan tdd:promote tdd-20250718142530-Abc123
+
+# Option B: Manual promotion
+mv tests/TDDraft/BlogPostCanBePublishedTest.php tests/Feature/BlogPostCanBePublishedTest.php
+# Then remove ->group('tddraft') from the moved test
+```
 
 This workflow helps you maintain a clean separation between experimental/draft tests and your production test suite.

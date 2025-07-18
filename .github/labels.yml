@@ -1,4 +1,4 @@
-# Configuration des labels pour Laravel Safeguard
+# Configuration des labels pour Laravel TDDraft
 # Ce fichier définit tous les labels utilisés pour les issues et PR
 
 # Scope - Domaines fonctionnels
@@ -6,12 +6,12 @@
   description: "Documentation: markdowns, examples, readme, etc."
   color: "0075ca"
 
-- name: "scope:rules"
-  description: "Related to the security rules system and rule definitions."
+- name: "scope:commands"
+  description: "Related to the TDDraft commands system and command definitions."
   color: "0052cc"
 
 - name: "scope:config"
-  description: "Configuration files, safeguard.php settings, and options."
+  description: "Configuration files, tddraft.php settings, and options."
   color: "17a2b8"
 
 - name: "scope:cli"
@@ -22,9 +22,9 @@
   description: "Unit, integration, or feature testing coverage."
   color: "0e8a16"
 
-- name: "scope:validation"
-  description: "Security validation logic and constraint checking."
-  color: "fd7e14"
+- name: "scope:tests"
+  description: "TDD test management, draft tests, and test promotion."
+  color: "0e8a16"
 
 # Status - État des issues
 - name: "status:blocked"

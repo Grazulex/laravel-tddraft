@@ -1,12 +1,12 @@
 # Best Practices
 
-This guide outlines recommended practices for using Laravel TDDraft effectively in your Test-Driven Development workflow with the current three-command system.
+This guide outlines recommended practices for using Laravel TDDraft effectively in your Test-Driven Development workflow with the complete five-command system.
 
 ## TDDraft Command Workflow
 
 ### Command Sequence Best Practices
 
-Follow the three-command workflow for optimal TDD experience:
+Follow the five-command workflow for optimal TDD experience:
 
 ```bash
 # 1. Initialize once per project
@@ -17,6 +17,12 @@ php artisan tdd:make "Feature description" --type=feature --path=Domain/Feature
 
 # 3. Run and iterate
 php artisan tdd:test --filter="feature description"
+
+# 4. List and manage your tests
+php artisan tdd:list --details
+
+# 5. Promote when ready
+php artisan tdd:promote <reference> --target=Feature
 ```
 
 ### Using tdd:make Effectively
@@ -47,6 +53,39 @@ php artisan tdd:test --coverage --parallel
 
 # Debug failing tests
 php artisan tdd:test --stop-on-failure
+```
+
+### Using tdd:list for Test Management
+
+Organize and review your draft tests effectively:
+
+```bash
+# Review all tests before end-of-sprint
+php artisan tdd:list --details
+
+# Focus on specific areas
+php artisan tdd:list --path=Ecommerce --type=feature
+
+# Find tests ready for promotion
+php artisan tdd:list --type=feature | grep "passing"
+```
+
+### Best Practices for tdd:promote
+
+Promote tests systematically and safely:
+
+```bash
+# Always test before promoting
+php artisan tdd:test --filter="<reference>"
+
+# Use descriptive file names
+php artisan tdd:promote <reference> --new-file=UserCheckoutWorkflowTest
+
+# Keep drafts during uncertain periods
+php artisan tdd:promote <reference> --keep-draft
+
+# Verify after promotion
+pest tests/Feature/UserCheckoutWorkflowTest.php
 ```
 
 ## Test Organization

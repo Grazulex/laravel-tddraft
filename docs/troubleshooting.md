@@ -281,7 +281,103 @@ Fatal error: Allowed memory size exhausted
 
 ## Command-Specific Issues
 
-### New Three-Command Workflow Issues
+### Five-Command Workflow Issues
+
+#### `tdd:list` Command Issues
+
+**Error:**
+```
+No TDDraft directory found. Run `php artisan tdd:init` first.
+```
+
+**Solution:**
+Run the initialization command:
+```bash
+php artisan tdd:init
+```
+
+**Error:**
+```
+No TDDraft tests found in tests/TDDraft/
+```
+
+**Solution:**
+Create your first draft test:
+```bash
+php artisan tdd:make "Your first test"
+```
+
+**Error:**
+```
+Could not parse draft file: tests/TDDraft/SomeTest.php
+```
+
+**Solution:**
+Ensure the test file has proper TDDraft format with Reference comment:
+```php
+/**
+ * TDDraft Test: Test Name
+ * 
+ * Reference: tdd-20250718142530-Abc123
+ * Type: feature
+ * Created: 2025-07-18 14:25:30
+ */
+```
+
+#### `tdd:promote` Command Issues
+
+**Error:**
+```
+No TDDraft test found with reference: tdd-20250718142530-Abc123
+```
+
+**Solution:**
+1. Use `tdd:list` to find the correct reference:
+   ```bash
+   php artisan tdd:list
+   ```
+2. Copy the exact reference from the output
+
+**Error:**
+```
+Target file tests/Feature/UserTest.php already exists. Overwrite?
+```
+
+**Solution:**
+1. Use `--force` to overwrite without prompt:
+   ```bash
+   php artisan tdd:promote <reference> --force
+   ```
+2. Use `--new-file` to create with different name:
+   ```bash
+   php artisan tdd:promote <reference> --new-file=UserRegistrationTest
+   ```
+3. Use `--file` to append to existing file:
+   ```bash
+   php artisan tdd:promote <reference> --file=ExistingTest.php
+   ```
+
+**Error:**
+```
+Could not parse the draft test file
+```
+
+**Solution:**
+Ensure your draft test file has valid TDDraft header format and proper PHP syntax.
+
+**Error:**
+```
+Could not determine class name from existing file
+```
+
+**Solution:**
+When using `--file` option, ensure the target file has a valid class declaration:
+```php
+class ExistingTest extends TestCase
+{
+    // ...
+}
+```
 
 #### `tdd:make` Command Issues
 

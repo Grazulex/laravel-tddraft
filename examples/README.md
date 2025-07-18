@@ -12,12 +12,14 @@ This directory contains practical examples demonstrating how to use Laravel TDDr
 ## Examples Overview
 
 ### [basic-usage.php](basic-usage.php)
-Demonstrates the fundamental three-command workflow of Laravel TDDraft:
+Demonstrates the complete five-command workflow of Laravel TDDraft:
 - Package installation and setup with `tdd:init`
 - Creating draft tests with `tdd:make` and unique reference tracking
 - Running tests with `tdd:test` command
+- Listing and managing tests with `tdd:list` command
+- Promoting tests with `tdd:promote` command
 - TDD Red-Green-Refactor cycle
-- Graduating tests to main suite with reference preservation
+- Automated and manual test graduation
 - Visual workflow representation with chart.png
 
 **Who should use this:** Developers new to Laravel TDDraft or TDD in general.
@@ -27,9 +29,11 @@ Shows advanced patterns and best practices:
 - Complex end-to-end test scenarios with unique references
 - Test organization strategies using subdirectories
 - Advanced test patterns (parameterized tests, performance testing)
+- Professional test management with `tdd:list` filtering
+- Enterprise promotion strategies with `tdd:promote`
 - Configuration management for different environments
 - Custom test helpers and traits
-- CI/CD integration with promotion workflows
+- CI/CD integration with automated promotion workflows
 - Performance monitoring and audit trails
 - Reference-based test tracking and lineage
 
@@ -67,14 +71,23 @@ php examples/advanced-usage.php
    php artisan tdd:test
    ```
 
-4. **Follow TDD Cycle**
+4. **List and Manage Tests**
+   ```bash
+   php artisan tdd:list
+   php artisan tdd:list --details
+   ```
+
+5. **Follow TDD Cycle**
    - RED: Test fails initially (expected)
    - GREEN: Implement minimal code
    - REFACTOR: Clean up while keeping tests green
 
-5. **Graduate to Main Suite**
+6. **Promote to Main Suite**
    ```bash
-   # Move with reference tracking
+   # Automated promotion (recommended)
+   php artisan tdd:promote <reference>
+   
+   # Manual promotion (alternative)
    mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/Auth/UserRegistrationTest.php
    # Update groups: remove 'tddraft', keep reference
    ```
@@ -112,7 +125,26 @@ tests/TDDraft/
 
 ## Common Patterns
 
-### 1. API Testing
+### 1. List Management
+```php
+// List all tests with filtering
+php artisan tdd:list --type=feature
+php artisan tdd:list --path=Auth --details
+
+// Review tests before promotion
+php artisan tdd:list --details
+```
+
+### 2. Automated Promotion
+```php
+// Basic promotion
+php artisan tdd:promote tdd-20250718142530-Abc123
+
+// Advanced promotion with options
+php artisan tdd:promote tdd-20250718142530-Abc123 --target=Unit --new-file=UserValidationTest --keep-draft
+```
+
+### 3. API Testing
 ```php
 it('returns user profile via API', function (): void {
     $user = User::factory()->create();
@@ -127,7 +159,7 @@ it('returns user profile via API', function (): void {
 })->group('tddraft');
 ```
 
-### 2. Database Testing
+### 4. Database Testing
 ```php
 it('creates user record correctly', function (): void {
     $userData = [
@@ -142,7 +174,7 @@ it('creates user record correctly', function (): void {
 })->group('tddraft');
 ```
 
-### 3. Event Testing
+### 5. Event Testing
 ```php
 it('dispatches user registered event', function (): void {
     Event::fake();
@@ -156,7 +188,7 @@ it('dispatches user registered event', function (): void {
 })->group('tddraft');
 ```
 
-### 4. Job Testing
+### 6. Job Testing
 ```php
 it('queues welcome email job', function (): void {
     Queue::fake();
@@ -225,6 +257,24 @@ it('handles empty cart gracefully', function (): void {
 ## Graduation Workflow
 
 When your draft tests are stable and the feature is complete:
+
+### Option 1: Automated Promotion (Recommended)
+
+```bash
+# 1. List tests to find references
+php artisan tdd:list
+
+# 2. Promote specific test
+php artisan tdd:promote tdd-20250718142530-Abc123
+
+# 3. Verify promoted test works
+pest tests/Feature/UserCanRegisterTest.php
+
+# 4. Run full test suite to ensure no conflicts
+pest
+```
+
+### Option 2: Manual Promotion
 
 ```bash
 # 1. Move test to appropriate directory

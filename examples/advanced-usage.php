@@ -7,13 +7,13 @@ declare(strict_types=1);
  *
  * This example demonstrates advanced patterns and best practices
  * for using Laravel TDDraft in complex Laravel applications with
- * the current three-command system and reference tracking.
+ * all five commands including advanced promotion and list management.
  */
 echo "Laravel TDDraft - Advanced Usage Example\n";
 echo "=========================================\n\n";
 
-echo "This example covers advanced TDDraft patterns, reference tracking,\n";
-echo "and promotion workflows for complex applications.\n\n";
+echo "This example covers advanced TDDraft patterns, automated promotion,\n";
+echo "list management, and complex workflows for enterprise applications.\n\n";
 
 // Example 1: Advanced Test Creation with References
 echo "1. Advanced Test Creation with tdd:make\n";
@@ -363,9 +363,123 @@ PHP;
 
 echo $performanceExample . "\n\n";
 
-// Example 8: Advanced Graduation Workflow
-echo "8. Advanced Graduation Workflow\n";
-echo "-------------------------------\n";
+// Example 8: Advanced List Management with tdd:list
+echo "8. Advanced List Management with tdd:list\n";
+echo "----------------------------------------\n";
+echo "Professional test management and filtering:\n\n";
+
+echo "# List with detailed metadata\n";
+echo "php artisan tdd:list --details\n\n";
+
+echo "# Filter by specific areas\n";
+echo "php artisan tdd:list --path=E2E\n";
+echo "php artisan tdd:list --path=Integrations\n";
+echo "php artisan tdd:list --path=Performance\n\n";
+
+echo "# Filter by test types for targeted review\n";
+echo "php artisan tdd:list --type=feature  # Focus on integration tests\n";
+echo "php artisan tdd:list --type=unit     # Focus on unit tests\n\n";
+
+echo "Example detailed output for complex project:\n";
+$advancedListOutput = <<<'OUTPUT'
+📋 TDDraft Tests List
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔖 tdd-20250718151230-E2e987
+📝 Complete order workflow
+📁 E2E/CompleteOrderWorkflowTest.php
+🏷️  feature
+📅 2025-07-18 15:12:30
+────────────────────────────────────────────────────────────
+
+🔖 tdd-20250718152045-Pay456
+📝 Payment gateway integration
+📁 Integrations/Payment/PaymentGatewayIntegrationTest.php
+🏷️  unit
+📅 2025-07-18 15:20:45
+────────────────────────────────────────────────────────────
+
+🔖 tdd-20250718153010-Perf123
+📝 Database query performance
+📁 Performance/DatabasePerformanceTest.php
+🏷️  unit
+📅 2025-07-18 15:30:10
+────────────────────────────────────────────────────────────
+
+📊 Total: 3 draft test(s)
+
+💡 Tips:
+  • Run specific test: php artisan tdd:test --filter="<reference>"
+  • Run by type: php artisan tdd:test --filter="feature"
+  • Promote draft: php artisan tdd:promote <reference>
+OUTPUT;
+
+echo $advancedListOutput . "\n\n";
+
+echo "# Organizational use cases:\n";
+echo "# Review all E2E tests before sprint demo\n";
+echo "php artisan tdd:list --path=E2E --details\n\n";
+
+echo "# Check performance tests before optimization sprint\n";
+echo "php artisan tdd:list --path=Performance\n\n";
+
+echo "# Review unit tests for specific component\n";
+echo "php artisan tdd:list --path=Services/Payment --type=unit\n\n";
+
+// Example 9: Advanced Promotion with tdd:promote
+echo "9. Advanced Promotion with tdd:promote\n";
+echo "-------------------------------------\n";
+echo "Enterprise-grade test promotion strategies:\n\n";
+
+echo "# Promote E2E test to Feature directory\n";
+echo "php artisan tdd:promote tdd-20250718151230-E2e987 --target=Feature --new-file=OrderWorkflowE2ETest\n\n";
+
+echo "# Promote integration test to Unit directory with custom organization\n";
+echo "php artisan tdd:promote tdd-20250718152045-Pay456 --target=Unit --new-file=Integrations/PaymentGatewayTest\n\n";
+
+echo "# Append performance test to existing performance test suite\n";
+echo "php artisan tdd:promote tdd-20250718153010-Perf123 --file=Performance/DatabasePerformanceTest.php\n\n";
+
+echo "# Promote with backup (keep draft for reference)\n";
+echo "php artisan tdd:promote tdd-20250718151230-E2e987 --keep-draft --new-file=CompleteOrderWorkflowTest\n\n";
+
+echo "# Batch promotion workflow for end-of-sprint\n";
+echo "# Step 1: Review what's ready\n";
+echo "php artisan tdd:list --details\n\n";
+
+echo "# Step 2: Promote feature tests\n";
+echo "php artisan tdd:promote tdd-20250718151230-E2e987 --target=Feature\n";
+echo "php artisan tdd:promote tdd-20250718151245-Api789 --target=Feature\n\n";
+
+echo "# Step 3: Promote unit tests\n";
+echo "php artisan tdd:promote tdd-20250718152045-Pay456 --target=Unit\n";
+echo "php artisan tdd:promote tdd-20250718153010-Perf123 --target=Unit\n\n";
+
+echo "# Step 4: Verify promoted tests in CI\n";
+echo "pest tests/Feature/ --stop-on-failure\n";
+echo "pest tests/Unit/ --stop-on-failure\n\n";
+
+echo "Advanced promotion example with custom organization:\n";
+$promotionExample = <<<'OUTPUT'
+$ php artisan tdd:promote tdd-20250718151230-E2e987 --target=Feature --new-file=E2E/OrderWorkflowTest
+
+📋 Found draft test: tests/TDDraft/E2E/CompleteOrderWorkflowTest.php
+✅ Successfully promoted test to: tests/Feature/E2E/OrderWorkflowTest.php
+🎯 Test class: OrderWorkflowTest
+🗑️  Removed draft file: tests/TDDraft/E2E/CompleteOrderWorkflowTest.php
+
+Generated promoted test:
+  • Removed TDDraft-specific comments
+  • Updated groups: removed 'tddraft', kept 'tdd-20250718151230-E2e987'
+  • Preserved reference for audit trail
+  • Created directory structure: tests/Feature/E2E/
+OUTPUT;
+
+echo $promotionExample . "\n\n";
+
+// Example 10: Advanced Graduation Workflow
+echo "10. Advanced Graduation Workflow\n";
+echo "--------------------------------\n";
 echo "Systematic approach to promoting tests from TDDraft to CI:\n\n";
 
 echo "# Step 1: Review test readiness\n";
@@ -438,9 +552,9 @@ echo "pest\n\n";
 echo "# Optional: Track graduated tests by reference\n";
 echo "grep -r \"tdd-20250718151230-E2e987\" tests/Feature/ # Find graduated test\n\n";
 
-// Example 9: Reference Tracking and Audit Trail
-echo "9. Reference Tracking and Audit Trail\n";
-echo "-------------------------------------\n";
+// Example 11: Reference Tracking and Audit Trail
+echo "11. Reference Tracking and Audit Trail\n";
+echo "--------------------------------------\n";
 echo "Maintain audit trail of test evolution:\n\n";
 
 $auditExample = <<<'PHP'
