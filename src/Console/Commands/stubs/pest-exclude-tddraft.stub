@@ -1,0 +1,2 @@
+// TDDraft: Exclude TDDraft directory from main test suite
+uses(Tests\TestCase::class)->in('Feature', 'Unit');

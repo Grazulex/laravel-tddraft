@@ -1,48 +1,30 @@
 /vendor/
 /node_modules/
-/.idea/
-/.vscode/
-/.DS_Store
-Thumbs.db
-
-# Composer
-composer.phar
-composer.lock
-
-# PHPUnit
-.phpunit.result.cache
-coverage/
-.coverage_html/
-
-# Environment files
 .env
-.env.local
-.env.*.local
-
-# Logs
-*.log
-/storage/logs/
-
-# Build artifacts
-/build/
-/dist/
-
-# OS generated files
+.env.*
+/storage/*.key
+/storage/app/public
+/storage/debugbar
+/storage/framework/cache/data
+/storage/framework/sessions
+/storage/framework/testing
+/storage/framework/views
+/storage/logs
+/public/storage
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+/.idea
+/.vscode
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
-
-# IDE files
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# Temporary files
-*.tmp
-*.temp
+composer.lock
+package-lock.json
+.env.backup
+.env.example.local
+/.phpunit.cache
+cache.sqlite
+/build

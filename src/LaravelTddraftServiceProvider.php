@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Grazulex\LaravelTddraft;
 
+use Grazulex\LaravelTddraft\Console\Commands\InitCommand;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Pest\Version;
@@ -20,6 +21,13 @@ final class LaravelTddraftServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/Config/tddraft.php' => config_path('tddraft.php'),
         ], 'tddraft-config');
+
+        // Register console commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                InitCommand::class,
+            ]);
+        }
 
         if (class_exists('Pest\\Version') && defined('Pest\\Version::VERSION')) {
             /** @phpstan-ignore-next-line */

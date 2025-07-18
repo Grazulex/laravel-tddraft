@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * This is an example TDDraft test.
+ * 
+ * TDDraft tests are meant to:
+ * - Start red (failing) by design
+ * - Help you explore and prototype test scenarios
+ * - Stay separate from your main test suite
+ * - Be promoted to real tests when ready
+ */
+
+it('should fail initially - this is normal for TDDraft!', function (): void {
+    // This test intentionally fails to demonstrate the TDD "red" phase
+    expect(false)->toBeTrue('This draft needs implementation!');
+})->group('tddraft');
+
+it('can be promoted when ready', function (): void {
+    // When this passes, you can promote it with:
+    // php artisan tdd:promote tests/TDDraft/ExampleDraftTest.php
+    expect(true)->toBeTrue();
+})->group('tddraft');
+
+// You can also use the fluent draft() syntax (when implemented):
+// draft('user can register')
+//     ->given('a guest user')
+//     ->when('they submit valid registration data')
+//     ->then('they should be registered and logged in');

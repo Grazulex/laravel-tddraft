@@ -3,11 +3,16 @@
     "description": "A powerful Laravel package that provides LaravelTddraft functionality with modern PHP 8.3+ features.",
     "keywords": [
         "laravel",
-        "tddraft",
-        "php8.3",
-        "laravel12",
+        "tdd",
+        "test-driven-development",
         "pest",
-        "clean-code"
+        "testing",
+        "draft-tests",
+        "exploratory-testing",
+        "red-green-refactor",
+        "clean-code",
+        "php8.3",
+        "laravel12"
     ],
     "type": "library",
     "homepage": "https://github.com/grazulex/laravel-tddraft",

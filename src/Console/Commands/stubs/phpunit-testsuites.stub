@@ -1,0 +1,10 @@
+    <testsuites>
+        <testsuite name="default">
+            <directory suffix="Test.php">./tests/Feature</directory>
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="tddraft">
+            <directory suffix="Test.php">./tests/TDDraft</directory>
+        </testsuite>
+    </testsuites>
