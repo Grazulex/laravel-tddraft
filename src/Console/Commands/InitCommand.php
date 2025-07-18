@@ -127,8 +127,26 @@ final class InitCommand extends Command
         if (preg_match($pattern, $content)) {
             $newContent = preg_replace($pattern, $replacement, $content);
             if ($newContent !== null) {
+                // Also ensure defaultTestSuite attribute is set
+                if (!str_contains($newContent, 'defaultTestSuite=')) {
+                    $newContent = str_replace(
+                        '<phpunit ',
+                        '<phpunit defaultTestSuite="default" ',
+                        $newContent
+                    );
+                    
+                    // Handle case where phpunit tag is on multiple lines
+                    if (!str_contains($newContent, 'defaultTestSuite=')) {
+                        $newContent = preg_replace(
+                            '/(<phpunit[^>]*?)>/s',
+                            '$1 defaultTestSuite="default">',
+                            $newContent
+                        );
+                    }
+                }
+                
                 File::put($phpunitPath, $newContent);
-                $this->info('✅ Updated phpunit.xml testsuites configuration');
+                $this->info('✅ Updated phpunit.xml testsuites configuration with defaultTestSuite');
             } else {
                 $this->warn('⚠️  Error updating phpunit.xml. Please add testsuites manually.');
                 $this->showManualPhpUnitInstructions();
@@ -144,6 +162,10 @@ final class InitCommand extends Command
         $this->newLine();
         $this->comment('Please manually add this to your phpunit.xml file:');
         $this->newLine();
+        $this->comment('1. Add defaultTestSuite="default" to the <phpunit> tag:');
+        $this->line('   <phpunit defaultTestSuite="default" ...>');
+        $this->newLine();
+        $this->comment('2. Replace or add the testsuites section:');
 
         $stubPath = __DIR__ . '/stubs/phpunit-testsuites.stub';
         $content = File::get($stubPath);
