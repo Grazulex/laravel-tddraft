@@ -163,8 +163,10 @@ final class InitCommand extends Command
 
         $content = File::get($pestPath);
 
-        // Check if already configured
-        if (str_contains($content, "->in('Feature', 'Unit')")) {
+        // Check if already configured to exclude TDDraft
+        if ((str_contains($content, "->in('Feature', 'Unit')") || 
+            str_contains($content, '->in("Feature", "Unit")')) ||
+            (str_contains($content, "->in('Feature')") && str_contains($content, "->in('Unit')"))) {
             $this->comment('📋 Pest configuration already restricts to Feature/Unit');
 
             return;
@@ -185,23 +187,48 @@ final class InitCommand extends Command
         File::copy($pestPath, $backupPath);
         $this->comment("📋 Created backup: {$backupPath}");
 
-        // Look for uses() calls and modify them
-        $pattern = '/uses\([^)]+\)->in\([^)]+\);/';
+        // Look for different pest configuration patterns
+        $patterns = [
+            // New syntax: pest()->extend()->in()
+            '/pest\(\)->extend\([^)]+\)[^;]*->in\([^)]+\);/s',
+            // Old syntax: uses()->in()
+            '/uses\([^)]+\)->in\(__DIR__\s*\.\s*[\'"]\/Feature[\'"],\s*__DIR__\s*\.\s*[\'"]\/Unit[\'"].*?\);/s',
+            '/uses\([^)]+\)->in\([\'"]Feature[\'"],\s*[\'"]Unit[\'"].*?\);/s',
+            '/uses\([^)]+\)->in\(__DIR__.*?\);/s',
+            '/uses\([^)]+\);/'
+        ];
 
-        if (preg_match($pattern, $content, $matches)) {
-            $originalUses = $matches[0];
+        $matched = false;
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $content, $matches)) {
+                $originalConfig = $matches[0];
+                
+                // Determine replacement based on the pattern found
+                if (str_contains($originalConfig, 'pest()->extend')) {
+                    // For new syntax, modify to include both Feature and Unit
+                    $replacement = str_replace("->in('Feature')", "->in('Feature', 'Unit')", $originalConfig);
+                    if ($replacement === $originalConfig) {
+                        $replacement = str_replace('->in("Feature")', '->in("Feature", "Unit")', $originalConfig);
+                    }
+                } else {
+                    // For old syntax, use the stub
+                    $stubPath = __DIR__ . '/stubs/pest-exclude-tddraft.stub';
+                    $newUsesContent = File::get($stubPath);
+                    $replacement = $newUsesContent . "\n\n// Original configuration (commented out):\n// " . $originalConfig;
+                }
+                
+                $newContent = str_replace($originalConfig, $replacement, $content);
+                File::put($pestPath, $newContent);
+                $this->info('✅ Updated tests/Pest.php to exclude TDDraft directory');
+                $matched = true;
+                break;
+            }
+        }
 
-            // Create backup comment and new uses
-            $stubPath = __DIR__ . '/stubs/pest-exclude-tddraft.stub';
-            $newUsesContent = File::get($stubPath);
-
-            $replacement = $newUsesContent . "\n\n// Original configuration (commented out):\n// " . $originalUses;
-            $newContent = str_replace($originalUses, $replacement, $content);
-
-            File::put($pestPath, $newContent);
-            $this->info('✅ Updated tests/Pest.php to exclude TDDraft directory');
-        } else {
-            $this->comment('📋 No uses() calls found in Pest.php, TDDraft will be naturally excluded');
+        if (!$matched) {
+            $this->comment('📋 No standard pest() or uses() calls found in Pest.php');
+            $this->comment('📋 Please manually add restrictions to exclude TDDraft');
+            $this->showManualPestInstructions();
         }
     }
 
@@ -232,7 +259,7 @@ final class InitCommand extends Command
             $stubPath = __DIR__ . '/stubs/example-draft.stub';
             $exampleContent = File::get($stubPath);
 
-            File::put($examplePath, "<?php\n\ndeclare(strict_types=1);\n\n" . $exampleContent);
+            File::put($examplePath, $exampleContent);
             $this->info('📝 Created example draft: tests/TDDraft/ExampleDraftTest.php');
         } else {
             $this->comment('📝 Skipped creating example draft test');

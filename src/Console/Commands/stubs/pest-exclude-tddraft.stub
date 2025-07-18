@@ -1,2 +1,8 @@
 // TDDraft: Exclude TDDraft directory from main test suite
+// Choose one of the following configurations based on your Pest setup:
+
+// For newer Pest syntax:
+// pest()->extend(Tests\TestCase::class)->in('Feature', 'Unit');
+
+// For older Pest syntax:
 uses(Tests\TestCase::class)->in('Feature', 'Unit');
