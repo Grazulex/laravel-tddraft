@@ -156,9 +156,77 @@ pest --testsuite=tddraft
 pest --testsuite=default,tddraft
 ```
 
+### List and Manage Tests
+
+Use the `tdd:list` command to view and manage your draft tests:
+
+```bash
+# List all draft tests
+php artisan tdd:list
+
+# Show detailed information
+php artisan tdd:list --details
+
+# Filter by test type
+php artisan tdd:list --type=feature
+php artisan tdd:list --type=unit
+
+# Filter by directory path
+php artisan tdd:list --path=Auth
+```
+
+Example output:
+```
+📋 TDDraft Tests List
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌──────────────────────────┬─────────────────────────────────────────┬─────────┬─────────────────────────┐
+│ Reference                │ Name                                    │ Type    │ File                    │
+├──────────────────────────┼─────────────────────────────────────────┼─────────┼─────────────────────────┤
+│ tdd-20250718142530-Abc123│ User can register                       │ feature │ UserCanRegisterTest.php │
+│ tdd-20250718141045-Def456│ Password validation                     │ unit    │ PasswordValidationTest.php│
+│ tdd-20250718140012-Ghi789│ API authentication                      │ feature │ Auth/ApiAuthTest.php    │
+└──────────────────────────┴─────────────────────────────────────────┴─────────┴─────────────────────────┘
+
+📊 Total: 3 draft test(s)
+
+💡 Tips:
+  • Run specific test: php artisan tdd:test --filter="<reference>"
+  • Run by type: php artisan tdd:test --filter="feature"
+  • Promote draft: php artisan tdd:promote <reference>
+```
+
 ### Graduate Tests
 
-When your draft test is ready for production, promote it to your main test suite using the unique reference for tracking:
+When your draft test is ready for production, you have two options for promoting it to your main test suite:
+
+#### Option 1: Automated Promotion (Recommended)
+
+Use the `tdd:promote` command with the unique reference for automated promotion:
+
+```bash
+# Basic promotion (promotes to Feature directory by default)
+php artisan tdd:promote tdd-20250718142530-Abc123
+
+# Promote to specific directory
+php artisan tdd:promote tdd-20250718142530-Abc123 --target=Unit
+
+# Promote with custom file name
+php artisan tdd:promote tdd-20250718142530-Abc123 --new-file=UserRegistrationTest
+
+# Append to existing test file
+php artisan tdd:promote tdd-20250718142530-Abc123 --file=ExistingTest.php
+
+# Keep the original draft file
+php artisan tdd:promote tdd-20250718142530-Abc123 --keep-draft
+
+# Force overwrite without confirmation
+php artisan tdd:promote tdd-20250718142530-Abc123 --force
+```
+
+#### Option 2: Manual Promotion
+
+For manual control, you can still promote tests manually:
 
 ```bash
 # Step 1: Note the unique reference from your test file
@@ -194,13 +262,15 @@ The unique reference system allows you to:
 
 ## 📦 Available Commands
 
-Laravel TDDraft provides three essential commands for your TDD workflow:
+Laravel TDDraft provides five essential commands for your complete TDD workflow:
 
 | Command | Description | Usage |
 |---------|-------------|-------|
 | `tdd:init` | Initialize TDDraft environment and configuration | `php artisan tdd:init` |
 | `tdd:make` | Create a new TDDraft test with unique reference tracking | `php artisan tdd:make "Test name"` |
 | `tdd:test` | Run TDDraft tests only (alias for pest --testsuite=tddraft) | `php artisan tdd:test` |
+| `tdd:list` | List all TDDraft tests with filtering and metadata | `php artisan tdd:list` |
+| `tdd:promote` | Promote a TDDraft test to the CI test suite | `php artisan tdd:promote <reference>` |
 
 ### Complete TDD Workflow
 
@@ -215,8 +285,14 @@ php artisan tdd:make "Password validation" --type=unit
 # 3. Run and iterate on your draft tests
 php artisan tdd:test
 
-# 4. When ready, promote tests to CI suite
-# (See graduation workflow below)
+# 4. List and manage your draft tests
+php artisan tdd:list
+php artisan tdd:list --details
+php artisan tdd:list --type=feature
+
+# 5. Promote ready tests to CI suite
+php artisan tdd:promote tdd-20250718142530-Abc123
+php artisan tdd:promote tdd-20250718142530-Abc123 --target=Unit --new-file=UserValidationTest
 ```
 
 ## 📁 Configuration

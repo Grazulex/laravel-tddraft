@@ -1,6 +1,6 @@
 # Commands
 
-Laravel TDDraft provides several commands to help you work with Test-Driven Development and draft testing.
+Laravel TDDraft provides five commands to help you work with Test-Driven Development and draft testing.
 
 ## tdd:init
 
@@ -245,24 +245,135 @@ Time:   0.15s
 ⚠️  Some TDDraft tests failed (this is normal during TDD red phase)
 ```
 
+## tdd:list
+
+List all TDDraft tests with their references, metadata, and filtering options for better test management.
+
+### Usage
+
+```bash
+# Basic listing
+php artisan tdd:list
+
+# Show detailed information
+php artisan tdd:list --details
+
+# Filter by test type
+php artisan tdd:list --type=feature
+php artisan tdd:list --type=unit
+
+# Filter by directory path
+php artisan tdd:list --path=Auth
+php artisan tdd:list --path=Api/V1
+```
+
+### Options
+
+- `--type=feature|unit`: Filter tests by their type
+- `--path=`: Filter tests by directory path within TDDraft
+- `--details`: Show detailed view with additional metadata
+
+### What it Does
+
+1. **Scans TDDraft Directory**: Recursively searches for all `.php` files in `tests/TDDraft/`
+2. **Extracts Metadata**: Parses test files to extract reference IDs, names, types, and creation dates
+3. **Applies Filters**: Filters results based on provided options
+4. **Displays Results**: Shows tests in compact table or detailed list format
+5. **Provides Tips**: Shows helpful commands for working with listed tests
+
+### Compact Output
+
+```
+📋 TDDraft Tests List
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌──────────────────────────┬─────────────────────────────────────────┬─────────┬─────────────────────────┐
+│ Reference                │ Name                                    │ Type    │ File                    │
+├──────────────────────────┼─────────────────────────────────────────┼─────────┼─────────────────────────┤
+│ tdd-20250718142530-Abc123│ User can register                       │ feature │ UserCanRegisterTest.php │
+│ tdd-20250718141045-Def456│ Password validation                     │ unit    │ PasswordValidationTest.php│
+│ tdd-20250718140012-Ghi789│ API authentication                      │ feature │ Auth/ApiAuthTest.php    │
+└──────────────────────────┴─────────────────────────────────────────┴─────────┴─────────────────────────┘
+
+📊 Total: 3 draft test(s)
+
+💡 Tips:
+  • Run specific test: php artisan tdd:test --filter="<reference>"
+  • Run by type: php artisan tdd:test --filter="feature"
+  • Promote draft: php artisan tdd:promote <reference>
+```
+
+### Detailed Output
+
+```bash
+php artisan tdd:list --details
+```
+
+```
+📋 TDDraft Tests List
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔖 tdd-20250718142530-Abc123
+📝 User can register
+📁 UserCanRegisterTest.php
+🏷️  feature
+📅 2025-07-18 14:25:30
+────────────────────────────────────────────────────────────
+
+🔖 tdd-20250718141045-Def456
+📝 Password validation
+📁 PasswordValidationTest.php
+🏷️  unit
+📅 2025-07-18 14:10:45
+────────────────────────────────────────────────────────────
+
+📊 Total: 2 draft test(s)
+```
+
+### Error Handling
+
+- **No TDDraft Directory**: Shows warning and suggests running `tdd:init`
+- **No Tests Found**: Displays helpful message with tips for creating first test
+- **Parse Errors**: Skips files that don't match TDDraft format
+
 ## Command Integration and Workflow
 
-The three commands work together to provide a complete TDD experience:
+The five commands work together to provide a complete TDD experience:
 
 ### 1. Setup Phase: `tdd:init`
 - Configures your Laravel project for TDDraft
 - Sets up directory structure and test isolation
 - Creates backup files before making changes
 
-### 2. Development Phase: `tdd:make` + `tdd:test`
+### 2. Development Phase: `tdd:make` + `tdd:test` + `tdd:list`
 - Create draft tests with `tdd:make`
 - Iterate on implementation while running `tdd:test`
+- Use `tdd:list` to manage and review your draft tests
 - Use unique references to track test evolution
 
-### 3. Promotion Phase: Manual graduation
-- Move mature tests from `tests/TDDraft/` to main test suite
-- Remove `tddraft` group but keep unique reference
-- Integrate into CI/CD pipeline
+### 3. Promotion Phase: `tdd:promote`
+- Automated promotion from `tests/TDDraft/` to main test suite
+- Preserves reference tracking for audit trails
+- Handles file management and content cleanup
+- Integrates seamlessly into CI/CD pipeline
+
+### Complete Command Flow
+
+```bash
+# 1. Initialize environment
+php artisan tdd:init
+
+# 2. Create and develop tests
+php artisan tdd:make "Feature description"
+php artisan tdd:test
+
+# 3. Review and manage drafts
+php artisan tdd:list
+php artisan tdd:list --details
+
+# 4. Promote ready tests
+php artisan tdd:promote <reference>
+```
 
 ### Cross-Command Reference System
 
@@ -271,11 +382,17 @@ Each test created with `tdd:make` includes:
 - **Type tag**: `feature` or `unit`
 - **TDDraft marker**: `tddraft` group
 
-This enables flexible filtering across all commands:
+This enables flexible filtering and management across all commands:
 
 ```bash
+# Find tests to promote
+php artisan tdd:list --type=feature
+
 # Run specific test by reference
 php artisan tdd:test --filter="tdd-20250718142530-Abc123"
+
+# Promote specific test
+php artisan tdd:promote tdd-20250718142530-Abc123
 
 # Run all feature drafts
 pest --testsuite=tddraft --group=feature

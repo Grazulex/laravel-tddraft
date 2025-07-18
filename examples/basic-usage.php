@@ -5,14 +5,14 @@ declare(strict_types=1);
 /**
  * Basic usage example for Laravel TDDraft
  *
- * This example demonstrates the basic workflow of using Laravel TDDraft
- * for Test-Driven Development in a Laravel application with the current
- * three-command system: tdd:init, tdd:make, and tdd:test.
+ * This example demonstrates the complete workflow of using Laravel TDDraft
+ * for Test-Driven Development in a Laravel application with all five
+ * commands: tdd:init, tdd:make, tdd:test, tdd:list, and tdd:promote.
  */
 echo "Laravel TDDraft - Basic Usage Example\n";
 echo "=====================================\n\n";
 
-echo "This example shows the complete TDDraft workflow with current commands:\n\n";
+echo "This example shows the complete TDDraft workflow with all five commands:\n\n";
 
 // Example 1: Package Installation
 echo "1. Package Installation\n";
@@ -109,27 +109,42 @@ echo "  pest --testsuite=tddraft          # Draft tests only\n";
 echo "  pest                              # Main tests only (excludes drafts)\n";
 echo "  pest --testsuite=default,tddraft  # All tests\n\n";
 
-// Example 5: TDD Workflow with Reference Tracking
-echo "5. TDD Workflow with Reference Tracking\n";
-echo "---------------------------------------\n";
-echo "1. RED: Write failing test using tdd:make\n";
-echo "2. GREEN: Implement minimal code to make test pass\n";
-echo "3. REFACTOR: Improve code while keeping tests green\n";
-echo "4. GRADUATE: Move stable test to main suite with reference tracking\n\n";
+// Example 5: TDD Workflow with Reference Tracking and Promotion
+echo "5. Complete TDD Workflow with All Commands\n";
+echo "------------------------------------------\n";
+echo "1. INIT: Set up environment with tdd:init\n";
+echo "2. CREATE: Write failing test using tdd:make\n";
+echo "3. RED: Run test and see it fail with tdd:test\n";
+echo "4. GREEN: Implement minimal code to make test pass\n";
+echo "5. REFACTOR: Improve code while keeping tests green\n";
+echo "6. REVIEW: Use tdd:list to manage your draft tests\n";
+echo "7. PROMOTE: Move stable test to CI suite with tdd:promote\n\n";
+
+echo "Complete workflow example:\n";
+echo "  # 1. Initialize\n";
+echo "  php artisan tdd:init\n\n";
+
+echo "  # 2. Create test\n";
+echo "  php artisan tdd:make \"User can register\"\n\n";
+
+echo "  # 3. Run and iterate\n";
+echo "  php artisan tdd:test\n\n";
+
+echo "  # 4. List and review\n";
+echo "  php artisan tdd:list\n\n";
+
+echo "  # 5. Promote when ready\n";
+echo "  php artisan tdd:promote tdd-20250718142530-Abc123\n\n";
 
 echo "Test graduation workflow:\n";
-echo "  # 1. Note the unique reference from test header\n";
-echo "  # Reference: tdd-20250718142530-Abc123\n\n";
+echo "  # Find the reference from tdd:list output\n";
+echo "  php artisan tdd:list\n\n";
 
-echo "  # 2. Move the test file\n";
-echo "  mv tests/TDDraft/UserCanRegisterTest.php tests/Feature/Auth/UserRegistrationTest.php\n\n";
+echo "  # Promote using the reference\n";
+echo "  php artisan tdd:promote tdd-20250718142530-Abc123\n\n";
 
-echo "  # 3. Update groups (remove 'tddraft', keep reference)\n";
-echo "  # Change: ->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')\n";
-echo "  # To:     ->group('feature', 'tdd-20250718142530-Abc123')\n\n";
-
-echo "  # 4. Verify in main test suite\n";
-echo "  pest tests/Feature/Auth/UserRegistrationTest.php\n\n";
+echo "  # Verify promoted test works\n";
+echo "  pest tests/Feature/UserCanRegisterTest.php\n\n";
 
 // Example 6: Advanced Filtering
 echo "6. Advanced Filtering with References\n";
@@ -144,20 +159,83 @@ echo "  pest --testsuite=tddraft --group=tdd-20250718142530-Abc123\n\n";
 echo "Filter by name pattern:\n";
 echo "  php artisan tdd:test --filter=\"password\"\n\n";
 
-// Example 7: Workflow Visualization
-echo "7. TDDraft → CI Workflow\n";
-echo "------------------------\n";
-echo "See chart.png for visual representation of:\n";
-echo "  ┌─────────────┐    ┌──────────────┐    ┌─────────────┐\n";
-echo "  │ tdd:make    │ -> │ tdd:test     │ -> │ Graduate    │\n";
-echo "  │ (create)    │    │ (iterate)    │    │ (promote)   │\n";
-echo "  └─────────────┘    └──────────────┘    └─────────────┘\n";
-echo "       │                     │                   │\n";
-echo "  Draft Tests         Red-Green-Refactor    CI Test Suite\n\n";
+// Example 7: List and Manage Tests
+echo "7. List and Manage Tests with tdd:list\n";
+echo "--------------------------------------\n";
+echo "Use the list command to view and manage your draft tests:\n\n";
 
-// Example 8: Configuration
-echo "8. Configuration Options\n";
-echo "------------------------\n";
+echo "  # List all draft tests\n";
+echo "  php artisan tdd:list\n\n";
+
+echo "  # Show detailed information\n";
+echo "  php artisan tdd:list --details\n\n";
+
+echo "  # Filter by test type\n";
+echo "  php artisan tdd:list --type=feature\n";
+echo "  php artisan tdd:list --type=unit\n\n";
+
+echo "  # Filter by directory path\n";
+echo "  php artisan tdd:list --path=Auth\n\n";
+
+echo "Example output:\n";
+$listOutput = <<<'OUTPUT'
+📋 TDDraft Tests List
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌──────────────────────────┬─────────────────────────────────────────┬─────────┬─────────────────────────┐
+│ Reference                │ Name                                    │ Type    │ File                    │
+├──────────────────────────┼─────────────────────────────────────────┼─────────┼─────────────────────────┤
+│ tdd-20250718142530-Abc123│ User can register                       │ feature │ UserCanRegisterTest.php │
+│ tdd-20250718141045-Def456│ Password validation                     │ unit    │ PasswordValidationTest.php│
+└──────────────────────────┴─────────────────────────────────────────┴─────────┴─────────────────────────┘
+
+📊 Total: 2 draft test(s)
+
+💡 Tips:
+  • Run specific test: php artisan tdd:test --filter="<reference>"
+  • Run by type: php artisan tdd:test --filter="feature"
+  • Promote draft: php artisan tdd:promote <reference>
+OUTPUT;
+
+echo $listOutput . "\n\n";
+
+// Example 8: Promote Tests
+echo "8. Promote Tests with tdd:promote\n";
+echo "---------------------------------\n";
+echo "Use the promote command to move ready tests to CI suite:\n\n";
+
+echo "  # Basic promotion (auto-detects target directory)\n";
+echo "  php artisan tdd:promote tdd-20250718142530-Abc123\n\n";
+
+echo "  # Promote to specific directory\n";
+echo "  php artisan tdd:promote tdd-20250718142530-Abc123 --target=Unit\n\n";
+
+echo "  # Promote with custom file name\n";
+echo "  php artisan tdd:promote tdd-20250718142530-Abc123 --new-file=UserRegistrationTest\n\n";
+
+echo "  # Keep the original draft file\n";
+echo "  php artisan tdd:promote tdd-20250718142530-Abc123 --keep-draft\n\n";
+
+echo "Example output:\n";
+echo "  📋 Found draft test: tests/TDDraft/UserCanRegisterTest.php\n";
+echo "  ✅ Successfully promoted test to: tests/Feature/UserCanRegisterTest.php\n";
+echo "  🎯 Test class: UserCanRegisterTest\n";
+echo "  🗑️  Removed draft file: tests/TDDraft/UserCanRegisterTest.php\n\n";
+
+// Example 9: Workflow Visualization
+echo "9. Complete TDDraft → CI Workflow\n";
+echo "---------------------------------\n";
+echo "See chart.png for visual representation of:\n";
+echo "  ┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐\n";
+echo "  │ tdd:init    │ -> │ tdd:make     │ -> │ tdd:test    │ -> │ tdd:list    │ -> │ tdd:promote │\n";
+echo "  │ (setup)     │    │ (create)     │    │ (iterate)   │    │ (manage)    │    │ (graduate)  │\n";
+echo "  └─────────────┘    └──────────────┘    └─────────────┘    └─────────────┘    └─────────────┘\n";
+echo "       │                     │                   │                   │                   │\n";
+echo "  Environment          Draft Tests        Red-Green-Refactor    Review & Plan       CI Test Suite\n\n";
+
+// Example 10: Configuration
+echo "10. Configuration Options\n";
+echo "-------------------------\n";
 echo "The config/tddraft.php file contains:\n";
 echo "  - Package enablement settings\n";
 echo "  - Default timeouts and retry attempts\n";
@@ -172,9 +250,11 @@ echo "  LARAVEL_TDDRAFT_LOG_LEVEL=info\n\n";
 
 echo "✅ That's the complete TDDraft workflow!\n";
 echo "Key benefits:\n";
-echo "  • Three-command simplicity: init → make → test\n";
+echo "  • Five-command completeness: init → make → test → list → promote\n";
 echo "  • Unique reference tracking for audit trails\n";
 echo "  • Clean separation of draft and CI tests\n";
+echo "  • Automated promotion with tdd:promote\n";
+echo "  • Test management with tdd:list\n";
 echo "  • Visual workflow guidance with chart.png\n\n";
 echo "For more advanced usage, see examples/advanced-usage.php\n";
 echo "For complete documentation, see docs/\n";
