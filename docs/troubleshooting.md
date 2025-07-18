@@ -281,6 +281,91 @@ Fatal error: Allowed memory size exhausted
 
 ## Command-Specific Issues
 
+### New Three-Command Workflow Issues
+
+#### `tdd:make` Command Issues
+
+**Error:**
+```
+Class name already exists
+```
+
+**Solution:**
+1. Use `--class` option for custom naming:
+   ```bash
+   php artisan tdd:make "User registration" --class=UniqueUserRegTest
+   ```
+
+2. Use subdirectories for organization:
+   ```bash
+   php artisan tdd:make "User registration" --path=Auth/Registration
+   ```
+
+**Error:**
+```
+Directory creation failed
+```
+
+**Solution:**
+1. Check write permissions:
+   ```bash
+   chmod 755 tests/TDDraft
+   ```
+
+2. Create path manually:
+   ```bash
+   mkdir -p tests/TDDraft/Auth/Registration
+   ```
+
+#### `tdd:test` Command Issues
+
+**Error:**
+```
+pest: command not found
+```
+
+**Solution:**
+1. Ensure Pest is installed:
+   ```bash
+   composer require pestphp/pest --dev
+   ```
+
+2. Use full path:
+   ```bash
+   ./vendor/bin/pest --testsuite=tddraft
+   ```
+
+**Error:**
+```
+No tests found with filter
+```
+
+**Solution:**
+1. Check filter syntax:
+   ```bash
+   php artisan tdd:test --filter="exact test name"
+   ```
+
+2. Use group filtering instead:
+   ```bash
+   php artisan tdd:test --group=feature
+   ```
+
+#### Reference Tracking Issues
+
+**Problem:** Can't find test by reference
+
+**Solution:**
+1. Search in all test directories:
+   ```bash
+   grep -r "tdd-20250718142530-Abc123" tests/
+   ```
+
+2. Check for graduated tests:
+   ```bash
+   find tests/Feature tests/Unit -name "*.php" -exec grep -l "tdd-20250718142530-Abc123" {} \;
+   ```
+
 ### `tdd:init` Command Not Found
 
 **Error:**
