@@ -2,6 +2,18 @@
 
 This guide shows you how to use Laravel TDDraft for Test-Driven Development in your Laravel projects.
 
+## 🔧 The Five Essential Commands
+
+Laravel TDDraft provides **five essential commands** for a complete TDD workflow:
+
+| Command | Purpose | Quick Example |
+|---------|---------|---------------|
+| **`tdd:init`** | Initialize TDDraft environment | `php artisan tdd:init` |
+| **`tdd:make`** | Create new draft test | `php artisan tdd:make "User can login"` |
+| **`tdd:test`** | Run draft tests only | `php artisan tdd:test` |
+| **`tdd:list`** | List and manage draft tests | `php artisan tdd:list --details` |
+| **`tdd:promote`** | Graduate test to CI suite | `php artisan tdd:promote <reference>` |
+
 ## Concept
 
 Laravel TDDraft helps you practice Test-Driven Development (TDD) by providing a separate testing environment for draft tests. This allows you to:

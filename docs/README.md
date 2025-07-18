@@ -10,13 +10,28 @@ Laravel TDDraft is a Laravel package that helps you practice Test-Driven Develop
 - Practice the Red-Green-Refactor TDD cycle
 - Keep draft tests separate from production tests
 - Maintain clean test suites for CI/CD pipelines
+- Access **five essential commands** for complete TDD workflow
+
+## ⚡ Five Essential Commands
+
+Laravel TDDraft provides **five powerful artisan commands** that work together for a complete TDD experience:
+
+| Command | Purpose | Documentation |
+|---------|---------|---------------|
+| **`tdd:init`** | Initialize TDDraft environment | [Commands](commands.md#tdd-init) |
+| **`tdd:make`** | Create new draft test with tracking | [Commands](commands.md#tdd-make) |
+| **`tdd:test`** | Run draft tests separately | [Commands](commands.md#tdd-test) |
+| **`tdd:list`** | List and manage draft tests | [Commands](commands.md#tdd-list) |
+| **`tdd:promote`** | Graduate tests to CI suite | [Commands](commands.md#tdd-promote) |
 
 ## Quick Start
 
 1. [Install](installation.md) the package
-2. Run `php artisan tdd:init` to set up your environment
-3. Create tests in `tests/TDDraft/` directory
-4. Run `pest --testsuite=tddraft` to test your drafts
+2. Run **`php artisan tdd:init`** to set up your environment
+3. Create tests with **`php artisan tdd:make "Test description"`**
+4. Run **`php artisan tdd:test`** to test your drafts
+5. Use **`php artisan tdd:list`** to manage drafts
+6. Graduate with **`php artisan tdd:promote <reference>`**
 
 ## Documentation Sections
 
