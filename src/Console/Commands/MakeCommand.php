@@ -21,13 +21,15 @@ final class MakeCommand extends Command
     public function handle(): int
     {
         $name = $this->argument('name');
-        $type = strtolower($this->option('type'));
+        $typeOption = $this->option('type');
+        $type = strtolower($typeOption ?? 'feature');
         $customPath = $this->option('path');
         $customClass = $this->option('class');
 
         // Validate type
-        if (!in_array($type, ['feature', 'unit'])) {
+        if (! in_array($type, ['feature', 'unit'])) {
             $this->error('❌ Test type must be either "feature" or "unit"');
+
             return self::FAILURE;
         }
 
@@ -35,38 +37,39 @@ final class MakeCommand extends Command
         $uniqueRef = $this->generateUniqueReference();
 
         // Determine file path and class name
-        $filePath = $this->determineFilePath($name, $type, $customPath);
-        $className = $this->determineClassName($name, $customClass);
+        $filePath = $this->determineFilePath($name, $customPath);
+        $this->determineClassName($name, $customClass);
 
         // Check if file already exists
         if (File::exists($filePath)) {
             $this->error("❌ Test file already exists: {$filePath}");
+
             return self::FAILURE;
         }
 
         // Create directory if needed
         $directory = dirname($filePath);
-        if (!File::exists($directory)) {
+        if (! File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
             $this->info("📂 Created directory: {$directory}");
         }
 
         // Generate test content
-        $content = $this->generateTestContent($name, $className, $type, $uniqueRef);
+        $content = $this->generateTestContent($name, $type, $uniqueRef);
 
         // Write file
         File::put($filePath, $content);
 
         $this->newLine();
-        $this->info("✅ TDDraft test created successfully!");
+        $this->info('✅ TDDraft test created successfully!');
         $this->line("📄 File: {$filePath}");
         $this->line("🔖 Reference: {$uniqueRef}");
         $this->line("🏷️  Type: {$type}");
         $this->newLine();
-        $this->comment("Next steps:");
+        $this->comment('Next steps:');
         $this->line("  • Run your draft test: php artisan tdd:test --filter=\"{$name}\"");
-        $this->line("  • Edit the test to implement your scenario");
-        $this->line("  • When ready, promote to main suite: mv {$filePath} tests/" . ucfirst($type) . "/");
+        $this->line('  • Edit the test to implement your scenario');
+        $this->line("  • When ready, promote to main suite: mv {$filePath} tests/" . ucfirst($type) . '/');
 
         return self::SUCCESS;
     }
@@ -76,13 +79,14 @@ final class MakeCommand extends Command
         // Generate a unique reference with timestamp and random component
         $timestamp = now()->format('YmdHis');
         $random = Str::random(6);
+
         return "tdd-{$timestamp}-{$random}";
     }
 
-    private function determineFilePath(string $name, string $type, ?string $customPath): string
+    private function determineFilePath(string $name, ?string $customPath): string
     {
         $basePath = base_path('tests/TDDraft');
-        
+
         // If custom path is provided, use it
         if ($customPath) {
             $customPath = trim($customPath, '/');
@@ -91,7 +95,7 @@ final class MakeCommand extends Command
 
         // Generate filename from name
         $filename = $this->generateFilename($name);
-        
+
         return $basePath . '/' . $filename;
     }
 
@@ -99,12 +103,12 @@ final class MakeCommand extends Command
     {
         // Convert name to StudlyCase and add Test suffix
         $filename = Str::studly($name);
-        
+
         // Ensure it ends with Test
-        if (!Str::endsWith($filename, 'Test')) {
+        if (! Str::endsWith($filename, 'Test')) {
             $filename .= 'Test';
         }
-        
+
         return $filename . '.php';
     }
 
@@ -115,16 +119,16 @@ final class MakeCommand extends Command
         }
 
         $className = Str::studly($name);
-        
+
         // Ensure it ends with Test
-        if (!Str::endsWith($className, 'Test')) {
+        if (! Str::endsWith($className, 'Test')) {
             $className .= 'Test';
         }
-        
+
         return $className;
     }
 
-    private function generateTestContent(string $name, string $className, string $type, string $uniqueRef): string
+    private function generateTestContent(string $name, string $type, string $uniqueRef): string
     {
         $description = Str::lower($name);
         $testName = Str::slug($name, ' ');

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 /**
  * Advanced usage example for Laravel TDDraft
- * 
+ *
  * This example demonstrates advanced patterns and best practices
  * for using Laravel TDDraft in complex Laravel applications.
  */
-
 echo "Laravel TDDraft - Advanced Usage Example\n";
 echo "=========================================\n\n";
 

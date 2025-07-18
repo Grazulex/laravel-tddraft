@@ -46,17 +46,20 @@ final class TestCommand extends Command
         }
 
         // Check if pest is available
-        if (!file_exists(base_path('vendor/bin/pest'))) {
+        if (! file_exists(base_path('vendor/bin/pest'))) {
             $this->error('❌ Pest is not installed. Please run: composer require pestphp/pest --dev');
+
             return self::FAILURE;
         }
 
         // Run the process
         $process = new Process($command, base_path());
         $process->setTty(true);
-        
-        $exitCode = $process->run(function ($type, $buffer) {
-            echo $buffer;
+
+        $exitCode = $process->run(function ($type, $buffer): void {
+            if (is_string($buffer)) {
+                echo $buffer;
+            }
         });
 
         if ($exitCode === 0) {

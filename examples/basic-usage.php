@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 /**
  * Basic usage example for Laravel TDDraft
- * 
+ *
  * This example demonstrates the basic workflow of using Laravel TDDraft
  * for Test-Driven Development in a Laravel application.
  */
-
 echo "Laravel TDDraft - Basic Usage Example\n";
 echo "=====================================\n\n";
 
