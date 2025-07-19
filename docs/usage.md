@@ -2,6 +2,39 @@
 
 This guide shows you how to use Laravel TDDraft for Test-Driven Development in your Laravel projects.
 
+## 🔧 The Five-Command TDD Workflow
+
+**Laravel TDDraft is built around a five-command workflow that enables true Test-Driven Development.** This structured approach is the key innovation - it provides a complete TDD cycle from experimentation to production.
+
+### 🔄 Understanding the Flow
+
+The five commands work together in a specific sequence that mirrors and enhances the traditional TDD Red-Green-Refactor cycle:
+
+```
+🏗️  SETUP      → 🧪  RED PHASE  → 🔄  ITERATION  → 📋  REVIEW     → 🚀  GRADUATE
+tdd:init       → tdd:make      → tdd:test      → tdd:list     → tdd:promote
+```
+
+### 📋 Commands and Their Role in TDD
+
+| Command | TDD Phase | Purpose | Example Usage |
+|---------|-----------|---------|---------------|
+| **`tdd:init`** | 🏗️ **Setup** | Create isolated TDD environment | `php artisan tdd:init` |
+| **`tdd:make`** | 🧪 **Red Phase** | Write failing tests safely | `php artisan tdd:make "User can login"` |
+| **`tdd:test`** | 🔄 **Red-Green Cycle** | Iterate on drafts without affecting CI | `php artisan tdd:test` |
+| **`tdd:list`** | 📋 **Review** | Manage and inspect draft tests | `php artisan tdd:list --details` |
+| **`tdd:promote`** | 🚀 **Graduate** | Move ready tests to production | `php artisan tdd:promote <reference>` |
+
+### 🎯 Why This Workflow Is Essential
+
+**This five-command sequence solves the core problems of practicing TDD in real projects:**
+
+1. **Fear of breaking CI** - Draft tests run separately from main suite
+2. **Experimental test clutter** - Clear separation between draft and production tests  
+3. **Lost test context** - Unique references track test evolution
+4. **Promotion friction** - Automated graduation from draft to CI
+5. **Team coordination** - Standardized TDD workflow for all developers
+
 ## Concept
 
 Laravel TDDraft helps you practice Test-Driven Development (TDD) by providing a separate testing environment for draft tests. This allows you to:
@@ -21,15 +54,121 @@ Laravel TDDraft helps you practice Test-Driven Development (TDD) by providing a 
 
 ## TDD Workflow with Laravel TDDraft
 
-### 1. Initialize TDDraft
+### 🔄 The Complete Five-Command Cycle
 
-First, set up your TDDraft environment:
+**This is the heart of Laravel TDDraft** - a structured workflow that enables real TDD practice without compromising your CI pipeline:
 
+#### Phase 1: 🏗️ Setup (One-time)
 ```bash
 php artisan tdd:init
 ```
+**Purpose**: Create the isolated TDDraft environment
+- Creates `tests/TDDraft/` directory
+- Configures PHPUnit to separate draft from CI tests
+- Sets up Pest configuration for draft test suite
 
-This creates the necessary directory structure and configuration.
+#### Phase 2: 🧪 Red Phase (Feature Start)
+```bash
+php artisan tdd:make "User can register with valid email"
+```
+**Purpose**: Create failing tests that define the feature
+- Generates test with unique reference for tracking
+- Creates initially failing test (Red phase of TDD)
+- Test runs in isolation from CI suite
+
+#### Phase 3: 🔄 Red-Green Iteration (Development)
+```bash
+php artisan tdd:test --filter="User can register"
+```
+**Purpose**: Rapid feedback loop for TDD cycle
+- Run ONLY draft tests (not CI tests)
+- Quick iterations without affecting team
+- Follow Red → Green → Refactor cycle safely
+
+#### Phase 4: 📋 Review (Quality Check)
+```bash
+php artisan tdd:list --details
+```
+**Purpose**: Manage and inspect all draft tests
+- View test metadata and references
+- Filter by type, path, or status
+- Decide which tests are ready for promotion
+
+#### Phase 5: 🚀 Graduate (Production Ready)
+```bash
+php artisan tdd:promote tdd-20250718142530-Abc123
+```
+**Purpose**: Move mature tests to CI suite
+- Automated promotion from draft to production
+- Maintains reference tracking for audit trail
+- Cleans up draft directory
+
+### 🎯 Real-World Example: Complete Feature Development
+
+Let's walk through developing a user registration feature using the five-command workflow:
+
+```bash
+# 🏗️ PHASE 1: Setup (if not already done)
+php artisan tdd:init
+
+# 🧪 PHASE 2: Define the feature with failing tests
+php artisan tdd:make "User can register with valid data"
+php artisan tdd:make "User registration validates email format" --type=unit
+php artisan tdd:make "User registration sends welcome email"
+
+# 🔄 PHASE 3: TDD Red-Green-Refactor cycles
+# First test: User can register with valid data
+php artisan tdd:test --filter="User can register with valid data"
+# ❌ FAILS: Route doesn't exist
+# → Add route and controller
+php artisan tdd:test --filter="User can register with valid data"  
+# ❌ FAILS: Controller method missing
+# → Add controller method
+php artisan tdd:test --filter="User can register with valid data"
+# ✅ PASSES: Basic registration works
+
+# Second test: Email validation
+php artisan tdd:test --filter="email format"
+# ❌ FAILS: No validation
+# → Add validation rules
+php artisan tdd:test --filter="email format"
+# ✅ PASSES: Email validation works
+
+# Third test: Welcome email
+php artisan tdd:test --filter="welcome email"
+# ❌ FAILS: No email sent
+# → Add email notification
+php artisan tdd:test --filter="welcome email"
+# ✅ PASSES: Email functionality works
+
+# Run all related tests
+php artisan tdd:test --filter="registration"
+# ✅ ALL PASS: Feature complete
+
+# 📋 PHASE 4: Review before promotion
+php artisan tdd:list
+# Review all draft tests and their status
+
+# 🚀 PHASE 5: Graduate to CI suite
+php artisan tdd:promote tdd-20250718142530-Abc123  # User registration
+php artisan tdd:promote tdd-20250718142531-Def456  # Email validation  
+php artisan tdd:promote tdd-20250718142532-Ghi789  # Welcome email
+
+# Verify in CI
+pest  # Should include promoted tests and pass
+```
+
+### 🧠 Why This Flow Works
+
+**The five-command workflow solves key TDD adoption barriers:**
+
+1. **No CI Pollution**: Draft tests never interfere with team's main test suite
+2. **Safe Experimentation**: You can write failing tests without breaking builds
+3. **Clear Progression**: Explicit steps from idea to production-ready test
+4. **Team Coordination**: Everyone follows same structured approach
+5. **Audit Trail**: Unique references track test evolution for compliance
+
+**This workflow transforms TDD from a risky practice to a safe, structured development approach.**
 
 ### 2. Create Draft Tests
 

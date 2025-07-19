@@ -75,3 +75,33 @@ The published configuration file (`config/tddraft.php`) contains settings for:
 - Logging configuration
 
 See [Configuration](configuration.md) for detailed configuration options.
+
+## Next Steps - The Five Essential Commands
+
+After installation, you'll have access to **five powerful commands** for TDD workflow:
+
+| Command | Purpose |
+|---------|---------|
+| **`tdd:init`** | ✅ Already used - initializes TDDraft environment |
+| **`tdd:make`** | Create new draft tests with unique tracking |
+| **`tdd:test`** | Run your draft tests separately from main suite |
+| **`tdd:list`** | List and manage all your draft tests |
+| **`tdd:promote`** | Graduate ready tests to your CI test suite |
+
+### Quick Start with Commands
+
+```bash
+# Create your first draft test
+php artisan tdd:make "User can register"
+
+# Run it
+php artisan tdd:test
+
+# List your drafts
+php artisan tdd:list
+
+# When ready, promote to CI
+php artisan tdd:promote <test-reference>
+```
+
+See [Usage Guide](usage.md) for detailed examples and [Commands Reference](commands.md) for complete documentation.

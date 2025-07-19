@@ -28,14 +28,86 @@ The package enables a clean separation between experimental draft tests and prod
 
 ## ✨ Features
 
+- 🔧 **Five-command TDD workflow**: The core innovation that enables true Test-Driven Development without CI interference
 - 📂 Creates dedicated `tests/TDDraft/` directory for draft tests
 - ⚙️ Automatically configures PHPUnit and Pest to exclude drafts from main test runs
 - 🧪 Native Pest 3 support with proper test isolation
-- 🔧 Three-command workflow: `tdd:init` → `tdd:make` → `tdd:test`
 - 📋 Automatic backup of configuration files before modification
 - 🔖 Unique reference tracking for test promotion from draft to CI
 - 🎯 Built for clean TDD workflow separation
 - 🚀 Easy graduation path from draft tests to production test suite
+
+## 🔧 The Five-Command TDD Workflow
+
+**Laravel TDDraft is built around a five-command workflow that enables true Test-Driven Development.** This structured approach is the key to the project - it provides a complete TDD cycle from experimentation to production.
+
+### 🔄 The Complete TDD Flow
+
+The five commands work together in a specific sequence that mirrors the TDD Red-Green-Refactor cycle:
+
+```mermaid
+graph LR
+    A[tdd:init] --> B[tdd:make]
+    B --> C[tdd:test]
+    C --> D{Test Passes?}
+    D -->|No| E[Write Code]
+    E --> C
+    D -->|Yes| F[tdd:list]
+    F --> G[tdd:promote]
+    G --> H[CI Test Suite]
+    
+    style A fill:#ff9999
+    style B fill:#ffcc99
+    style C fill:#ffff99
+    style F fill:#ccffcc
+    style G fill:#99ccff
+```
+
+### 📋 Command Reference
+
+| Command | Role in TDD Flow | Description |
+|---------|------------------|-------------|
+| **`tdd:init`** | 🏗️ **Setup** | Initialize TDDraft environment and configuration |
+| **`tdd:make`** | 🧪 **Red Phase** | Create a new failing test with unique tracking |
+| **`tdd:test`** | 🔄 **Red-Green Cycle** | Run and iterate on draft tests until they pass |
+| **`tdd:list`** | 📋 **Review** | List and manage your draft tests before promotion |
+| **`tdd:promote`** | 🚀 **Graduate** | Move ready tests to production CI test suite |
+
+### 🎯 Why This Flow Matters
+
+**This five-command sequence is the core innovation of Laravel TDDraft.** It solves the common TDD problems:
+
+1. **`tdd:init`** - Creates a separate space for experimental tests
+2. **`tdd:make`** - Enables rapid test creation without affecting CI
+3. **`tdd:test`** - Allows focused iteration on draft tests only
+4. **`tdd:list`** - Provides oversight of your TDD pipeline
+5. **`tdd:promote`** - Ensures only ready tests reach production
+
+### 🔁 Complete Workflow Example
+
+```bash
+# 1. 🏗️ SETUP: Initialize your TDDraft environment (one-time)
+php artisan tdd:init
+
+# 2. 🧪 RED PHASE: Create failing tests for new features
+php artisan tdd:make "User can register"
+php artisan tdd:make "Password validation" --type=unit
+
+# 3. 🔄 RED-GREEN CYCLE: Iterate until tests pass
+php artisan tdd:test --filter="User can register"  # RED: Test fails
+# Write minimal code to make test pass...
+php artisan tdd:test --filter="User can register"  # GREEN: Test passes
+# Refactor code...
+php artisan tdd:test --filter="User can register"  # GREEN: Still passes
+
+# 4. 📋 REVIEW: Check all draft tests before promotion
+php artisan tdd:list --details
+
+# 5. 🚀 GRADUATE: Move ready tests to CI suite
+php artisan tdd:promote tdd-20250718142530-Abc123
+```
+
+**This workflow keeps your CI clean while enabling true TDD experimentation.** Your main test suite never sees failing or experimental tests, but you can still practice proper Red-Green-Refactor cycles.
 
 ## 🚀 Quick Start
 
@@ -259,41 +331,6 @@ The unique reference system allows you to:
 - Monitor test evolution from draft to production
 - Maintain audit trail for compliance
 - Link CI failures back to original draft intent
-
-## 📦 Available Commands
-
-Laravel TDDraft provides five essential commands for your complete TDD workflow:
-
-| Command | Description | Usage |
-|---------|-------------|-------|
-| `tdd:init` | Initialize TDDraft environment and configuration | `php artisan tdd:init` |
-| `tdd:make` | Create a new TDDraft test with unique reference tracking | `php artisan tdd:make "Test name"` |
-| `tdd:test` | Run TDDraft tests only (alias for pest --testsuite=tddraft) | `php artisan tdd:test` |
-| `tdd:list` | List all TDDraft tests with filtering and metadata | `php artisan tdd:list` |
-| `tdd:promote` | Promote a TDDraft test to the CI test suite | `php artisan tdd:promote <reference>` |
-
-### Complete TDD Workflow
-
-```bash
-# 1. Initialize your TDDraft environment
-php artisan tdd:init
-
-# 2. Create draft tests with unique tracking
-php artisan tdd:make "User can register"
-php artisan tdd:make "Password validation" --type=unit
-
-# 3. Run and iterate on your draft tests
-php artisan tdd:test
-
-# 4. List and manage your draft tests
-php artisan tdd:list
-php artisan tdd:list --details
-php artisan tdd:list --type=feature
-
-# 5. Promote ready tests to CI suite
-php artisan tdd:promote tdd-20250718142530-Abc123
-php artisan tdd:promote tdd-20250718142530-Abc123 --target=Unit --new-file=UserValidationTest
-```
 
 ## 📁 Configuration
 
