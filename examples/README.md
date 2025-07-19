@@ -127,12 +127,36 @@ tests/TDDraft/
 
 ### 1. List Management
 ```php
-// List all tests with filtering
+// List all tests with filtering and status information
 php artisan tdd:list --type=feature
 php artisan tdd:list --path=Auth --details
 
-// Review tests before promotion
+// Review tests with their current status before promotion
 php artisan tdd:list --details
+```
+
+Example output with status tracking:
+```
+📋 TDDraft Tests List
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔖 tdd-20250718142530-Abc123
+📝 User can register with valid data  
+📁 Authentication/UserRegistrationTest.php
+🏷️  feature
+📊 ✅ Passed
+📅 2025-07-18 14:25:30
+────────────────────────────────────────────────────────────
+
+🔖 tdd-20250718141045-Def456
+📝 Password validation rules
+📁 Authentication/PasswordValidationTest.php
+🏷️  unit
+📊 ❌ Failed
+📅 2025-07-18 14:10:45
+────────────────────────────────────────────────────────────
+
+📊 Total: 2 draft test(s)
 ```
 
 ### 2. Automated Promotion
@@ -310,15 +334,15 @@ LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=false
 
 ### Status Tracking Integration
 ```php
-// Custom script to analyze test stability
+// Custom script to analyze test stability using status data
 <?php
 $statusFile = base_path('tests/TDDraft/.status.json');
 if (file_exists($statusFile)) {
     $statuses = json_decode(file_get_contents($statusFile), true);
     
     foreach ($statuses as $reference => $data) {
-        $historyCount = count($data['history']);
-        $currentStatus = $data['status'];
+        $historyCount = count($data['history'] ?? []);
+        $currentStatus = $data['status'] ?? 'unknown';
         
         if ($historyCount > 5 && $currentStatus === 'failed') {
             echo "⚠️  Test {$reference} has failed {$historyCount} times - needs attention\n";
@@ -326,6 +350,34 @@ if (file_exists($statusFile)) {
             echo "✅ Test {$reference} stable - ready for promotion\n";
         }
     }
+}
+```
+
+### Test Execution with Status Tracking
+When you run `php artisan tdd:test`, the command now:
+- Shows available tests before execution
+- Automatically tracks results in real-time
+- Saves status history to `tests/TDDraft/.status.json`
+- Provides audit trails for test evolution
+- Enables data-driven promotion decisions
+
+Example status file content:
+```json
+{
+  "tdd-20250718142530-Abc123": {
+    "status": "passed",
+    "updated_at": "2025-07-18T14:30:45+00:00",
+    "history": [
+      {
+        "status": "failed",
+        "timestamp": "2025-07-18T14:25:30+00:00"
+      },
+      {
+        "status": "failed", 
+        "timestamp": "2025-07-18T14:27:15+00:00"
+      }
+    ]
+  }
 }
 ```
 
