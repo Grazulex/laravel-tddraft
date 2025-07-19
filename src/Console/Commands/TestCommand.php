@@ -153,32 +153,78 @@ final class TestCommand extends Command
             return;
         }
 
+        // Get mapping of test names to references from TDDraft files
+        $testToRefMapping = $this->buildTestToReferenceMapping();
+
         // Parse test results from output
-        $this->parseTestResultsFromOutput($output, $statusTracker);
+        $this->parseTestResultsFromOutput($output, $statusTracker, $testToRefMapping);
 
         // If we have a JUnit XML file, parse that too
         if ($jsonFile && file_exists($jsonFile)) {
-            $this->parseJUnitResults($jsonFile, $statusTracker);
+            $this->parseJUnitResults($jsonFile, $statusTracker, $testToRefMapping);
         }
     }
 
     /**
-     * Parse test results from console output.
+     * Build mapping between test names and their references by reading TDDraft files.
+     *
+     * @return array<string, string>
      */
-    private function parseTestResultsFromOutput(string $output, StatusTracker $statusTracker): void
+    private function buildTestToReferenceMapping(): array
+    {
+        $mapping = [];
+        $tddraftPath = base_path('tests/TDDraft');
+
+        if (! File::exists($tddraftPath)) {
+            return $mapping;
+        }
+
+        $files = File::allFiles($tddraftPath);
+
+        foreach ($files as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $content = File::get($file->getPathname());
+
+            // Extract reference from comments
+            if (preg_match('/Reference:\s*(tdd-\d{14}-[a-zA-Z0-9]{6})/', $content, $refMatches)) {
+                $reference = $refMatches[1];
+
+                // Extract test names (it() calls)
+                if (preg_match_all('/it\s*\(\s*[\'"]([^\'"]+)[\'"]/', $content, $testMatches)) {
+                    foreach ($testMatches[1] as $testName) {
+                        $mapping[trim($testName)] = $reference;
+                    }
+                }
+            }
+        }
+
+        return $mapping;
+    }
+
+    /**
+     * Parse test results from console output.
+     *
+     * @param  array<string, string>  $testToRefMapping
+     */
+    private function parseTestResultsFromOutput(string $output, StatusTracker $statusTracker, array $testToRefMapping): void
     {
         $lines = explode("\n", $output);
 
         foreach ($lines as $line) {
-            // Look for test result lines
+            // Look for test result lines - Pest format: "  ✓ test name" or "  ⨯ test name"
             if (preg_match('/^\s*[✓⨯]\s+(.+?)(?:\s+\d+\.\d+s)?$/', $line, $matches)) {
                 $testName = trim($matches[1]);
 
-                // Extract reference from test name if possible
-                if (preg_match('/(tdd-\d{14}-[a-zA-Z0-9]{6})/', $testName, $refMatches)) {
-                    $reference = $refMatches[1];
+                // Look for reference in mapping
+                if (isset($testToRefMapping[$testName])) {
+                    $reference = $testToRefMapping[$testName];
                     $status = str_contains($line, '✓') ? 'passed' : 'failed';
                     $statusTracker->updateTestStatus($reference, $status);
+
+                    $this->line("  🔄 Updated status: {$reference} -> {$status}");
                 }
             }
         }
@@ -186,8 +232,10 @@ final class TestCommand extends Command
 
     /**
      * Parse JUnit XML results.
+     *
+     * @param  array<string, string>  $testToRefMapping
      */
-    private function parseJUnitResults(string $xmlFile, StatusTracker $statusTracker): void
+    private function parseJUnitResults(string $xmlFile, StatusTracker $statusTracker, array $testToRefMapping): void
     {
         try {
             $xml = simplexml_load_file($xmlFile);
@@ -203,9 +251,9 @@ final class TestCommand extends Command
             foreach ($testcases as $testcase) {
                 $name = (string) $testcase['name'];
 
-                // Extract reference from test name
-                if (preg_match('/(tdd-\d{14}-[a-zA-Z0-9]{6})/', $name, $matches)) {
-                    $reference = $matches[1];
+                // Look for reference in mapping first
+                if (isset($testToRefMapping[$name])) {
+                    $reference = $testToRefMapping[$name];
 
                     // Determine status
                     $status = 'passed';
