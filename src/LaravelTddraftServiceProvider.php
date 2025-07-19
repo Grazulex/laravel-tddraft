@@ -10,9 +10,6 @@ use Grazulex\LaravelTddraft\Console\Commands\MakeCommand;
 use Grazulex\LaravelTddraft\Console\Commands\PromoteCommand;
 use Grazulex\LaravelTddraft\Console\Commands\TestCommand;
 use Illuminate\Support\ServiceProvider;
-use Override;
-use Pest\Version;
-use RuntimeException;
 
 final class LaravelTddraftServiceProvider extends ServiceProvider
 {
@@ -36,20 +33,11 @@ final class LaravelTddraftServiceProvider extends ServiceProvider
                 ListCommand::class,
             ]);
         }
-
-        if (class_exists('Pest\\Version') && defined('Pest\\Version::VERSION')) {
-            /** @phpstan-ignore-next-line */
-            $version = Version::VERSION;
-            if (is_string($version) && version_compare($version, '3.0.0', '<')) {
-                throw new RuntimeException("Laravel-TDDraft requires Pest 3.0 or higher. Current version: {$version}");
-            }
-        }
     }
 
     /**
      * Register any application services.
      */
-    #[Override]
     public function register(): void
     {
         // Merge configuration
