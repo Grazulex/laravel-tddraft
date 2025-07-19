@@ -69,7 +69,7 @@ final class TestCommand extends Command
 
         // Run the process and capture output
         $process = new Process($command, base_path());
-        $process->setTty(true);
+        $process->setTty(false);
         $output = '';
 
         $exitCode = $process->run(function ($type, $buffer) use (&$output): void {
