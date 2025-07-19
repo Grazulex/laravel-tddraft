@@ -472,7 +472,7 @@ echo "# Filter by test types for targeted review\n";
 echo "php artisan tdd:list --type=feature  # Focus on integration tests\n";
 echo "php artisan tdd:list --type=unit     # Focus on unit tests\n\n";
 
-echo "Example detailed output for complex project:\n";
+echo "Example detailed output for complex project with status tracking:\n";
 $advancedListOutput = <<<'OUTPUT'
 📋 TDDraft Tests List
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -481,6 +481,7 @@ $advancedListOutput = <<<'OUTPUT'
 📝 Complete order workflow
 📁 E2E/CompleteOrderWorkflowTest.php
 🏷️  feature
+📊 ✅ Passed
 📅 2025-07-18 15:12:30
 ────────────────────────────────────────────────────────────
 
@@ -488,6 +489,7 @@ $advancedListOutput = <<<'OUTPUT'
 📝 Payment gateway integration
 📁 Integrations/Payment/PaymentGatewayIntegrationTest.php
 🏷️  unit
+📊 ❌ Failed
 📅 2025-07-18 15:20:45
 ────────────────────────────────────────────────────────────
 
@@ -495,6 +497,7 @@ $advancedListOutput = <<<'OUTPUT'
 📝 Database query performance
 📁 Performance/DatabasePerformanceTest.php
 🏷️  unit
+📊 💥 Error
 📅 2025-07-18 15:30:10
 ────────────────────────────────────────────────────────────
 
