@@ -210,33 +210,51 @@ PHP;
 echo "Advanced test patterns:\n";
 echo $advancedPatterns . "\n\n";
 
-// Example 4: Configuration Management
-echo "4. Configuration Management\n";
-echo "---------------------------\n";
+// Example 4: Configuration Management with Status Tracking
+echo "4. Configuration Management with Status Tracking\n";
+echo "------------------------------------------------\n";
 echo "Advanced configuration for different environments:\n\n";
 
 $configExample = <<<'PHP'
-// config/tddraft.php - Environment-specific settings
+// config/tddraft.php - Environment-specific settings with status tracking
 return [
-    'enabled' => env('LARAVEL_TDDRAFT_ENABLED', app()->environment('local', 'testing')),
-    
-    'defaults' => [
-        'timeout' => env('LARAVEL_TDDRAFT_TIMEOUT', 30),
-        'retry_attempts' => env('LARAVEL_TDDRAFT_RETRIES', 3),
-    ],
-    
-    'cache' => [
-        'enabled' => !app()->environment('testing'),
-        'ttl' => env('LARAVEL_TDDRAFT_CACHE_TTL', 3600),
-        'key_prefix' => 'tddraft:' . app()->environment() . ':',
-    ],
-    
-    'logging' => [
-        'enabled' => env('LARAVEL_TDDRAFT_LOGGING_ENABLED', app()->environment('local')),
-        'channel' => env('LARAVEL_TDDRAFT_LOG_CHANNEL', 'stack'),
-        'level' => env('LARAVEL_TDDRAFT_LOG_LEVEL', app()->environment('production') ? 'error' : 'debug'),
+    /**
+     * NEW: Test status tracking configuration
+     * 
+     * Tracks test execution results and maintains history for audit trails
+     */
+    'status_tracking' => [
+        // Enable tracking in development and testing environments
+        'enabled' => env('LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED', 
+            app()->environment('local', 'testing')),
+
+        // Environment-specific status file paths
+        'file_path' => env('LARAVEL_TDDRAFT_STATUS_FILE', 
+            'tests/TDDraft/.status.' . app()->environment() . '.json'),
+
+        // Track detailed history in development, minimal in testing
+        'track_history' => env('LARAVEL_TDDRAFT_TRACK_HISTORY', 
+            app()->environment('local')),
+
+        // Adjust history limits per environment
+        'max_history_entries' => env('LARAVEL_TDDRAFT_MAX_HISTORY', 
+            app()->environment('local') ? 100 : 20),
     ],
 ];
+
+// Environment files (.env.local, .env.testing, etc.)
+// .env.local (development)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true
+LARAVEL_TDDRAFT_TRACK_HISTORY=true  
+LARAVEL_TDDRAFT_MAX_HISTORY=100
+
+// .env.testing (CI/testing)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true
+LARAVEL_TDDRAFT_TRACK_HISTORY=false
+LARAVEL_TDDRAFT_MAX_HISTORY=20
+
+// .env.production (disabled)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=false
 PHP;
 
 echo $configExample . "\n\n";
@@ -288,10 +306,84 @@ PHP;
 echo "Custom helper functions:\n";
 echo $helpersExample . "\n\n";
 
-// Example 6: Integration with CI/CD
-echo "6. CI/CD Integration\n";
-echo "-------------------\n";
-echo "GitHub Actions workflow for TDDraft:\n\n";
+// Example 6: Status Tracking Analysis
+echo "6. Status Tracking Analysis (NEW)\n";
+echo "---------------------------------\n";
+echo "Advanced usage of status tracking data for test management:\n\n";
+
+$statusAnalysisExample = <<<'PHP'
+// Custom script: analyze-test-stability.php
+<?php
+
+/**
+ * Analyze TDDraft test stability using status tracking data
+ * Run: php scripts/analyze-test-stability.php
+ */
+
+$statusFile = base_path('tests/TDDraft/.status.json');
+
+if (!file_exists($statusFile)) {
+    echo "❌ No status tracking data found\n";
+    exit(1);
+}
+
+$statuses = json_decode(file_get_contents($statusFile), true);
+
+if (empty($statuses)) {
+    echo "📊 No test data available\n";
+    exit(0);
+}
+
+echo "📈 TDDraft Test Stability Analysis\n";
+echo "==================================\n\n";
+
+$stable = [];
+$unstable = [];
+$failing = [];
+
+foreach ($statuses as $reference => $data) {
+    $historyCount = count($data['history']);
+    $currentStatus = $data['status'];
+    
+    if ($currentStatus === 'passed' && $historyCount === 0) {
+        $stable[] = $reference;
+    } elseif ($historyCount > 3) {
+        $unstable[] = $reference;
+    } elseif ($currentStatus === 'failed') {
+        $failing[] = $reference;
+    }
+}
+
+echo "✅ Stable Tests (ready for promotion): " . count($stable) . "\n";
+foreach ($stable as $ref) {
+    echo "   • {$ref}\n";
+}
+
+echo "\n⚠️  Unstable Tests (needs attention): " . count($unstable) . "\n";
+foreach ($unstable as $ref) {
+    $historyCount = count($statuses[$ref]['history']);
+    echo "   • {$ref} - {$historyCount} status changes\n";
+}
+
+echo "\n❌ Currently Failing Tests: " . count($failing) . "\n";
+foreach ($failing as $ref) {
+    $lastUpdate = $statuses[$ref]['updated_at'];
+    echo "   • {$ref} - failed since {$lastUpdate}\n";
+}
+
+// Generate promotion recommendations
+echo "\n🚀 Promotion Recommendations:\n";
+foreach ($stable as $ref) {
+    echo "   php artisan tdd:promote {$ref}\n";
+}
+PHP;
+
+echo $statusAnalysisExample . "\n\n";
+
+// Example 7: Integration with CI/CD
+echo "7. CI/CD Integration with Status Tracking\n";
+echo "-----------------------------------------\n";
+echo "GitHub Actions workflow for TDDraft with status tracking:\n\n";
 
 $ciExample = <<<'YAML'
 # .github/workflows/tddraft.yml

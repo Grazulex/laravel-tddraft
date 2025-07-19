@@ -178,7 +178,7 @@ Next steps:
 
 ## tdd:test
 
-Run TDDraft tests with convenient options and filtering.
+Run TDDraft tests with convenient options, filtering, and automatic status tracking.
 
 ### Usage
 
@@ -197,6 +197,40 @@ php artisan tdd:test --parallel
 
 # Stop on first failure
 php artisan tdd:test --stop-on-failure
+```
+
+### What it Does
+
+The `tdd:test` command provides several enhanced features:
+
+1. **Displays Available Tests**: Shows a quick summary of your draft tests before running them
+2. **Runs Tests with Pest**: Executes `pest --testsuite=tddraft` with your specified options
+3. **Automatic Status Tracking**: **NEW** - Tracks test execution results and maintains history
+4. **Encouraging Messages**: Provides appropriate feedback for both passing and failing tests
+
+### Status Tracking (NEW)
+
+When status tracking is enabled (default), the command automatically:
+
+- **Captures Test Results**: Records whether each test passed, failed, or had errors
+- **Maintains History**: Keeps a history of status changes for each test reference
+- **Updates Status File**: Saves results to `tests/TDDraft/.status.json`
+- **Handles References**: Links results to unique test references for precise tracking
+
+**Status File Example:**
+```json
+{
+  "tdd-20250718142530-Abc123": {
+    "status": "passed",
+    "updated_at": "2025-07-18T14:30:45+00:00",
+    "history": [
+      {
+        "status": "failed",
+        "timestamp": "2025-07-18T14:25:30+00:00"
+      }
+    ]
+  }
+}
 ```
 
 ### Advanced Filtering
@@ -233,6 +267,11 @@ The command provides encouraging messages for failing tests, as this is expected
 ```
 🧪 Running TDDraft tests...
 
+📋 Available Tests: 3 draft test(s)
+  • tdd-20250718142530-Abc123 - User can register (feature)
+  • tdd-20250718141045-Def456 - Password validation (unit)
+  • tdd-20250718140012-Ghi789 - API authentication (feature)
+
    PASS  Tests\TDDraft\UserCanRegisterTest
   ✓ user can register
 
@@ -243,6 +282,24 @@ Tests:  1 passed, 1 failed
 Time:   0.15s
 
 ⚠️  Some TDDraft tests failed (this is normal during TDD red phase)
+```
+
+### Disabling Status Tracking
+
+To disable status tracking, set the configuration:
+
+```php
+// config/tddraft.php
+'status_tracking' => [
+    'enabled' => false,
+    // ... other settings
+],
+```
+
+Or use environment variables:
+
+```env
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=false
 ```
 
 ## tdd:list
