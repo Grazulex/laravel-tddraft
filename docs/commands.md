@@ -461,3 +461,133 @@ pest --testsuite=tddraft --group=feature
 # Run all unit drafts
 pest --testsuite=tddraft --group=unit
 ```
+
+## tdd:promote
+
+Promote a TDDraft test to the CI test suite (tests/Feature or tests/Unit) with automated file management and reference preservation.
+
+### Usage
+
+```bash
+# Basic promotion (auto-detects target directory based on test type)
+php artisan tdd:promote tdd-20250718142530-Abc123
+
+# Promote to specific directory
+php artisan tdd:promote tdd-20250718142530-Abc123 --target=Unit
+php artisan tdd:promote tdd-20250718142530-Abc123 --target=Feature
+
+# Create new file with custom name
+php artisan tdd:promote tdd-20250718142530-Abc123 --new-file=UserRegistrationTest
+
+# Append to existing file
+php artisan tdd:promote tdd-20250718142530-Abc123 --file=ExistingTest.php
+
+# Specify custom class name
+php artisan tdd:promote tdd-20250718142530-Abc123 --class=CustomTestClass
+
+# Keep original draft file after promotion
+php artisan tdd:promote tdd-20250718142530-Abc123 --keep-draft
+
+# Force overwrite without confirmation
+php artisan tdd:promote tdd-20250718142530-Abc123 --force
+```
+
+### Options
+
+- `reference` (required): The unique reference ID of the TDDraft test to promote
+- `--target=Feature|Unit`: Target directory (Feature or Unit). If not specified, uses the test type from the draft
+- `--file=`: Existing file to append the test to (optional)
+- `--new-file=`: New file name to create (optional, without .php extension)
+- `--class=`: Custom test class name (optional)
+- `--force`: Overwrite existing files without confirmation
+- `--keep-draft`: Keep the original draft file after promotion
+
+### What it Does
+
+1. **Finds Draft Test**: Locates the TDDraft test file using the unique reference
+2. **Parses Test Content**: Extracts test metadata, content, and structure
+3. **Determines Target**: Automatically selects target directory based on test type or provided options
+4. **Handles File Operations**: Creates new files or appends to existing ones as specified
+5. **Updates Test Content**: 
+   - Removes TDDraft-specific comments and metadata
+   - Removes `tddraft` group but preserves the unique reference for audit trails
+   - Updates class names and namespaces if needed
+6. **Updates Status**: Marks test as "promoted" in the status tracking system
+7. **Cleanup**: Removes the draft file unless `--keep-draft` is specified
+
+### Promotion Process
+
+When you promote a test, the following transformations occur:
+
+**Before Promotion (Draft):**
+```php
+/**
+ * TDDraft Test: User can register
+ * 
+ * Reference: tdd-20250718142530-Abc123
+ * Type: feature
+ * Created: 2025-07-18 14:25:30
+ */
+
+it('user can register', function (): void {
+    // Test implementation
+})
+->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
+->todo('Implement the test scenario for: user can register');
+```
+
+**After Promotion (CI Suite):**
+```php
+it('user can register', function (): void {
+    // Test implementation  
+})
+->group('feature', 'tdd-20250718142530-Abc123'); // Reference preserved for audit
+```
+
+### Target Directory Selection
+
+- **Auto-detection**: Uses the `Type:` field from the draft test metadata
+- **Manual override**: Use `--target=Feature` or `--target=Unit` to specify
+- **Path creation**: Automatically creates target directories if they don't exist
+
+### Example Output
+
+```
+📋 Found draft test: tests/TDDraft/UserCanRegisterTest.php
+✅ Successfully promoted test to: tests/Feature/UserCanRegisterTest.php
+🎯 Test class: UserCanRegisterTest
+🗑️  Removed draft file: tests/TDDraft/UserCanRegisterTest.php
+```
+
+### Advanced Promotion Examples
+
+```bash
+# Organize promoted tests in subdirectories
+php artisan tdd:promote tdd-20250718142530-Abc123 --target=Feature --new-file=Auth/UserRegistrationTest
+
+# Append multiple draft tests to a comprehensive test file
+php artisan tdd:promote tdd-20250718142530-Abc123 --file=UserManagementTest.php
+php artisan tdd:promote tdd-20250718142531-Def456 --file=UserManagementTest.php
+
+# Keep drafts for reference during code review
+php artisan tdd:promote tdd-20250718142530-Abc123 --keep-draft
+
+# Batch promotion workflow
+php artisan tdd:list --type=feature  # Find tests ready for promotion
+php artisan tdd:promote tdd-20250718142530-Abc123
+php artisan tdd:promote tdd-20250718142531-Def456
+```
+
+### Error Handling
+
+- **Test Not Found**: Shows error if the reference doesn't match any draft test
+- **File Conflicts**: Asks for confirmation before overwriting existing files (unless `--force` is used)
+- **Invalid Options**: Validates option combinations and shows helpful error messages
+- **Directory Creation**: Automatically creates target directories if they don't exist
+
+### Integration with Status Tracking
+
+The promote command automatically:
+- Updates the test status to "promoted"
+- Maintains the status history for audit trails
+- Preserves the unique reference in the promoted test for lineage tracking

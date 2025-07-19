@@ -146,7 +146,9 @@ Status tracking is automatically enabled and works with the `tdd:test` command:
 php artisan tdd:test
 
 # Status is tracked in tests/TDDraft/.status.json
-# View status through tdd:list command (coming in future versions)
+# View status through tdd:list command
+php artisan tdd:list
+php artisan tdd:list --details
 ```
 
 **Benefits of Status Tracking:**

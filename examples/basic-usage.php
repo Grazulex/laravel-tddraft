@@ -284,16 +284,16 @@ echo "  Environment          Draft Tests        Red-Green-Refactor    Review & P
 echo "10. Configuration Options\n";
 echo "-------------------------\n";
 echo "The config/tddraft.php file contains:\n";
-echo "  - Package enablement settings\n";
-echo "  - Default timeouts and retry attempts\n";
-echo "  - Caching configuration\n";
-echo "  - Logging settings\n\n";
+echo "  - Status tracking configuration (NEW)\n";
+echo "  - Test result history management\n";
+echo "  - File path settings for status storage\n";
+echo "  - Environment-specific controls\n\n";
 
 echo "Environment variables:\n";
-echo "  LARAVEL_TDDRAFT_ENABLED=true\n";
-echo "  LARAVEL_TDDRAFT_LOGGING_ENABLED=false\n";
-echo "  LARAVEL_TDDRAFT_LOG_CHANNEL=stack\n";
-echo "  LARAVEL_TDDRAFT_LOG_LEVEL=info\n\n";
+echo "  LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true\n";
+echo "  LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.json\n";
+echo "  LARAVEL_TDDRAFT_TRACK_HISTORY=true\n";
+echo "  LARAVEL_TDDRAFT_MAX_HISTORY=50\n\n";
 
 echo "✅ That's the complete TDDraft workflow!\n";
 echo "Key benefits:\n";
