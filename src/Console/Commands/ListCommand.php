@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Grazulex\LaravelTddraft\Console\Commands;
 
+use Grazulex\LaravelTddraft\Services\StatusTracker;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -39,6 +40,10 @@ final class ListCommand extends Command
             return self::SUCCESS;
         }
 
+        // Load test statuses
+        $statusTracker = new StatusTracker;
+        $statuses = $statusTracker->getAllTestStatuses();
+
         // Apply filters
         $filteredDrafts = $this->applyFilters($drafts);
 
@@ -49,7 +54,7 @@ final class ListCommand extends Command
         }
 
         // Display drafts
-        $this->displayDrafts($filteredDrafts);
+        $this->displayDrafts($filteredDrafts, $statuses);
 
         $this->newLine();
         $this->info('📊 Total: ' . count($filteredDrafts) . ' draft test(s)');
@@ -82,7 +87,7 @@ final class ListCommand extends Command
         }
 
         // Sort by creation date (newest first)
-        uasort($drafts, fn($a, $b): int => strcmp((string) $b['reference'], (string) $a['reference']));
+        uasort($drafts, fn ($a, $b): int => strcmp($b['reference'], $a['reference']));
 
         return $drafts;
     }
@@ -155,11 +160,11 @@ final class ListCommand extends Command
         $pathFilter = $this->option('path');
 
         if ($typeFilter) {
-            $drafts = array_filter($drafts, fn($draft): bool => strtolower((string) $draft['type']) === strtolower($typeFilter));
+            $drafts = array_filter($drafts, fn ($draft): bool => strtolower($draft['type']) === strtolower($typeFilter));
         }
 
         if ($pathFilter) {
-            return array_filter($drafts, fn($draft): bool => str_contains(strtolower((string) $draft['path']), strtolower($pathFilter)));
+            return array_filter($drafts, fn ($draft): bool => str_contains(strtolower($draft['path']), strtolower($pathFilter)));
         }
 
         return $drafts;
@@ -169,13 +174,14 @@ final class ListCommand extends Command
      * Display the draft tests in a formatted table.
      *
      * @param  array<string, array{reference: string, name: string, type: string, file: string, path: string, created: ?string}>  $drafts
+     * @param  array<string, string>  $statuses
      */
-    private function displayDrafts(array $drafts): void
+    private function displayDrafts(array $drafts, array $statuses): void
     {
         if ($this->option('details')) {
-            $this->displayDetailedList($drafts);
+            $this->displayDetailedList($drafts, $statuses);
         } else {
-            $this->displayCompactList($drafts);
+            $this->displayCompactList($drafts, $statuses);
         }
     }
 
@@ -183,8 +189,9 @@ final class ListCommand extends Command
      * Display drafts in detailed format.
      *
      * @param  array<string, array{reference: string, name: string, type: string, file: string, path: string, created: ?string}>  $drafts
+     * @param  array<string, string>  $statuses
      */
-    private function displayDetailedList(array $drafts): void
+    private function displayDetailedList(array $drafts, array $statuses): void
     {
         foreach ($drafts as $draft) {
             $this->newLine();
@@ -192,6 +199,12 @@ final class ListCommand extends Command
             $this->line("📝 <fg=white>{$draft['name']}</>");
             $this->line("📁 <fg=gray>{$draft['path']}</>");
             $this->line("🏷️  <fg=yellow>{$draft['type']}</>");
+
+            // Display status with emoji
+            $status = $statuses[$draft['reference']] ?? 'unknown';
+            $statusDisplay = $this->formatStatus($status);
+            $this->line("📊 <fg=white>{$statusDisplay}</>");
+
             if ($draft['created']) {
                 $this->line("📅 <fg=gray>{$draft['created']}</>");
             }
@@ -203,17 +216,22 @@ final class ListCommand extends Command
      * Display drafts in compact table format.
      *
      * @param  array<string, array{reference: string, name: string, type: string, file: string, path: string, created: ?string}>  $drafts
+     * @param  array<string, string>  $statuses
      */
-    private function displayCompactList(array $drafts): void
+    private function displayCompactList(array $drafts, array $statuses): void
     {
-        $headers = ['Reference', 'Name', 'Type', 'File'];
+        $headers = ['Reference', 'Name', 'Type', 'Status', 'File'];
         $rows = [];
 
         foreach ($drafts as $draft) {
+            $status = $statuses[$draft['reference']] ?? 'unknown';
+            $statusDisplay = $this->formatStatus($status);
+
             $rows[] = [
                 $draft['reference'],
-                $this->truncate($draft['name'], 40),
+                $this->truncate($draft['name'], 35),
                 $draft['type'],
+                $statusDisplay,
                 $draft['file'],
             ];
         }
@@ -231,5 +249,22 @@ final class ListCommand extends Command
         }
 
         return substr($text, 0, $maxLength - 3) . '...';
+    }
+
+    /**
+     * Format test status with emoji and color.
+     */
+    private function formatStatus(string $status): string
+    {
+        return match ($status) {
+            'passed' => '✅ Passed',
+            'failed' => '❌ Failed',
+            'error' => '💥 Error',
+            'skipped' => '⏭️  Skipped',
+            'incomplete' => '⏸️  Incomplete',
+            'promoted' => '🎯 Promoted',
+            'unknown' => '❓ Unknown',
+            default => '❓ ' . ucfirst($status),
+        };
     }
 }

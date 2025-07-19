@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Illuminate\Console\Command;
 use Grazulex\LaravelTddraft\Console\Commands\ListCommand;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
 it('has correct signature and description', function (): void {
@@ -103,7 +103,7 @@ it('can apply type filter using private method', function (): void {
     ];
 
     // Test the filter logic directly without mocking
-    $filtered = array_filter($drafts, fn($draft): bool => strtolower((string) $draft['type']) === 'feature');
+    $filtered = array_filter($drafts, fn ($draft): bool => strtolower((string) $draft['type']) === 'feature');
 
     expect($filtered)->toHaveCount(2);
     expect($filtered)->toHaveKeys(['ref1', 'ref3']);

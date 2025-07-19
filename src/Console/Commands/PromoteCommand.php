@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Grazulex\LaravelTddraft\Console\Commands;
 
 use Exception;
+use Grazulex\LaravelTddraft\Services\StatusTracker;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -73,10 +74,16 @@ final class PromoteCommand extends Command
             return self::FAILURE;
         }
 
+        // Update status to promoted
+        $statusTracker = new StatusTracker;
+        $statusTracker->updateTestStatus($testInfo['reference'], 'promoted');
+
         // Remove draft file if not keeping it
         if (! $keepDraft) {
             File::delete($draftFile);
             $this->info("🗑️  Removed draft file: {$draftFile}");
+        } else {
+            $this->info('📋 Kept draft file for reference');
         }
 
         $this->info("✅ Successfully promoted test to: {$targetPath['file']}");

@@ -5,42 +5,30 @@ declare(strict_types=1);
 return [
     /*
     |--------------------------------------------------------------------------
-    | LaravelTddraft Configuration
+    | Laravel TDDraft Configuration
     |--------------------------------------------------------------------------
     |
-    | This file contains the configuration for the LaravelTddraft package.
+    | This file contains the configuration for the Laravel TDDraft package.
     | You can customize these settings according to your needs.
     |
     */
 
     /**
-     * Enable or disable the package functionality
+     * Test status tracking configuration
+     *
+     * Controls how test execution results are tracked and persisted.
      */
-    'enabled' => env('LARAVEL_TDDRAFT_ENABLED', true),
+    'status_tracking' => [
+        // Enable or disable status tracking
+        'enabled' => env('LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED', true),
 
-    /**
-     * Default settings for tddraft
-     */
-    'defaults' => [
-        'timeout' => 30,
-        'retry_attempts' => 3,
-    ],
+        // File path where test statuses are saved (relative to Laravel base path)
+        'file_path' => env('LARAVEL_TDDRAFT_STATUS_FILE', 'tests/TDDraft/.status.json'),
 
-    /**
-     * Cache configuration
-     */
-    'cache' => [
-        'enabled' => true,
-        'ttl' => 3600, // 1 hour
-        'key_prefix' => 'tddraft:',
-    ],
+        // Keep history of status changes for each test
+        'track_history' => env('LARAVEL_TDDRAFT_TRACK_HISTORY', true),
 
-    /**
-     * Logging configuration
-     */
-    'logging' => [
-        'enabled' => env('LARAVEL_TDDRAFT_LOGGING_ENABLED', false),
-        'channel' => env('LARAVEL_TDDRAFT_LOG_CHANNEL', 'stack'),
-        'level' => env('LARAVEL_TDDRAFT_LOG_LEVEL', 'info'),
+        // Maximum number of history entries to keep per test
+        'max_history_entries' => env('LARAVEL_TDDRAFT_MAX_HISTORY', 50),
     ],
 ];

@@ -32,7 +32,7 @@ class BasicTest extends TestCase
 
     public function test_config_is_published(): void
     {
-        $this->assertTrue(config('tddraft.enabled'));
+        $this->assertTrue(config('tddraft.status_tracking.enabled', true));
     }
 
     public function test_package_configuration_is_available(): void
@@ -40,9 +40,14 @@ class BasicTest extends TestCase
         $this->assertNotNull($this->app);
         // Test that config is properly merged
         $this->assertIsArray(config('tddraft'));
-        $this->assertArrayHasKey('enabled', config('tddraft'));
-        $this->assertArrayHasKey('defaults', config('tddraft'));
-        $this->assertArrayHasKey('cache', config('tddraft'));
-        $this->assertArrayHasKey('logging', config('tddraft'));
+        $this->assertArrayHasKey('status_tracking', config('tddraft'));
+
+        // Test status tracking config structure
+        $statusTracking = config('tddraft.status_tracking');
+        $this->assertIsArray($statusTracking);
+        $this->assertArrayHasKey('enabled', $statusTracking);
+        $this->assertArrayHasKey('file_path', $statusTracking);
+        $this->assertArrayHasKey('track_history', $statusTracking);
+        $this->assertArrayHasKey('max_history_entries', $statusTracking);
     }
 }
