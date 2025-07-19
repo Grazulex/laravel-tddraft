@@ -45,6 +45,7 @@ This command will:
 - Create a `tests/TDDraft/` directory for your draft tests
 - Configure PHPUnit to exclude TDDraft tests from your main test suite
 - Configure Pest to exclude TDDraft tests from your main test suite
+- Set up automatic status tracking for test results (**NEW**)
 - Optionally create an example draft test file
 
 ## What Gets Created
@@ -55,12 +56,13 @@ After running `tdd:init`, you'll have:
 tests/
 ├── TDDraft/
 │   ├── .gitkeep
+│   ├── .status.json (created after first test run - NEW)
 │   └── ExampleDraftTest.php (optional)
 ├── Pest.php (modified to exclude TDDraft)
 └── ...
 
 config/
-└── tddraft.php
+└── tddraft.php (with status tracking configuration - NEW)
 
 phpunit.xml (modified to include TDDraft testsuite)
 ```
@@ -69,10 +71,12 @@ phpunit.xml (modified to include TDDraft testsuite)
 
 The published configuration file (`config/tddraft.php`) contains settings for:
 
-- Package enablement
-- Default timeouts and retry attempts
-- Caching configuration
-- Logging configuration
+- **Status tracking configuration** (**NEW**)
+  - Automatic test result tracking
+  - Historical status data management
+  - Configurable status file location
+- Package enablement controls
+- Environment-specific settings
 
 See [Configuration](configuration.md) for detailed configuration options.
 
@@ -94,7 +98,7 @@ After installation, you'll have access to **five powerful commands** for TDD wor
 # Create your first draft test
 php artisan tdd:make "User can register"
 
-# Run it
+# Run it (with automatic status tracking!)
 php artisan tdd:test
 
 # List your drafts
