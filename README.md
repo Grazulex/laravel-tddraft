@@ -401,12 +401,12 @@ declare(strict_types=1);
 it('should fail initially - this is normal for TDDraft', function (): void {
     // This test intentionally fails to demonstrate the TDD "red" phase
     expect(false)->toBeTrue('This draft needs implementation!');
-})->group('tddraft');
+})->group('tddraft', 'feature', 'example-red-phase');
 
 it('can be promoted when ready', function (): void {
     // When this passes, you can promote it to your main test suite
     expect(true)->toBeTrue();
-})->group('tddraft');
+})->group('tddraft', 'feature', 'example-green-phase');
 ```
 
 ## 📚 Documentation

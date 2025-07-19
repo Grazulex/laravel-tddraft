@@ -169,18 +169,20 @@ it('allows user registration with valid data', function (): void {
     ]);
 
     $response->assertStatus(201);
-})->group('tddraft');
+})->group('tddraft', 'feature', 'tdd-20250718142530-Abc123');
 ```
 
-### Use the `tddraft` Group
+### Use the `tddraft` Group with References
 
-Always mark draft tests with the appropriate group:
+Always mark draft tests with the appropriate groups including the unique reference for tracking:
 
 ```php
 it('describes the behavior', function (): void {
     // Test implementation
-})->group('tddraft');
+})->group('tddraft', 'feature', 'tdd-20250718142530-Abc123');
 ```
+
+**Best Practice:** Use `php artisan tdd:make` to automatically generate tests with proper grouping and unique references. Manual test creation should follow the same pattern.
 
 ### Write Descriptive Test Names
 
@@ -189,15 +191,15 @@ Test names should read like specifications:
 ```php
 it('prevents registration with duplicate email', function (): void {
     // ...
-})->group('tddraft');
+})->group('tddraft', 'feature', 'tdd-20250718142530-Abc123');
 
 it('sends welcome email after successful registration', function (): void {
     // ...
-})->group('tddraft');
+})->group('tddraft', 'feature', 'tdd-20250718142531-Def456');
 
 it('redirects to dashboard after login', function (): void {
     // ...
-})->group('tddraft');
+})->group('tddraft', 'feature', 'tdd-20250718142532-Ghi789');
 ```
 
 ### Focus on One Behavior Per Test
@@ -214,12 +216,12 @@ it('validates email format during registration', function (): void {
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['email']);
-})->group('tddraft');
+})->group('tddraft', 'feature', 'tdd-20250718142534-Mno345');
 
 // Avoid: Testing multiple behaviors
 it('handles registration validation', function (): void {
     // Don't test email, password, name validation all in one test
-})->group('tddraft');
+})->group('tddraft', 'feature', 'tdd-20250718142535-Pqr678');
 ```
 
 ## TDD Workflow
