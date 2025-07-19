@@ -215,13 +215,22 @@ final class TestCommand extends Command
 
         foreach ($lines as $line) {
             // Look for test result lines - Pest format: "  ✓ test name" or "  ⨯ test name"
-            if (preg_match('/^\s*[✓⨯]\s+(.+?)(?:\s+\d+\.\d+s)?$/', $line, $matches)) {
+            if (preg_match('/^\s*✓\s+it\s+(.+?)(?:\s+\d+\.\d+s)?$/', $line, $matches)) {
                 $testName = trim($matches[1]);
 
-                // Look for reference in mapping
                 if (isset($testToRefMapping[$testName])) {
                     $reference = $testToRefMapping[$testName];
-                    $status = str_contains($line, '✓') ? 'passed' : 'failed';
+                    $status = 'passed';
+                    $statusTracker->updateTestStatus($reference, $status);
+
+                    $this->line("  🔄 Updated status: {$reference} -> {$status}");
+                }
+            } elseif (preg_match('/^\s*⨯\s+it\s+(.+?)(?:\s+\d+\.\d+s)?$/', $line, $matches)) {
+                $testName = trim($matches[1]);
+
+                if (isset($testToRefMapping[$testName])) {
+                    $reference = $testToRefMapping[$testName];
+                    $status = 'failed';
                     $statusTracker->updateTestStatus($reference, $status);
 
                     $this->line("  🔄 Updated status: {$reference} -> {$status}");

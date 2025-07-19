@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Grazulex\LaravelTddraft;
 
+use Override;
 use Grazulex\LaravelTddraft\Console\Commands\InitCommand;
 use Grazulex\LaravelTddraft\Console\Commands\ListCommand;
 use Grazulex\LaravelTddraft\Console\Commands\MakeCommand;
@@ -38,6 +39,7 @@ final class LaravelTddraftServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[Override]
     public function register(): void
     {
         // Merge configuration
