@@ -1,6 +1,6 @@
 # Laravel TDDraft Examples
 
-This directory contains practical examples demonstrating how to use Laravel TDDraft effectively in your Laravel applications.
+This directory contains practical examples demonstrating how to use Laravel TDDraft effectively in your Laravel applications, including the new status tracking features.
 
 ## TDDraft Workflow Overview
 
@@ -15,10 +15,10 @@ This directory contains practical examples demonstrating how to use Laravel TDDr
 Demonstrates the complete five-command workflow of Laravel TDDraft:
 - Package installation and setup with `tdd:init`
 - Creating draft tests with `tdd:make` and unique reference tracking
-- Running tests with `tdd:test` command
+- Running tests with `tdd:test` command **with automatic status tracking**
 - Listing and managing tests with `tdd:list` command
 - Promoting tests with `tdd:promote` command
-- TDD Red-Green-Refactor cycle
+- TDD Red-Green-Refactor cycle with status monitoring
 - Automated and manual test graduation
 - Visual workflow representation with chart.png
 
@@ -31,11 +31,11 @@ Shows advanced patterns and best practices:
 - Advanced test patterns (parameterized tests, performance testing)
 - Professional test management with `tdd:list` filtering
 - Enterprise promotion strategies with `tdd:promote`
-- Configuration management for different environments
+- Configuration management for different environments including status tracking
 - Custom test helpers and traits
 - CI/CD integration with automated promotion workflows
-- Performance monitoring and audit trails
-- Reference-based test tracking and lineage
+- Performance monitoring and audit trails **using status tracking data**
+- Reference-based test tracking and lineage with historical status data
 
 **Who should use this:** Experienced developers building complex applications.
 
@@ -294,13 +294,39 @@ pest
 
 ### Environment-Specific Settings
 ```bash
-# .env.local
-LARAVEL_TDDRAFT_ENABLED=true
-LARAVEL_TDDRAFT_LOGGING_ENABLED=true
+# .env.local (development with full tracking)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true
+LARAVEL_TDDRAFT_TRACK_HISTORY=true
+LARAVEL_TDDRAFT_MAX_HISTORY=100
 
-# .env.production  
-LARAVEL_TDDRAFT_ENABLED=false
-LARAVEL_TDDRAFT_LOGGING_ENABLED=false
+# .env.testing (CI environment with minimal tracking)  
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true
+LARAVEL_TDDRAFT_TRACK_HISTORY=false
+LARAVEL_TDDRAFT_MAX_HISTORY=10
+
+# .env.production (disable TDDraft completely)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=false
+```
+
+### Status Tracking Integration
+```php
+// Custom script to analyze test stability
+<?php
+$statusFile = base_path('tests/TDDraft/.status.json');
+if (file_exists($statusFile)) {
+    $statuses = json_decode(file_get_contents($statusFile), true);
+    
+    foreach ($statuses as $reference => $data) {
+        $historyCount = count($data['history']);
+        $currentStatus = $data['status'];
+        
+        if ($historyCount > 5 && $currentStatus === 'failed') {
+            echo "⚠️  Test {$reference} has failed {$historyCount} times - needs attention\n";
+        } elseif ($historyCount === 0 && $currentStatus === 'passed') {
+            echo "✅ Test {$reference} stable - ready for promotion\n";
+        }
+    }
+}
 ```
 
 ### Custom Test Configuration

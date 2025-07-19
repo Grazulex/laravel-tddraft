@@ -34,6 +34,7 @@ The package enables a clean separation between experimental draft tests and prod
 - 🧪 Native Pest 3 support with proper test isolation
 - 📋 Automatic backup of configuration files before modification
 - 🔖 Unique reference tracking for test promotion from draft to CI
+- 📊 **NEW: Test status tracking** - Automatic tracking of test execution results and history
 - 🎯 Built for clean TDD workflow separation
 - 🚀 Easy graduation path from draft tests to production test suite
 
@@ -205,7 +206,7 @@ it('user can register', function (): void {
 # Run only main tests (excludes TDDraft)
 pest
 
-# Run only TDDraft tests (new shortcut!)
+# Run only TDDraft tests (with automatic status tracking!)
 php artisan tdd:test
 
 # Run TDDraft tests with options
@@ -227,6 +228,24 @@ pest --testsuite=tddraft
 # Run all tests including TDDraft
 pest --testsuite=default,tddraft
 ```
+
+### Test Status Tracking (NEW)
+
+Laravel TDDraft now automatically tracks your test execution results:
+
+```bash
+# Run tests with automatic status tracking
+php artisan tdd:test
+
+# Status is automatically saved to tests/TDDraft/.status.json
+# Each test result is linked to its unique reference for precise tracking
+```
+
+**Status tracking provides:**
+- Automatic recording of test results (passed/failed/error/skipped)
+- Historical tracking of status changes over time
+- Reference-based linking for audit trails
+- JSON storage for easy integration with other tools
 
 ### List and Manage Tests
 
@@ -338,22 +357,38 @@ The package configuration is published to `config/tddraft.php`:
 
 ```php
 return [
-    'enabled' => env('LARAVEL_TDDRAFT_ENABLED', true),
-    'defaults' => [
-        'timeout' => 30,
-        'retry_attempts' => 3,
-    ],
-    'cache' => [
-        'enabled' => true,
-        'ttl' => 3600,
-        'key_prefix' => 'tddraft:',
-    ],
-    'logging' => [
-        'enabled' => env('LARAVEL_TDDRAFT_LOGGING_ENABLED', false),
-        'channel' => env('LARAVEL_TDDRAFT_LOG_CHANNEL', 'stack'),
-        'level' => env('LARAVEL_TDDRAFT_LOG_LEVEL', 'info'),
+    /**
+     * Test status tracking configuration
+     *
+     * NEW: Controls how test execution results are tracked and persisted.
+     */
+    'status_tracking' => [
+        // Enable or disable status tracking
+        'enabled' => env('LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED', true),
+
+        // File path where test statuses are saved (relative to Laravel base path)
+        'file_path' => env('LARAVEL_TDDRAFT_STATUS_FILE', 'tests/TDDraft/.status.json'),
+
+        // Keep history of status changes for each test
+        'track_history' => env('LARAVEL_TDDRAFT_TRACK_HISTORY', true),
+
+        // Maximum number of history entries to keep per test
+        'max_history_entries' => env('LARAVEL_TDDRAFT_MAX_HISTORY', 50),
     ],
 ];
+```
+
+**Environment Variables:**
+```env
+# Enable/disable status tracking
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true
+
+# Configure status file location
+LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.json
+
+# Control history tracking
+LARAVEL_TDDRAFT_TRACK_HISTORY=true
+LARAVEL_TDDRAFT_MAX_HISTORY=50
 ```
 
 ## 🧪 Example Draft Test

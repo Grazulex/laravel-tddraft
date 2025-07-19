@@ -223,7 +223,7 @@ it('user can register', function (): void {
 Use the dedicated command to run only your draft tests:
 
 ```bash
-# Run all draft tests
+# Run all draft tests (with automatic status tracking)
 php artisan tdd:test
 
 # Run with filtering
@@ -232,6 +232,31 @@ php artisan tdd:test --filter="user registration"
 # Run with coverage
 php artisan tdd:test --coverage
 ```
+
+**NEW: Status Tracking** - The `tdd:test` command now automatically tracks test results:
+
+- Captures test outcomes (passed/failed/error/skipped)
+- Maintains history of status changes for each test reference
+- Saves results to `tests/TDDraft/.status.json`
+- Links results to unique test references for precise tracking
+
+**Status File Example:**
+```json
+{
+  "tdd-20250718142530-Abc123": {
+    "status": "passed",
+    "updated_at": "2025-07-18T14:30:45+00:00",
+    "history": [
+      {
+        "status": "failed", 
+        "timestamp": "2025-07-18T14:25:30+00:00"
+      }
+    ]
+  }
+}
+```
+
+This enables tracking test evolution during your TDD cycles and provides audit trails for test promotion decisions.
 
 ### 4. List and Manage Draft Tests
 

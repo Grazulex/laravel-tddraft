@@ -55,6 +55,36 @@ php artisan tdd:test --coverage --parallel
 php artisan tdd:test --stop-on-failure
 ```
 
+### Status Tracking Best Practices (NEW)
+
+Leverage the automatic status tracking for better test management:
+
+**Monitor Test Evolution:**
+```bash
+# Check status file for test stability patterns
+cat tests/TDDraft/.status.json | jq '.[] | select(.history | length > 3)'
+
+# Review tests with consistent failures
+grep -l "failed" tests/TDDraft/.status.json
+```
+
+**Use Status Data for Promotion Decisions:**
+```bash
+# Find stable tests (no history changes = consistently passing)
+php artisan tdd:list --details  # Look for tests without status changes
+```
+
+**Environment-Specific Tracking:**
+```bash
+# Development: Full tracking
+LARAVEL_TDDRAFT_TRACK_HISTORY=true
+LARAVEL_TDDRAFT_MAX_HISTORY=100
+
+# CI: Minimal tracking  
+LARAVEL_TDDRAFT_TRACK_HISTORY=false
+LARAVEL_TDDRAFT_MAX_HISTORY=10
+```
+
 ### Using tdd:list for Test Management
 
 Organize and review your draft tests effectively:
@@ -66,7 +96,7 @@ php artisan tdd:list --details
 # Focus on specific areas
 php artisan tdd:list --path=Ecommerce --type=feature
 
-# Find tests ready for promotion
+# Find tests ready for promotion (those with stable passing status)
 php artisan tdd:list --type=feature | grep "passing"
 ```
 

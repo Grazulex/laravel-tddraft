@@ -87,12 +87,12 @@ PHP;
 
 echo $exampleTest . "\n\n";
 
-// Example 4: Running Tests
-echo "4. Running Tests with tdd:test\n";
-echo "------------------------------\n";
-echo "Use the dedicated test command:\n\n";
+// Example 4: Running Tests with Status Tracking
+echo "4. Running Tests with tdd:test (Status Tracking)\n";
+echo "------------------------------------------------\n";
+echo "Use the dedicated test command with automatic status tracking:\n\n";
 
-echo "  # Run all draft tests\n";
+echo "  # Run all draft tests (with automatic status tracking)\n";
 echo "  php artisan tdd:test\n\n";
 
 echo "  # Run with filtering\n";
@@ -103,6 +103,29 @@ echo "  php artisan tdd:test --coverage\n\n";
 
 echo "  # Run with options\n";
 echo "  php artisan tdd:test --parallel --stop-on-failure\n\n";
+
+echo "NEW: Status Tracking Features:\n";
+echo "  • Test results are automatically tracked\n";
+echo "  • Status history is maintained for each test reference\n";
+echo "  • Results saved to tests/TDDraft/.status.json\n";
+echo "  • Links outcomes to unique test references\n\n";
+
+echo "Example status file content:\n";
+$statusExample = <<<'JSON'
+{
+  "tdd-20250718142530-Abc123": {
+    "status": "passed",
+    "updated_at": "2025-07-18T14:30:45+00:00",
+    "history": [
+      {
+        "status": "failed",
+        "timestamp": "2025-07-18T14:25:30+00:00"
+      }
+    ]
+  }
+}
+JSON;
+echo $statusExample . "\n\n";
 
 echo "Alternative Pest commands:\n";
 echo "  pest --testsuite=tddraft          # Draft tests only\n";

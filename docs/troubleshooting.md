@@ -202,8 +202,11 @@ Configuration file not found
 **Solution:**
 1. Check `.env` file:
    ```env
-   LARAVEL_TDDRAFT_ENABLED=true
-   LARAVEL_TDDRAFT_LOGGING_ENABLED=false
+   # Status tracking configuration
+   LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true
+   LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.json
+   LARAVEL_TDDRAFT_TRACK_HISTORY=true
+   LARAVEL_TDDRAFT_MAX_HISTORY=50
    ```
 
 2. Clear config cache:
@@ -214,7 +217,101 @@ Configuration file not found
 3. Verify config loading:
    ```bash
    php artisan tinker
-   >>> config('tddraft.enabled')
+   >>> config('tddraft.status_tracking.enabled')
+   ```
+
+## Status Tracking Issues (NEW)
+
+### Status File Not Created
+
+**Problem:** No `.status.json` file generated after running tests
+
+**Solution:**
+1. Check if status tracking is enabled:
+   ```bash
+   php artisan tinker
+   >>> config('tddraft.status_tracking.enabled')
+   ```
+
+2. Verify directory permissions:
+   ```bash
+   ls -la tests/TDDraft/
+   chmod 755 tests/TDDraft/
+   ```
+
+3. Run tests with verbose output to check for errors:
+   ```bash
+   php artisan tdd:test --stop-on-failure
+   ```
+
+### Status File Corruption
+
+**Problem:** Status file contains invalid JSON
+
+**Solution:**
+1. Backup and reset status file:
+   ```bash
+   mv tests/TDDraft/.status.json tests/TDDraft/.status.json.backup
+   echo '{}' > tests/TDDraft/.status.json
+   ```
+
+2. Run tests to regenerate:
+   ```bash
+   php artisan tdd:test
+   ```
+
+### Status History Growing Too Large
+
+**Problem:** Status file becoming too large with extensive history
+
+**Solution:**
+1. Reduce history limit:
+   ```env
+   LARAVEL_TDDRAFT_MAX_HISTORY=10
+   ```
+
+2. Disable history tracking:
+   ```env
+   LARAVEL_TDDRAFT_TRACK_HISTORY=false
+   ```
+
+3. Clean up existing file:
+   ```bash
+   # Backup first
+   cp tests/TDDraft/.status.json tests/TDDraft/.status.json.backup
+   
+   # Reset with empty history
+   php -r "
+   \$data = json_decode(file_get_contents('tests/TDDraft/.status.json'), true);
+   foreach (\$data as &\$test) {
+       \$test['history'] = [];
+   }
+   file_put_contents('tests/TDDraft/.status.json', json_encode(\$data, JSON_PRETTY_PRINT));
+   "
+   ```
+
+### Test References Not Tracked
+
+**Problem:** Test results not linked to references in status file
+
+**Solution:**
+1. Verify test file has proper reference in groups:
+   ```php
+   ->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
+   ```
+
+2. Check test file header contains reference:
+   ```php
+   /**
+    * TDDraft Test: Feature name
+    * Reference: tdd-20250718142530-Abc123
+    */
+   ```
+
+3. Ensure reference format is correct (tdd-YYYYMMDDHHMMSS-RANDOM):
+   ```bash
+   # Good: tdd-20250718142530-Abc123
+   # Bad:  tdd-123-xyz
    ```
 
 ## Performance Issues
