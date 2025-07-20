@@ -9,13 +9,27 @@
   [![License](https://img.shields.io/github/license/grazulex/laravel-tddraft)](LICENSE.md)
   [![PHP Version](https://img.shields.io/badge/php-%5E8.3-blue)](https://php.net)
   [![Laravel Version](https://img.shields.io/badge/laravel-%5E12.19-red)](https://laravel.com)
-  [![Pest Version](https://img.shields.io/badge/pest-%5E3.8-purple)](https://pestphp.com)
+  [![Tests](https://github.com/Grazulex/laravel-tddraft/workflows/Tests/badge.svg)](https://github.com/Grazulex/laravel-tddraft/actions)
   [![Code Style](https://img.shields.io/badge/code%20style-pint-orange)](https://github.com/laravel/pint)
 </div>
 
 ## Overview
 
 **Laravel TDDraft** helps you practice Test-Driven Development by providing a structured approach to draft testing in Laravel applications. It creates a separate testing environment for experimental tests that won't interfere with your main test suite or CI pipeline.
+
+## 📖 Table of Contents
+
+- [Overview](#overview)
+- [✨ Features](#-features)
+- [🔧 The Five-Command TDD Workflow](#-the-five-command-tdd-workflow)
+- [🚀 Quick Start](#-quick-start)
+- [🛠 Usage](#-usage)
+- [⚙️ Configuration](#️-configuration)
+- [🧪 Example Draft Test](#-example-draft-test)
+- [📚 Documentation & Examples](#-documentation--examples)
+- [🔧 Requirements](#-requirements)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
 ### TDDraft → CI Workflow
 
@@ -532,14 +546,18 @@ The [`examples/`](examples/) directory contains comprehensive usage examples:
 
 ## 🤝 Contributing
 
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this project.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## 🔒 Security
+
+If you discover a security vulnerability, please review our [Security Policy](SECURITY.md) before disclosing it.
 
 ## 📄 License
 
-This package is open-source software licensed under the [MIT license](LICENSE.md).
+Laravel TDDraft is open-sourced software licensed under the [MIT license](LICENSE.md).
 
 ---
 
 <div align="center">
-  Made with <span style="color: #FF9900;">❤️</span> for the <span style="color: #88C600;">Laravel</span> and <span style="color: #D2D200;">Pest</span> community
+  Made with ❤️ for the Laravel community
 </div>
