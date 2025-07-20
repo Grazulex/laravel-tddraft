@@ -2,28 +2,30 @@
 
 This guide shows you how to use Laravel TDDraft for Test-Driven Development in your Laravel projects.
 
-## 🔧 The Five-Command TDD Workflow
+## 🔧 The Five-Command TDD Workflow with Status Tracking
 
-**Laravel TDDraft is built around a five-command workflow that enables true Test-Driven Development.** This structured approach is the key innovation - it provides a complete TDD cycle from experimentation to production.
+**Laravel TDDraft is built around a five-command workflow that enables true Test-Driven Development with comprehensive status tracking.** This structured approach is the key innovation - it provides a complete TDD cycle from experimentation to production with full traceability.
 
 ### 🔄 Understanding the Flow
 
-The five commands work together in a specific sequence that mirrors and enhances the traditional TDD Red-Green-Refactor cycle:
+The five commands work together in a specific sequence that mirrors and enhances the traditional TDD Red-Green-Refactor cycle with professional status monitoring:
 
 ```
 🏗️  SETUP      → 🧪  RED PHASE  → 🔄  ITERATION  → 📋  REVIEW     → 🚀  GRADUATE
 tdd:init       → tdd:make      → tdd:test      → tdd:list     → tdd:promote
+(with status   → (unique ref   → (status      → (status      → (audit trail)
+ tracking)     → tracking)     → tracking)    → display)     
 ```
 
 ### 📋 Commands and Their Role in TDD
 
-| Command | TDD Phase | Purpose | Example Usage |
-|---------|-----------|---------|---------------|
-| **`tdd:init`** | 🏗️ **Setup** | Create isolated TDD environment | `php artisan tdd:init` |
-| **`tdd:make`** | 🧪 **Red Phase** | Write failing tests safely | `php artisan tdd:make "User can login"` |
-| **`tdd:test`** | 🔄 **Red-Green Cycle** | Iterate on drafts without affecting CI | `php artisan tdd:test` |
-| **`tdd:list`** | 📋 **Review** | Manage and inspect draft tests | `php artisan tdd:list --details` |
-| **`tdd:promote`** | 🚀 **Graduate** | Move ready tests to production | `php artisan tdd:promote <reference>` |
+| Command | TDD Phase | Purpose | Status Tracking | Example Usage |
+|---------|-----------|---------|----------------|---------------|
+| **`tdd:init`** | 🏗️ **Setup** | Create isolated TDD environment with tracking | ✅ Sets up tracking | `php artisan tdd:init` |
+| **`tdd:make`** | 🧪 **Red Phase** | Write failing tests with unique references | ✅ Creates trackable ID | `php artisan tdd:make "User can login"` |
+| **`tdd:test`** | 🔄 **Red-Green Cycle** | Iterate with automatic status monitoring | ✅ Records all results | `php artisan tdd:test` |
+| **`tdd:list`** | 📋 **Review** | Manage tests with status history display | ✅ Shows status data | `php artisan tdd:list --details` |
+| **`tdd:promote`** | 🚀 **Graduate** | Move ready tests with audit trail | ✅ Maintains lineage | `php artisan tdd:promote <reference>` |
 
 ### 🎯 Why This Workflow Is Essential
 
@@ -37,13 +39,14 @@ tdd:init       → tdd:make      → tdd:test      → tdd:list     → tdd:prom
 
 ## Concept
 
-Laravel TDDraft helps you practice Test-Driven Development (TDD) by providing a separate testing environment for draft tests. This allows you to:
+Laravel TDDraft helps you practice Test-Driven Development (TDD) by providing a separate testing environment for draft tests with comprehensive status tracking. This allows you to:
 
 - Write experimental tests without affecting your main test suite
-- Practice the Red-Green-Refactor cycle  
-- Keep draft tests separate from production tests
-- Maintain a clean test suite for CI/CD
-- Track test evolution from draft to production with unique references
+- Practice the Red-Green-Refactor cycle with automatic status monitoring
+- Keep draft tests separate from production tests with unique reference tracking
+- Maintain a clean test suite for CI/CD with full audit trails
+- Track test evolution from draft to production with historical status data
+- Make data-driven decisions about test promotion based on status stability
 
 ## TDDraft to CI Workflow
 
@@ -62,37 +65,41 @@ Laravel TDDraft helps you practice Test-Driven Development (TDD) by providing a 
 ```bash
 php artisan tdd:init
 ```
-**Purpose**: Create the isolated TDDraft environment
-- Creates `tests/TDDraft/` directory
+**Purpose**: Create the isolated TDDraft environment with status tracking
+- Creates `tests/TDDraft/` directory with `.gitkeep`
 - Configures PHPUnit to separate draft from CI tests
 - Sets up Pest configuration for draft test suite
+- **Configures status tracking system for comprehensive monitoring**
 
 #### Phase 2: 🧪 Red Phase (Feature Start)
 ```bash
 php artisan tdd:make "User can register with valid email"
 ```
-**Purpose**: Create failing tests that define the feature
-- Generates test with unique reference for tracking
+**Purpose**: Create failing tests that define the feature with tracking
+- Generates test with unique reference for precise tracking
 - Creates initially failing test (Red phase of TDD)
 - Test runs in isolation from CI suite
+- **Status tracking begins from first test execution**
 
 #### Phase 3: 🔄 Red-Green Iteration (Development)
 ```bash
 php artisan tdd:test --filter="User can register"
 ```
-**Purpose**: Rapid feedback loop for TDD cycle
+**Purpose**: Rapid feedback loop for TDD cycle with status monitoring
 - Run ONLY draft tests (not CI tests)
 - Quick iterations without affecting team
-- Follow Red → Green → Refactor cycle safely
+- Follow Red → Green → Refactor cycle safely  
+- **Automatic status tracking of each test execution with history**
 
 #### Phase 4: 📋 Review (Quality Check)
 ```bash
 php artisan tdd:list --details
 ```
-**Purpose**: Manage and inspect all draft tests
-- View test metadata and references
+**Purpose**: Manage and inspect all draft tests with status analysis
+- View test metadata, references, and current status
 - Filter by type, path, or status
-- Decide which tests are ready for promotion
+- **Analyze status history to determine promotion readiness**
+- Decide which tests are ready for graduation
 
 #### Phase 5: 🚀 Graduate (Production Ready)
 ```bash
@@ -298,19 +305,15 @@ Example output:
   • Promote draft: php artisan tdd:promote <reference>
 ```
 
-### 5. Follow TDD Red-Green-Refactor
+### 6. Follow TDD Red-Green-Refactor
 
-1. **RED**: Test fails initially (expected)
-2. **GREEN**: Implement minimal code to make test pass
-3. **REFACTOR**: Clean up code while keeping tests passing
+1. **RED**: Test fails initially (expected) - Status tracked as "failed"
+2. **GREEN**: Implement minimal code to make test pass - Status tracked as "passed"
+3. **REFACTOR**: Clean up code while keeping tests passing - Status remains "passed"
 
-### 5. Follow TDD Red-Green-Refactor
+The status tracking system automatically records each phase transition, providing audit trails of your TDD workflow.
 
-1. **RED**: Test fails initially (expected)
-2. **GREEN**: Implement minimal code to make test pass
-3. **REFACTOR**: Clean up code while keeping tests passing
-
-### 6. Graduate to Main Test Suite
+### 7. Graduate to Main Test Suite
 
 When your draft test is ready for production, you have two options for promoting it:
 

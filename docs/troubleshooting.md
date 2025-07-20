@@ -195,9 +195,140 @@ Configuration file not found
    ls -la config/tddraft.php
    ```
 
-### Environment Variables Not Working
+## Status Tracking Issues (NEW)
 
-**Problem:** Configuration not loading from `.env`
+### Status File Not Created
+
+**Problem:** `tests/TDDraft/.status.json` not being created
+
+**Solution:**
+1. Check if status tracking is enabled:
+   ```bash
+   grep LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED .env
+   ```
+
+2. Verify configuration:
+   ```php
+   // config/tddraft.php
+   'status_tracking' => [
+       'enabled' => env('LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED', true),
+   ],
+   ```
+
+3. Check directory permissions:
+   ```bash
+   ls -la tests/TDDraft/
+   chmod 755 tests/TDDraft/
+   ```
+
+4. Run a test to trigger status file creation:
+   ```bash
+   php artisan tdd:test
+   ```
+
+### Status Not Being Tracked
+
+**Problem:** Tests run but status is not recorded
+
+**Solutions:**
+1. **Check test references:** Ensure tests have unique reference tracking:
+   ```php
+   it('test name', function (): void {
+       // test code
+   })->group('tddraft', 'feature', 'tdd-20250718142530-Abc123');
+   ```
+
+2. **Verify reference format:** References must follow pattern `tdd-YYYYMMDDHHMMSS-RANDOM`:
+   ```bash
+   # Good: tdd-20250718142530-Abc123
+   # Bad:  custom-reference-name
+   ```
+
+3. **Use tdd:test command:** Status tracking works with the dedicated command:
+   ```bash
+   # Use this (tracks status):
+   php artisan tdd:test
+   
+   # Not this (no status tracking):
+   pest --testsuite=tddraft
+   ```
+
+### Corrupted Status File
+
+**Problem:** `tests/TDDraft/.status.json` is invalid JSON
+
+**Solution:**
+1. Check file content:
+   ```bash
+   cat tests/TDDraft/.status.json
+   ```
+
+2. Validate JSON:
+   ```bash
+   php -r "json_decode(file_get_contents('tests/TDDraft/.status.json'), true) ?: print 'Invalid JSON';"
+   ```
+
+3. Reset status file if corrupted:
+   ```bash
+   rm tests/TDDraft/.status.json
+   php artisan tdd:test  # Will recreate
+   ```
+
+### Status History Not Tracking
+
+**Problem:** History array remains empty despite test status changes
+
+**Solution:**
+1. Check history tracking setting:
+   ```env
+   LARAVEL_TDDRAFT_TRACK_HISTORY=true
+   ```
+
+2. Verify configuration:
+   ```php
+   // config/tddraft.php
+   'status_tracking' => [
+       'track_history' => env('LARAVEL_TDDRAFT_TRACK_HISTORY', true),
+       'max_history_entries' => env('LARAVEL_TDDRAFT_MAX_HISTORY', 50),
+   ],
+   ```
+
+3. Force a status change to trigger history:
+   ```php
+   // Modify a passing test to fail temporarily, then fix it
+   php artisan tdd:test  # Status changes from passed → failed → passed
+   ```
+
+### Large Status File Performance
+
+**Problem:** Status file becomes too large, slowing down operations
+
+**Solution:**
+1. Reduce history retention:
+   ```env
+   LARAVEL_TDDRAFT_MAX_HISTORY=10  # Instead of 50
+   ```
+
+2. Clean up old test references:
+   ```bash
+   # Custom script to clean up promoted test references
+   php -r "
+   \$status = json_decode(file_get_contents('tests/TDDraft/.status.json'), true);
+   \$cleaned = array_filter(\$status, function(\$ref) { 
+       return file_exists('tests/TDDraft/' . glob('*' . \$ref . '*')[0] ?? ''); 
+   }, ARRAY_FILTER_USE_KEY);
+   file_put_contents('tests/TDDraft/.status.json', json_encode(\$cleaned, JSON_PRETTY_PRINT));
+   "
+   ```
+
+3. Use environment-specific status files:
+   ```env
+   # .env.local
+   LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.local.json
+   
+   # .env.testing
+   LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.testing.json
+   ```
 
 **Solution:**
 1. Check `.env` file:
