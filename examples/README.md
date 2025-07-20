@@ -39,6 +39,19 @@ Shows advanced patterns and best practices:
 
 **Who should use this:** Experienced developers building complex applications.
 
+### [status-tracking-analysis.php](status-tracking-analysis.php) (NEW)
+Comprehensive guide to status tracking analysis and data-driven TDD workflows:
+- Understanding status tracking data structure and insights
+- Custom analysis scripts for test stability assessment
+- Automated promotion workflows based on status history
+- CI/CD integration with status analysis and reporting
+- Custom PHP classes and Laravel commands for status analysis
+- Regression detection and test stability scoring
+- Professional workflow patterns using status data
+- Quality metrics and promotion recommendation systems
+
+**Who should use this:** Teams implementing professional TDD workflows with data-driven test management.
+
 ## Running the Examples
 
 These examples are educational and show code patterns rather than executable scripts. To run them:
@@ -49,6 +62,9 @@ php examples/basic-usage.php
 
 # View advanced usage patterns  
 php examples/advanced-usage.php
+
+# View status tracking analysis patterns (NEW)
+php examples/status-tracking-analysis.php
 ```
 
 ## Real-World Usage

@@ -4,7 +4,7 @@ Laravel TDDraft provides five commands to help you work with Test-Driven Develop
 
 ## tdd:init
 
-The initialization command sets up your Laravel project for Test-Driven Development with separate draft testing.
+The initialization command sets up your Laravel project for Test-Driven Development with separate draft testing and comprehensive status tracking.
 
 ### Usage
 
@@ -30,7 +30,12 @@ The `tdd:init` command performs several important setup tasks:
    - Ensures TDDraft tests run separately from your main test suite
    - Creates backup of original `tests/Pest.php` before modification
 
-4. **Creates Example Files**
+4. **Sets Up Status Tracking System**
+   - Configures automatic test execution monitoring
+   - Prepares status tracking for the `tdd:test` command
+   - Sets up environment for historical status data
+
+5. **Creates Example Files**
    - Optionally creates `tests/TDDraft/ExampleDraftTest.php` with sample tests
    - Shows how to write TDDraft tests with proper annotations
 
@@ -87,7 +92,7 @@ After initialization, you can run tests separately:
 # Run only main tests (excludes TDDraft)
 pest
 
-# Run only TDDraft tests  
+# Run only TDDraft tests with automatic status tracking
 php artisan tdd:test
 
 # Run only TDDraft tests (alternative)

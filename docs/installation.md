@@ -42,11 +42,13 @@ php artisan tdd:init
 ```
 
 This command will:
-- Create a `tests/TDDraft/` directory for your draft tests
+- Create a `tests/TDDraft/` directory for your draft tests with `.gitkeep`
 - Configure PHPUnit to exclude TDDraft tests from your main test suite
-- Configure Pest to exclude TDDraft tests from your main test suite
-- Set up automatic status tracking for test results (**NEW**)
-- Optionally create an example draft test file
+- Configure Pest to exclude TDDraft tests from your main test suite  
+- **Set up comprehensive status tracking system** for automated test monitoring
+- Create configuration file with environment-specific status tracking settings
+- Create backup files of modified configurations for safety
+- Optionally create an example draft test file with unique reference
 
 ## What Gets Created
 
@@ -71,12 +73,17 @@ phpunit.xml (modified to include TDDraft testsuite)
 
 The published configuration file (`config/tddraft.php`) contains settings for:
 
-- **Status tracking configuration** (**NEW**)
-  - Automatic test result tracking
-  - Historical status data management
-  - Configurable status file location
-- Package enablement controls
-- Environment-specific settings
+- **Comprehensive Status Tracking System**
+  - Automatic test result tracking and historical data
+  - Status file location and format configuration
+  - History retention and environment-specific behavior
+  - Enable/disable controls per environment
+- **Package Operation Controls**
+  - Environment-specific enablement
+  - Test suite separation configuration
+- **Advanced Settings**
+  - File path customization
+  - Performance optimization options
 
 See [Configuration](configuration.md) for detailed configuration options.
 
@@ -98,13 +105,13 @@ After installation, you'll have access to **five powerful commands** for TDD wor
 # Create your first draft test
 php artisan tdd:make "User can register"
 
-# Run it (with automatic status tracking!)
+# Run it with automatic status tracking and history
 php artisan tdd:test
 
-# List your drafts
-php artisan tdd:list
+# List your drafts with status display
+php artisan tdd:list --details
 
-# When ready, promote to CI
+# When status shows consistent passing, promote to CI
 php artisan tdd:promote <test-reference>
 ```
 

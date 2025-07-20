@@ -34,9 +34,16 @@ The package enables a clean separation between experimental draft tests and prod
 - 🧪 Native Pest 3 support with proper test isolation
 - 📋 Automatic backup of configuration files before modification
 - 🔖 Unique reference tracking for test promotion from draft to CI
-- 📊 **NEW: Test status tracking** - Automatic tracking of test execution results and history
+- 📊 **NEW: Comprehensive Test Status Tracking**
+  - 📈 Automatic tracking of test execution results and history
+  - 🎯 Status persistence across test runs with `.status.json`
+  - 📋 Historical tracking of test state changes
+  - 🔍 Advanced test filtering and management by status
+  - 📅 Timestamped audit trails for test evolution
+  - ⚙️ Configurable history limits and environment-specific settings
 - 🎯 Built for clean TDD workflow separation
 - 🚀 Easy graduation path from draft tests to production test suite
+- 🔧 **Professional Test Management**: Advanced filtering, promotion, and audit capabilities
 
 ## 🔧 The Five-Command TDD Workflow
 
@@ -68,11 +75,11 @@ graph LR
 
 | Command | Role in TDD Flow | Description |
 |---------|------------------|-------------|
-| **`tdd:init`** | 🏗️ **Setup** | Initialize TDDraft environment and configuration |
-| **`tdd:make`** | 🧪 **Red Phase** | Create a new failing test with unique tracking |
-| **`tdd:test`** | 🔄 **Red-Green Cycle** | Run and iterate on draft tests until they pass |
-| **`tdd:list`** | 📋 **Review** | List and manage your draft tests before promotion |
-| **`tdd:promote`** | 🚀 **Graduate** | Move ready tests to production CI test suite |
+| **`tdd:init`** | 🏗️ **Setup** | Initialize TDDraft environment and configuration with status tracking |
+| **`tdd:make`** | 🧪 **Red Phase** | Create a new failing test with unique tracking reference |
+| **`tdd:test`** | 🔄 **Red-Green Cycle** | Run and iterate on draft tests with automatic status tracking |
+| **`tdd:list`** | 📋 **Review** | List and manage draft tests with status history and filtering |
+| **`tdd:promote`** | 🚀 **Graduate** | Move ready tests to production CI suite with audit trail |
 
 ### 🎯 Why This Flow Matters
 
@@ -94,15 +101,15 @@ php artisan tdd:init
 php artisan tdd:make "User can register"
 php artisan tdd:make "Password validation" --type=unit
 
-# 3. 🔄 RED-GREEN CYCLE: Iterate until tests pass
-php artisan tdd:test --filter="User can register"  # RED: Test fails
+# 3. 🔄 RED-GREEN CYCLE: Iterate until tests pass (with automatic status tracking)
+php artisan tdd:test --filter="User can register"  # RED: Test fails (status tracked)
 # Write minimal code to make test pass...
-php artisan tdd:test --filter="User can register"  # GREEN: Test passes
+php artisan tdd:test --filter="User can register"  # GREEN: Test passes (status tracked)
 # Refactor code...
-php artisan tdd:test --filter="User can register"  # GREEN: Still passes
+php artisan tdd:test --filter="User can register"  # GREEN: Still passes (status tracked)
 
-# 4. 📋 REVIEW: Check all draft tests before promotion
-php artisan tdd:list --details
+# 4. 📋 REVIEW: Check all draft tests with their status history
+php artisan tdd:list --details  # Shows current status and history for each test
 
 # 5. 🚀 GRADUATE: Move ready tests to CI suite
 php artisan tdd:promote tdd-20250718142530-Abc123
@@ -140,10 +147,12 @@ php artisan tdd:init
 ```
 
 This command will:
-- Create `tests/TDDraft/` directory structure
+- Create `tests/TDDraft/` directory structure with `.gitkeep`
 - Configure PHPUnit to separate TDDraft tests from main suite
 - Configure Pest to exclude TDDraft from default test runs
-- Optionally create example test files
+- Set up status tracking system for test execution monitoring
+- Create configuration file with environment-specific status tracking settings
+- Optionally create example test files for quick start
 
 ## 🛠 Usage
 
@@ -200,20 +209,25 @@ it('user can register', function (): void {
 ->todo('Implement the test scenario for: user can register');
 ```
 
-### Run Tests Separately
+### Run Tests with Status Tracking
+
+Laravel TDDraft provides dedicated commands with automatic status monitoring:
 
 ```bash
-# Run only main tests (excludes TDDraft)
+# Run only main tests (excludes TDDraft) 
 pest
 
-# Run only TDDraft tests (with automatic status tracking!)
+# Run only TDDraft tests with automatic status tracking
 php artisan tdd:test
 
-# Run TDDraft tests with options
+# Run TDDraft tests with options (all with status tracking)
 php artisan tdd:test --filter="user registration"
 php artisan tdd:test --coverage
 php artisan tdd:test --parallel
 php artisan tdd:test --stop-on-failure
+
+# Alternative: use pest directly (without automatic status tracking)
+pest --testsuite=tddraft
 
 # Filter by type
 pest --testsuite=tddraft --group=feature
@@ -222,14 +236,11 @@ pest --testsuite=tddraft --group=unit
 # Filter by specific reference
 pest --testsuite=tddraft --group=tdd-20250718142530-Abc123
 
-# Alternative: use pest directly
-pest --testsuite=tddraft
-
 # Run all tests including TDDraft
 pest --testsuite=default,tddraft
 ```
 
-### Test Status Tracking (NEW)
+### Comprehensive Status Tracking System
 
 Laravel TDDraft now automatically tracks your test execution results:
 
@@ -241,11 +252,33 @@ php artisan tdd:test
 # Each test result is linked to its unique reference for precise tracking
 ```
 
-**Status tracking provides:**
-- Automatic recording of test results (passed/failed/error/skipped)
-- Historical tracking of status changes over time
-- Reference-based linking for audit trails
-- JSON storage for easy integration with other tools
+**Comprehensive status tracking features:**
+- ✅ **Automatic Recording**: Test results (passed/failed/error/skipped) saved after each run
+- 📊 **Historical Tracking**: Maintains change history for test evolution analysis
+- 🔖 **Reference-Based Linking**: Status tied to unique test references for audit trails
+- 📁 **JSON Storage**: Structured data for easy integration with external tools
+- ⚙️ **Environment Configuration**: Customizable tracking behavior per environment
+- 📈 **Test Stability Analysis**: Track which tests are ready for promotion based on status history
+
+**Example status file structure:**
+```json
+{
+  "tdd-20250718142530-Abc123": {
+    "status": "passed",
+    "updated_at": "2025-07-18T14:30:45+00:00",
+    "history": [
+      {
+        "status": "failed",
+        "timestamp": "2025-07-18T14:25:30+00:00"
+      },
+      {
+        "status": "failed", 
+        "timestamp": "2025-07-18T14:27:15+00:00"
+      }
+    ]
+  }
+}
+```
 
 ### List and Manage Tests
 
@@ -343,24 +376,37 @@ pest tests/Feature/Auth/UserRegistrationTest.php
 pest
 ```
 
-### Tracking Test Lineage
+### Status Tracking and Test Lineage
 
-The unique reference system allows you to:
-- Track which tests originated from TDDraft
-- Monitor test evolution from draft to production
-- Maintain audit trail for compliance
-- Link CI failures back to original draft intent
+The unique reference system with status tracking allows you to:
+- **Track Test Evolution**: Monitor tests from draft to production with complete history
+- **Analyze Test Stability**: Use status history to determine promotion readiness
+- **Maintain Audit Trails**: Full traceability for compliance and debugging
+- **Link CI Failures**: Connect production failures back to original draft intent
+- **Data-Driven Decisions**: Use status data to optimize TDD workflow
 
-## 📁 Configuration
+**Advanced status analysis example:**
+```bash
+# Find tests that are consistently passing (ready for promotion)
+php artisan tdd:list --details | grep "✅ Passed"
 
-The package configuration is published to `config/tddraft.php`:
+# Identify tests that need attention based on status history
+# (This could be automated using the .status.json data)
+```
+
+## ⚙️ Configuration
+
+### Status Tracking Configuration
+
+The package configuration is published to `config/tddraft.php` with comprehensive status tracking options:
 
 ```php
 return [
     /**
      * Test status tracking configuration
      *
-     * NEW: Controls how test execution results are tracked and persisted.
+     * Controls how test execution results are tracked and persisted.
+     * This is a key feature that enables professional TDD workflow management.
      */
     'status_tracking' => [
         // Enable or disable status tracking
@@ -378,47 +424,105 @@ return [
 ];
 ```
 
-**Environment Variables:**
+### Environment-Specific Configuration
+
+Configure different behavior per environment:
+
 ```env
-# Enable/disable status tracking
+# Development environment (.env.local)
 LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true
-
-# Configure status file location
 LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.json
-
-# Control history tracking
 LARAVEL_TDDRAFT_TRACK_HISTORY=true
-LARAVEL_TDDRAFT_MAX_HISTORY=50
+LARAVEL_TDDRAFT_MAX_HISTORY=100
+
+# Testing/CI environment (.env.testing)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true  
+LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.testing.json
+LARAVEL_TDDRAFT_TRACK_HISTORY=false
+LARAVEL_TDDRAFT_MAX_HISTORY=20
+
+# Production environment (.env.production)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=false
 ```
 
 ## 🧪 Example Draft Test
+
+**Example of a TDDraft test with unique reference tracking and status monitoring:**
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-it('should fail initially - this is normal for TDDraft', function (): void {
-    // This test intentionally fails to demonstrate the TDD "red" phase
-    expect(false)->toBeTrue('This draft needs implementation!');
-})->group('tddraft', 'feature', 'example-red-phase');
+/**
+ * TDDraft Test: User registration workflow
+ * 
+ * Reference: tdd-20250718142530-Abc123
+ * Type: feature
+ * Created: 2025-07-18 14:25:30
+ */
 
-it('can be promoted when ready', function (): void {
-    // When this passes, you can promote it to your main test suite
+it('should fail initially - this is normal for TDD red phase', function (): void {
+    // This test intentionally fails to demonstrate the TDD "red" phase
+    // Status will be tracked as 'failed' until implementation is complete
+    
+    $response = $this->post('/register', [
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ]);
+
+    $response->assertStatus(201);
+    $this->assertDatabaseHas('users', [
+        'email' => 'john@example.com',
+    ]);
+})
+->group('tddraft', 'feature', 'tdd-20250718142530-Abc123')
+->todo('Implement user registration endpoint and validation');
+
+it('can be promoted when ready and status shows consistent passing', function (): void {
+    // When this test consistently passes (shown in status tracking),
+    // it's ready for promotion to the main test suite
     expect(true)->toBeTrue();
-})->group('tddraft', 'feature', 'example-green-phase');
+})
+->group('tddraft', 'feature', 'tdd-20250718142530-Abc123');
 ```
 
-## 📚 Documentation
+**Key features demonstrated:**
+- ✅ **Unique Reference**: `tdd-20250718142530-Abc123` for tracking and promotion
+- 📊 **Status Tracking**: Each run records pass/fail status with timestamp
+- 🔄 **TDD Cycle**: Start with failing test, implement code, achieve passing status
+- 🎯 **Promotion Ready**: Use status history to determine when test is stable
+
+## 📚 Documentation & Examples
+
+### Complete Documentation
 
 For comprehensive documentation, see the [`docs/`](docs/) directory:
 
-- [Installation Guide](docs/installation.md)
-- [Configuration](docs/configuration.md)
-- [Usage Guide](docs/usage.md)
-- [Commands Reference](docs/commands.md)
-- [Best Practices](docs/best-practices.md)
-- [Troubleshooting](docs/troubleshooting.md)
+- [Installation Guide](docs/installation.md) - Step-by-step setup instructions  
+- [Configuration](docs/configuration.md) - Detailed configuration options
+- [Usage Guide](docs/usage.md) - Complete usage patterns and workflows
+- [Commands Reference](docs/commands.md) - All five commands with examples
+- [Best Practices](docs/best-practices.md) - Professional TDD patterns
+- [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
+
+### Practical Examples
+
+The [`examples/`](examples/) directory contains comprehensive usage examples:
+
+- [**Basic Usage**](examples/basic-usage.php) - Complete five-command workflow with status tracking
+- [**Advanced Usage**](examples/advanced-usage.php) - Enterprise patterns, CI integration, and status analysis
+- [**Examples README**](examples/README.md) - Real-world usage patterns and organization strategies
+
+**Examples demonstrate:**
+- ✅ Five-command TDD workflow from init to promote  
+- 📊 Status tracking integration and analysis
+- 🏗️ Test organization strategies for complex projects
+- 🚀 Automated promotion workflows
+- 📈 Performance monitoring and audit trails
+- 🔧 CI/CD integration patterns
 
 ## 🔧 Requirements
 

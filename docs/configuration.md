@@ -8,9 +8,9 @@ php artisan vendor:publish --tag=tddraft-config
 
 ## Configuration Options
 
-### Status Tracking Configuration
+### Comprehensive Status Tracking Configuration
 
-**NEW**: Test execution status tracking and history management.
+Laravel TDDraft includes a sophisticated test execution status tracking and history management system.
 
 ```php
 /**
@@ -48,18 +48,25 @@ php artisan vendor:publish --tag=tddraft-config
 - `incomplete` - Test is marked as incomplete
 - `unknown` - Status could not be determined
 
-## Environment Variables
+## Environment-Specific Configuration
 
-You can override configuration values using environment variables:
+You can configure different behavior per environment:
 
 ```env
-# .env file
-
-# Status tracking configuration
+# Development environment (.env.local)
 LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true
 LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.json
 LARAVEL_TDDRAFT_TRACK_HISTORY=true
-LARAVEL_TDDRAFT_MAX_HISTORY=50
+LARAVEL_TDDRAFT_MAX_HISTORY=100
+
+# Testing/CI environment (.env.testing)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=true  
+LARAVEL_TDDRAFT_STATUS_FILE=tests/TDDraft/.status.testing.json
+LARAVEL_TDDRAFT_TRACK_HISTORY=false
+LARAVEL_TDDRAFT_MAX_HISTORY=20
+
+# Production environment (.env.production)
+LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=false
 ```
 
 ## Status Tracking File Structure

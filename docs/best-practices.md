@@ -55,34 +55,57 @@ php artisan tdd:test --coverage --parallel
 php artisan tdd:test --stop-on-failure
 ```
 
-### Status Tracking Best Practices (NEW)
+### Advanced Status Tracking Workflows
 
-Leverage the automatic status tracking for better test management:
+**Status Analysis Scripts:**
 
-**Monitor Test Evolution:**
+Create custom scripts to analyze test stability:
+
 ```bash
-# Check status file for test stability patterns
-cat tests/TDDraft/.status.json | jq '.[] | select(.history | length > 3)'
+#!/bin/bash
+# scripts/analyze-test-stability.sh
+STATUS_FILE="tests/TDDraft/.status.json"
 
-# Review tests with consistent failures
-grep -l "failed" tests/TDDraft/.status.json
+echo "📊 Test Stability Analysis"
+echo "=========================="
+
+# Find tests ready for promotion (no history = stable)
+echo "✅ Stable Tests (ready for promotion):"
+jq -r 'to_entries[] | select(.value.history | length == 0) | select(.value.status == "passed") | .key' $STATUS_FILE
+
+# Find unstable tests (multiple status changes)
+echo "⚠️  Unstable Tests (need attention):"
+jq -r 'to_entries[] | select(.value.history | length > 3) | "\(.key) - \(.value.history | length) changes"' $STATUS_FILE
+
+# Find consistently failing tests
+echo "❌ Failing Tests:"
+jq -r 'to_entries[] | select(.value.status == "failed") | .key' $STATUS_FILE
 ```
 
-**Use Status Data for Promotion Decisions:**
+**Automated Promotion Workflow:**
+
 ```bash
-# Find stable tests (no history changes = consistently passing)
-php artisan tdd:list --details  # Look for tests without status changes
+#!/bin/bash
+# scripts/promote-stable-tests.sh
+for ref in $(php artisan tdd:list --type=feature | grep "✅ Passed" | cut -d' ' -f1); do
+    echo "Promoting stable test: $ref"
+    php artisan tdd:promote "$ref"
+done
 ```
 
-**Environment-Specific Tracking:**
-```bash
-# Development: Full tracking
-LARAVEL_TDDRAFT_TRACK_HISTORY=true
-LARAVEL_TDDRAFT_MAX_HISTORY=100
+**CI Integration:**
 
-# CI: Minimal tracking  
-LARAVEL_TDDRAFT_TRACK_HISTORY=false
-LARAVEL_TDDRAFT_MAX_HISTORY=10
+```yaml
+# .github/workflows/tddraft-analysis.yml
+- name: Analyze TDDraft Test Stability
+  run: |
+    if [ -f "tests/TDDraft/.status.json" ]; then
+      echo "📊 TDDraft Test Status Summary"
+      total=$(jq '. | length' tests/TDDraft/.status.json)
+      passed=$(jq '[.[] | select(.status == "passed")] | length' tests/TDDraft/.status.json)
+      failed=$(jq '[.[] | select(.status == "failed")] | length' tests/TDDraft/.status.json)
+      echo "Total: $total, Passed: $passed, Failed: $failed"
+    fi
 ```
 
 ### Using tdd:list for Test Management
