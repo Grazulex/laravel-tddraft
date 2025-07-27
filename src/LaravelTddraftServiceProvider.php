@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Grazulex\LaravelTddraft;
 
-use Override;
 use Grazulex\LaravelTddraft\Console\Commands\InitCommand;
 use Grazulex\LaravelTddraft\Console\Commands\ListCommand;
 use Grazulex\LaravelTddraft\Console\Commands\MakeCommand;
 use Grazulex\LaravelTddraft\Console\Commands\PromoteCommand;
 use Grazulex\LaravelTddraft\Console\Commands\TestCommand;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 final class LaravelTddraftServiceProvider extends ServiceProvider
 {

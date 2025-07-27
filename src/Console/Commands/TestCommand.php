@@ -29,11 +29,12 @@ final class TestCommand extends Command
 
         $this->newLine();
 
+        // Parse filter option to determine references
+        $filterOption = $this->option('filter');
+        $references = $this->parseFilterToReferences($filterOption);
+
         // Build the pest command
-        $command = [
-            './vendor/bin/pest',
-            '--testsuite=tddraft',
-        ];
+        $command = $this->buildPestCommand($references);
 
         // Add JSON output for status tracking
         $statusTracker = new StatusTracker;
@@ -43,11 +44,7 @@ final class TestCommand extends Command
             $command[] = '--log-junit=' . $tempJsonFile;
         }
 
-        // Add optional arguments
-        if ($this->option('filter')) {
-            $command[] = '--filter=' . $this->option('filter');
-        }
-
+        // Add other optional arguments
         if ($this->option('coverage')) {
             $command[] = '--coverage';
         }
@@ -65,6 +62,11 @@ final class TestCommand extends Command
             $this->error('❌ Pest is not installed. Please run: composer require pestphp/pest --dev');
 
             return self::FAILURE;
+        }
+
+        // Show what command will be executed for debugging
+        if ($this->option('verbose')) {
+            $this->comment('Executing: ' . implode(' ', $command));
         }
 
         // Run the process and capture output
@@ -202,6 +204,53 @@ final class TestCommand extends Command
         }
 
         return $mapping;
+    }
+
+    /**
+     * Parse filter option to extract TDDraft references.
+     *
+     * @return array<string>
+     */
+    private function parseFilterToReferences(?string $filter): array
+    {
+        if (! $filter) {
+            return [];
+        }
+
+        // Check if filter looks like a TDDraft reference (tdd-YYYYMMDDHHIISS-XXXXXX)
+        if (preg_match('/^tdd-\d{14}-[a-zA-Z0-9]{6}$/', $filter)) {
+            return [$filter];
+        }
+
+        // For other filters, return empty to use general filtering
+        return [];
+    }
+
+    /**
+     * Build Pest command with appropriate filtering.
+     *
+     * @param  array<string>  $references
+     *
+     * @return array<string>
+     */
+    private function buildPestCommand(array $references): array
+    {
+        $command = [
+            './vendor/bin/pest',
+            '--testsuite=tddraft',
+        ];
+
+        // Use groups for TDDraft references
+        if ($references !== []) {
+            foreach ($references as $reference) {
+                $command[] = '--group=' . $reference;
+            }
+        } elseif ($this->option('filter')) {
+            // For general filtering, use --filter
+            $command[] = '--filter=' . $this->option('filter');
+        }
+
+        return $command;
     }
 
     /**
