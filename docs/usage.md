@@ -227,17 +227,33 @@ it('user can register', function (): void {
 
 ### 3. Run Draft Tests
 
-Use the dedicated command to run only your draft tests:
+Use the dedicated command to run only your draft tests **with advanced filtering**:
 
 ```bash
 # Run all draft tests (with automatic status tracking)
 php artisan tdd:test
 
-# Run with filtering
+# Filter by test name or description
 php artisan tdd:test --filter="user registration"
+php artisan tdd:test --filter="login"
 
-# Run with coverage
-php artisan tdd:test --coverage
+# Filter by specific reference for precise testing
+php artisan tdd:test --filter="tdd-20250727142530-Abc123"
+
+# Filter by partial reference (time-based filtering)
+php artisan tdd:test --filter="tdd-20250727"          # All tests from specific day
+php artisan tdd:test --filter="tdd-202507271425"      # Tests from specific time period
+
+# Run with additional options
+php artisan tdd:test --filter="api" --coverage
+php artisan tdd:test --filter="authentication" --parallel
+php artisan tdd:test --filter="payment" --stop-on-failure
+
+# Advanced Pest group filtering (alternative approach)
+pest --testsuite=tddraft --group=feature              # All feature tests
+pest --testsuite=tddraft --group=unit                 # All unit tests  
+pest --testsuite=tddraft --group=tdd-20250727142530   # Specific test by reference
+pest --testsuite=tddraft --group=feature --parallel   # Feature tests in parallel
 ```
 
 **NEW: Status Tracking** - The `tdd:test` command now automatically tracks test results:
@@ -267,21 +283,29 @@ This enables tracking test evolution during your TDD cycles and provides audit t
 
 ### 4. List and Manage Draft Tests
 
-Use the `tdd:list` command to view and manage your draft tests:
+Use the `tdd:list` command to view and manage your draft tests **with powerful filtering options**:
 
 ```bash
 # List all draft tests
 php artisan tdd:list
 
-# Show detailed information
+# Show detailed information with status tracking
 php artisan tdd:list --details
 
-# Filter by test type
+# Filter by test type  
 php artisan tdd:list --type=feature
 php artisan tdd:list --type=unit
 
 # Filter by directory path
 php artisan tdd:list --path=Auth
+php artisan tdd:list --path=Api/V1
+
+# Combine filters for precise results
+php artisan tdd:list --type=feature --path=Auth --details
+
+# Advanced filtering examples
+php artisan tdd:list --type=unit --path=Services --details    # Unit tests in Services with details
+php artisan tdd:list --path=Authentication | grep "✅"        # Find passing auth tests
 ```
 
 Example output:
@@ -446,15 +470,19 @@ pest --testsuite=default,tddraft
 ### Advanced Filtering with References
 
 ```bash
-# Filter by test type
-php artisan tdd:test --group=feature
-pest --testsuite=tddraft --group=unit
+# Filter by test type and get specific references
+php artisan tdd:list --type=feature | grep "tdd-"     # Find all feature test references
 
-# Filter by specific reference
-pest --testsuite=tddraft --group=tdd-20250718142530-Abc123
+# Run specific test by reference
+php artisan tdd:test --filter="<reference>"
 
-# Run specific test by name
-php artisan tdd:test --filter="user can register"
+# Time-based reference filtering (tests created in specific timeframe)
+php artisan tdd:list | grep "tdd-20250727"            # Tests from specific day
+php artisan tdd:test --filter="tdd-20250727142"       # Tests from specific hour
+
+# Status-based filtering for targeted actions
+php artisan tdd:list --details | grep "✅ Passed"     # Find tests ready for promotion
+php artisan tdd:list --details | grep "❌ Failed"     # Find tests needing attention
 ```
 
 ## Best Practices

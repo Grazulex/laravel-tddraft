@@ -183,7 +183,7 @@ Next steps:
 
 ## tdd:test
 
-Run TDDraft tests with convenient options, filtering, and automatic status tracking.
+Run TDDraft tests with **convenient filtering options**, and automatic status tracking.
 
 ### Usage
 
@@ -191,17 +191,52 @@ Run TDDraft tests with convenient options, filtering, and automatic status track
 # Run all TDDraft tests
 php artisan tdd:test
 
-# Filter by test name
+# Filter by test name or pattern
 php artisan tdd:test --filter="user registration"
+php artisan tdd:test --filter="login"
+
+# Filter by specific reference ID
+php artisan tdd:test --filter="tdd-20250727142530-Abc123"
 
 # Generate coverage report
 php artisan tdd:test --coverage
 
-# Run tests in parallel
+# Run tests in parallel for faster execution
 php artisan tdd:test --parallel
 
-# Stop on first failure
+# Stop on first failure for quick debugging
 php artisan tdd:test --stop-on-failure
+
+# Combine options for targeted testing
+php artisan tdd:test --filter="api" --coverage --parallel
+```
+
+### Filter and Performance Options
+
+- `--filter=pattern`: **Filter tests by name pattern** - supports partial matches, references, or test descriptions
+- `--coverage`: **Generate test coverage report** for draft tests
+- `--parallel`: **Run tests in parallel** for faster execution
+- `--stop-on-failure`: **Stop execution on first failure** for debugging
+
+### Advanced Filtering with Pest Groups
+
+You can also use Pest directly with the group system for more advanced filtering:
+
+```bash
+# Run only feature draft tests
+pest --testsuite=tddraft --group=feature
+
+# Run only unit draft tests  
+pest --testsuite=tddraft --group=unit
+
+# Run specific test by reference
+pest --testsuite=tddraft --group=tdd-20250727142530-Abc123
+
+# Combine groups
+pest --testsuite=tddraft --group=feature,unit
+
+# Use with Pest options
+pest --testsuite=tddraft --group=feature --parallel --coverage
 ```
 
 ### What it Does
@@ -250,7 +285,46 @@ pest --testsuite=tddraft --group=feature
 pest --testsuite=tddraft --group=unit
 
 # Run specific test by reference
-pest --testsuite=tddraft --group=tdd-20250718142530-Abc123
+pest --testsuite=tddraft --group=tdd-20250727142530-Abc123
+
+# Combine groups for complex filtering
+pest --testsuite=tddraft --group=feature,unit
+
+# Use with Pest performance options
+pest --testsuite=tddraft --group=feature --parallel --coverage
+```
+
+### Reference-Based Filtering
+
+Each test gets a unique reference for precise tracking and filtering:
+
+```bash
+# Filter by partial reference (useful for time-based grouping)
+php artisan tdd:test --filter="tdd-20250727"          # All tests from specific day
+php artisan tdd:test --filter="tdd-202507271425"      # Tests from specific time
+
+# Filter by exact reference
+php artisan tdd:test --filter="tdd-20250727142530-Abc123"
+
+# Use with tdd:list to find references
+php artisan tdd:list | grep "tdd-" | head -5          # Show first 5 references
+```
+
+### Filtering Examples by Use Case
+
+```bash
+# Development workflow - run specific feature tests
+php artisan tdd:test --filter="authentication"
+php artisan tdd:test --filter="user registration" --coverage
+
+# Debugging - focus on failing tests
+php artisan tdd:test --filter="payment" --stop-on-failure
+
+# Performance testing - run all tests quickly
+php artisan tdd:test --parallel
+
+# Feature completion - run all related tests
+php artisan tdd:test --filter="api" --coverage
 ```
 
 ### Options
@@ -311,7 +385,7 @@ LARAVEL_TDDRAFT_STATUS_TRACKING_ENABLED=false
 
 ## tdd:list
 
-List all TDDraft tests with their references, metadata, and filtering options for better test management.
+List all TDDraft tests with their references, metadata, and **powerful filtering options** for better test management.
 
 ### Usage
 
@@ -319,23 +393,42 @@ List all TDDraft tests with their references, metadata, and filtering options fo
 # Basic listing
 php artisan tdd:list
 
-# Show detailed information
+# Show detailed information with status tracking
 php artisan tdd:list --details
 
 # Filter by test type
 php artisan tdd:list --type=feature
 php artisan tdd:list --type=unit
 
-# Filter by directory path
+# Filter by directory path  
 php artisan tdd:list --path=Auth
 php artisan tdd:list --path=Api/V1
+
+# Combine filters for precise results
+php artisan tdd:list --type=feature --path=Auth --details
 ```
 
-### Options
+### Filter Options
 
-- `--type=feature|unit`: Filter tests by their type
-- `--path=`: Filter tests by directory path within TDDraft
-- `--details`: Show detailed view with additional metadata
+- `--type=feature|unit`: **Filter tests by their type** (feature or unit tests)
+- `--path=directory`: **Filter tests by directory path** within TDDraft (supports subdirectories)
+- `--details`: **Show detailed view** with additional metadata and status history
+
+### Advanced Filtering Examples
+
+```bash
+# Find all authentication-related feature tests
+php artisan tdd:list --type=feature --path=Auth --details
+
+# Find unit tests in a specific module
+php artisan tdd:list --type=unit --path=Services/Payment
+
+# Get overview of all tests with status information
+php artisan tdd:list --details
+
+# Quick view of specific test type
+php artisan tdd:list --type=unit
+```
 
 ### What it Does
 
