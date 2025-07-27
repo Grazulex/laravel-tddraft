@@ -12,45 +12,47 @@ This directory contains practical examples demonstrating how to use Laravel TDDr
 ## Examples Overview
 
 ### [basic-usage.php](basic-usage.php)
-Demonstrates the complete five-command workflow of Laravel TDDraft:
+Demonstrates the complete five-command workflow of Laravel TDDraft with **extensive filtering examples**:
 - Package installation and setup with `tdd:init`
 - Creating draft tests with `tdd:make` and unique reference tracking
-- Running tests with `tdd:test` command **with automatic status tracking**
-- Listing and managing tests with `tdd:list` command
+- Running tests with `tdd:test` command **with comprehensive filter options**
+- **Advanced filtering by type, path, reference, and status** with `tdd:list` command
 - Promoting tests with `tdd:promote` command
 - TDD Red-Green-Refactor cycle with status monitoring
+- **Pest group-based filtering** for advanced test management
 - Automated and manual test graduation
 - Visual workflow representation with chart.png
 
-**Who should use this:** Developers new to Laravel TDDraft or TDD in general.
+**Who should use this:** Developers new to Laravel TDDraft or TDD in general, especially those wanting to understand the filtering capabilities.
 
 ### [advanced-usage.php](advanced-usage.php)
-Shows advanced patterns and best practices:
+Shows advanced patterns and best practices with **professional filtering strategies**:
 - Complex end-to-end test scenarios with unique references
 - Test organization strategies using subdirectories
 - Advanced test patterns (parameterized tests, performance testing)
-- Professional test management with `tdd:list` filtering
-- Enterprise promotion strategies with `tdd:promote`
+- **Professional test management with advanced `tdd:list` filtering by type, path, and status**
+- **Enterprise promotion strategies** with `tdd:promote` and complex filtering workflows
 - Configuration management for different environments including status tracking
 - Custom test helpers and traits
 - CI/CD integration with automated promotion workflows
-- Performance monitoring and audit trails **using status tracking data**
-- Reference-based test tracking and lineage with historical status data
+- **Performance monitoring and audit trails using filtering for status tracking data**
+- **Reference-based test tracking and lineage** with historical status data
+- **Advanced Pest group filtering** for complex test suite management
 
-**Who should use this:** Experienced developers building complex applications.
+**Who should use this:** Experienced developers building complex applications who need sophisticated filtering and test management.
 
 ### [status-tracking-analysis.php](status-tracking-analysis.php) (NEW)
-Comprehensive guide to status tracking analysis and data-driven TDD workflows:
+Comprehensive guide to status tracking analysis and **data-driven filtering workflows**:
 - Understanding status tracking data structure and insights
-- Custom analysis scripts for test stability assessment
-- Automated promotion workflows based on status history
+- **Custom analysis scripts for test stability assessment using filtered data**
+- **Automated promotion workflows based on status history and filtering criteria**
 - CI/CD integration with status analysis and reporting
 - Custom PHP classes and Laravel commands for status analysis
-- Regression detection and test stability scoring
-- Professional workflow patterns using status data
-- Quality metrics and promotion recommendation systems
+- **Regression detection and test stability scoring using advanced filtering**
+- **Professional workflow patterns using status data and filter combinations**
+- **Quality metrics and promotion recommendation systems with intelligent filtering**
 
-**Who should use this:** Teams implementing professional TDD workflows with data-driven test management.
+**Who should use this:** Teams implementing professional TDD workflows with data-driven test management and advanced filtering requirements.
 
 ## Running the Examples
 
@@ -141,14 +143,20 @@ tests/TDDraft/
 
 ## Common Patterns
 
-### 1. List Management
-```php
-// List all tests with filtering and status information
-php artisan tdd:list --type=feature
-php artisan tdd:list --path=Auth --details
+### 1. List Management with Advanced Filtering
+```bash
+# List all tests with filtering and status information
+php artisan tdd:list --type=feature                   # Filter by type
+php artisan tdd:list --path=Auth --details            # Filter by path with details
+php artisan tdd:list --type=unit --path=Services      # Combine filters
 
-// Review tests with their current status before promotion
-php artisan tdd:list --details
+# Review tests with their current status before promotion
+php artisan tdd:list --details | grep "✅ Passed"     # Find tests ready for promotion
+php artisan tdd:list --details | grep "❌ Failed"     # Find tests needing attention
+
+# Advanced filtering examples
+php artisan tdd:list --type=feature --path=Api/V1     # API feature tests
+php artisan tdd:list --path=Auth/Login --details      # Detailed login tests
 ```
 
 Example output with status tracking:
@@ -175,28 +183,48 @@ Example output with status tracking:
 📊 Total: 2 draft test(s)
 ```
 
-### 2. Automated Promotion
-```php
-// Basic promotion
-php artisan tdd:promote tdd-20250718142530-Abc123
+### 2. Advanced Filtering and Targeting
+```bash
+# Basic promotion with reference filtering
+php artisan tdd:promote tdd-20250727142530-Abc123
 
-// Advanced promotion with options
-php artisan tdd:promote tdd-20250718142530-Abc123 --target=Unit --new-file=UserValidationTest --keep-draft
+# Advanced promotion with options and filtering
+php artisan tdd:promote tdd-20250727142530-Abc123 --target=Unit --new-file=UserValidationTest --keep-draft
+
+# Find tests to promote using filtering
+php artisan tdd:list --type=feature --details | grep "✅ Passed"
+php artisan tdd:list --path=Auth | grep "tdd-"        # Get references for Auth tests
+
+# Batch promotion workflow with filtering
+php artisan tdd:list --type=feature | grep "✅"       # Find stable feature tests
+# Copy references and promote individually
+php artisan tdd:promote tdd-20250727142530-Abc123
+php artisan tdd:promote tdd-20250727142531-Def456
 ```
 
-### 3. API Testing
-```php
-it('returns user profile via API', function (): void {
-    $user = User::factory()->create();
-    
-    $response = $this->actingAs($user)
-        ->getJson('/api/profile');
-    
-    $response->assertStatus(200)
-        ->assertJsonStructure([
-            'data' => ['id', 'name', 'email']
-        ]);
-})->group('tddraft');
+### 3. Test Execution with Comprehensive Filtering
+```bash
+# Basic filtering
+php artisan tdd:test --filter="user registration"
+
+# Reference-based filtering  
+php artisan tdd:test --filter="tdd-20250727142530"    # Partial reference
+php artisan tdd:test --filter="tdd-20250727142530-Abc123"  # Exact reference
+
+# Time-based filtering (using reference timestamps)
+php artisan tdd:test --filter="tdd-20250727"          # All tests from specific day
+php artisan tdd:test --filter="tdd-202507271425"      # Tests from specific time
+
+# Feature/workflow filtering
+php artisan tdd:test --filter="authentication" --coverage
+php artisan tdd:test --filter="api" --parallel
+php artisan tdd:test --filter="payment" --stop-on-failure
+
+# Advanced Pest group filtering
+pest --testsuite=tddraft --group=feature              # Feature tests only
+pest --testsuite=tddraft --group=unit                 # Unit tests only
+pest --testsuite=tddraft --group=tdd-20250727142530   # Specific test
+pest --testsuite=tddraft --group=feature,unit --parallel  # Combined groups
 ```
 
 ### 4. Database Testing
