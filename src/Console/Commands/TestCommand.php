@@ -219,11 +219,48 @@ final class TestCommand extends Command
 
         // Check if filter looks like a TDDraft reference (tdd-YYYYMMDDHHIISS-XXXXXX)
         if (preg_match('/^tdd-\d{14}-[a-zA-Z0-9]{6}$/', $filter)) {
-            return [$filter];
+            // Find all groups that start with this reference
+            return $this->findGroupsForReference($filter);
         }
 
         // For other filters, return empty to use general filtering
         return [];
+    }
+
+    /**
+     * Find all Pest groups that start with the given reference.
+     *
+     * @return array<string>
+     */
+    private function findGroupsForReference(string $reference): array
+    {
+        $groups = [];
+        $tddraftPath = base_path('tests/TDDraft');
+
+        if (! File::exists($tddraftPath)) {
+            return $groups;
+        }
+
+        $files = File::allFiles($tddraftPath);
+
+        foreach ($files as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $content = File::get($file->getPathname());
+
+            // Find all group definitions that start with our reference
+            if (preg_match_all("/->group\([^)]*'({$reference}[^']*)'[^)]*\)/", $content, $matches)) {
+                foreach ($matches[1] as $group) {
+                    if (! in_array($group, $groups)) {
+                        $groups[] = $group;
+                    }
+                }
+            }
+        }
+
+        return $groups;
     }
 
     /**
