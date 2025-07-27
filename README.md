@@ -34,6 +34,55 @@ Laravel TDDraft enables true Test-Driven Development in Laravel applications by 
 
 **The key innovation is the five-command workflow that separates experimental draft tests from production tests, with powerful filtering and status tracking to manage your TDD process professionally.**
 
+## 🏗️ Test Architecture & Isolation
+
+Laravel TDDraft creates a **completely separate testing environment** that doesn't interfere with your existing test suite:
+
+```
+tests/
+├── Feature/           # 🟢 Your production CI tests (unchanged)
+├── Unit/             # 🟢 Your production CI tests (unchanged)  
+└── TDDraft/          # 🔵 Isolated draft tests (new - never affects CI)
+    ├── Feature/      # Draft feature tests
+    ├── Unit/         # Draft unit tests
+    └── .status.json  # Status tracking (auto-generated)
+```
+
+### Key Architectural Benefits:
+
+- **🚫 Zero CI Interference**: TDDraft tests in `tests/TDDraft/` are **completely excluded** from your main test suites
+- **🔄 Independent Operation**: Your existing `tests/Unit/` and `tests/Feature/` continue working exactly as before
+- **📋 Separate Test Suites**: PHPUnit/Pest configuration keeps TDDraft isolated via test suite definitions
+- **⚡ Parallel Development**: Teams can practice TDD in the draft environment while CI runs production tests
+
+### How Isolation Works:
+
+**Standard PHPUnit/Pest Configuration:**
+```xml
+<testsuites>
+    <testsuite name="Unit">
+        <directory suffix="Test.php">tests/Unit</directory>      <!-- Production tests -->
+    </testsuite>
+    <testsuite name="Feature">
+        <directory suffix="Test.php">tests/Feature</directory>   <!-- Production tests -->
+    </testsuite>
+    <!-- tests/TDDraft/ is intentionally NOT included -->
+</testsuites>
+```
+
+**TDDraft Tests Run Separately:**
+```bash
+# Your CI pipeline (unchanged)
+pest                          # Runs only tests/Unit + tests/Feature
+phpunit                       # Runs only tests/Unit + tests/Feature
+
+# TDDraft workflow (isolated)
+php artisan tdd:test         # Runs only tests/TDDraft/**
+pest --testsuite=tddraft     # Alternative access to draft tests
+```
+
+This architectural separation ensures that **failing TDDraft tests never break your CI builds** while you practice the Red-Green-Refactor cycle.
+
 ### 🎯 Why Laravel TDDraft?
 
 **TDD is hard to practice in real projects because:**
@@ -52,7 +101,7 @@ Laravel TDDraft enables true Test-Driven Development in Laravel applications by 
 
 ## ✨ Features
 
-- 🏗️ **Isolated TDD Environment** - Separate `tests/TDDraft/` directory that never affects CI
+- 🏗️ **Complete Test Isolation** - `tests/TDDraft/` directory completely separate from `tests/Unit/` and `tests/Feature/` - never affects CI
 - 🔖 **Unique Reference Tracking** - Every test gets a `tdd-YYYYMMDDHHMMSS-RANDOM` ID for precise tracking
 - 🔍 **Advanced Filtering** - Filter tests by type, path, reference, status, and more
 - 📊 **Automatic Status Tracking** - Monitor test results and history during TDD cycles
@@ -61,7 +110,7 @@ Laravel TDDraft enables true Test-Driven Development in Laravel applications by 
 - 🔄 **True TDD Workflow** - Safe Red-Green-Refactor cycles without breaking builds
 - 📋 **Group-Based Organization** - Pest groups for flexible test filtering and execution
 - ⚡ **Five-Command Simplicity** - Complete TDD workflow with just five intuitive commands
-- 🧪 **Pest Integration** - Full compatibility with Pest testing framework
+- 🧪 **Zero Interference Design** - Your existing Unit/Feature tests continue working unchanged
 
 ## 📦 Installation
 
@@ -433,7 +482,16 @@ Check out the [examples directory](examples) for more detailed examples and patt
 
 ## 🧪 Testing
 
-Laravel TDDraft follows its own philosophy - all tests are organized using the TDD workflow:
+Laravel TDDraft follows its own philosophy - all tests are organized using the TDD workflow with **complete isolation between test environments**:
+
+### Test Architecture
+
+```
+tests/
+├── Feature/           # Package's production tests (for CI)
+├── Unit/             # Package's production tests (for CI)
+└── TDDraft/          # Draft tests (isolated, never affects CI)
+```
 
 ### Running Tests
 
@@ -441,32 +499,37 @@ Laravel TDDraft follows its own philosophy - all tests are organized using the T
 # Install dependencies
 composer install
 
-# Run the main test suite
-pest
+# Run the main CI test suite (production tests only)
+pest                  # Runs tests/Unit + tests/Feature
+pest --coverage       # With coverage for production tests
 
-# Run with coverage
-pest --coverage
+# Run specific production test groups
+pest --group=unit     # Unit tests only
+pest --group=feature  # Feature tests only
 
-# Run specific test groups
-pest --group=unit
-pest --group=feature
+# TDDraft workflow (completely separate)
+php artisan tdd:test  # Runs only tests/TDDraft/** tests
+php artisan tdd:list  # Manage draft tests
 ```
 
-### Test Organization
+### Test Isolation Benefits
 
-```
-tests/
-├── Feature/           # Feature tests for the package
-├── Unit/             # Unit tests for individual components
-└── TDDraft/          # Example draft tests (if any)
-```
+**For Package Development:**
+- Production tests (`tests/Unit/`, `tests/Feature/`) ensure package stability
+- CI pipeline only runs production tests - never broken by experimental code
+- Draft tests demonstrate package capabilities without affecting main suite
+
+**For Package Users:**
+- Your existing `tests/Unit/` and `tests/Feature/` remain unchanged
+- TDDraft adds `tests/TDDraft/` for safe TDD practice
+- No interference between production and draft test environments
 
 ### Writing Tests for This Package
 
 If you're contributing to Laravel TDDraft itself, follow the same TDD principles:
 
 1. Write failing tests first
-2. Implement minimal code to make them pass
+2. Implement minimal code to make them pass  
 3. Refactor while keeping tests green
 
 The package tests itself using the standard Laravel/Pest approach, while providing TDDraft workflow for users.
