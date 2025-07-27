@@ -10,7 +10,4 @@ declare(strict_types=1);
  * Promoted: {{promotedDate}}
  */
 
-class {{className}} extends TestCase
-{
 {{testContent}}
-}

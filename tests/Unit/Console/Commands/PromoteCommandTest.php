@@ -33,7 +33,6 @@ it('can read promoted test stub', function (): void {
     expect(File::exists($stubPath))->toBeTrue();
 
     $content = File::get($stubPath);
-    expect($content)->toContain('{{className}}');
     expect($content)->toContain('{{originalReference}}');
     expect($content)->toContain('{{originalName}}');
     expect($content)->toContain('{{promotedDate}}');
@@ -132,13 +131,14 @@ it('can generate promoted test content using private method', function (): void 
 
     $testInfo = [
         'reference' => 'tdd-20240101120000-abc123',
+        'type' => 'feature',
         'name' => 'User can login',
         'test_content' => "it('user can login', function (): void {\n    expect(\$user->login())->toBeTrue();\n});",
     ];
 
-    $content = $method->invoke($command, 'UserLoginTest', $testInfo);
+    $content = $method->invoke($command, $testInfo);
 
-    expect($content)->toContain('class UserLoginTest extends TestCase');
+    expect($content)->not->toContain('class UserLoginTest extends TestCase');
     expect($content)->toContain('Original Reference: tdd-20240101120000-abc123');
     expect($content)->toContain('Original Name: User can login');
     expect($content)->toContain("it('user can login'");

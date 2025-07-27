@@ -323,10 +323,9 @@ final class PromoteCommand extends Command
 
         if (! File::exists($stubPath)) {
             // Create content without stub
-            $content = $this->generatePromotedTestContent($targetPath['class'], $testInfo);
+            $content = $this->generatePromotedTestContent($testInfo);
         } else {
             $content = File::get($stubPath);
-            $content = str_replace('{{className}}', $targetPath['class'], $content);
             $content = str_replace('{{testContent}}', $this->cleanTestContent($testInfo['test_content']), $content);
             $content = str_replace('{{originalReference}}', $testInfo['reference'], $content);
             $content = str_replace('{{originalName}}', $testInfo['name'], $content);
@@ -364,6 +363,21 @@ final class PromoteCommand extends Command
             if (str_contains($line, "expect(true)->toBeTrue('Replace this")) {
                 continue;
             }
+
+            // Clean up TDDraft groups - remove tddraft group and reference-specific groups
+            if (str_contains($line, '->group(')) {
+                // Remove 'tddraft' and reference-specific groups, keep only the type (unit/feature)
+                $line = preg_replace("/->group\([^)]*'tddraft'[^)]*\)/", '', $line) ?? '';
+                $line = preg_replace("/->group\([^)]*'tdd-\d{14}-[a-zA-Z0-9]{6}[^']*'[^)]*\)/", '', $line) ?? '';
+                // If line becomes empty or just whitespace after group removal, skip it
+                if (trim($line) === '') {
+                    continue;
+                }
+                if (trim($line) === '->group()') {
+                    continue;
+                }
+            }
+
             $cleanedLines[] = $line;
         }
 
@@ -375,7 +389,7 @@ final class PromoteCommand extends Command
      *
      * @param  array{reference: string, type: string, name: string, test_content: string}  $testInfo
      */
-    private function generatePromotedTestContent(string $className, array $testInfo): string
+    private function generatePromotedTestContent(array $testInfo): string
     {
         $cleanTestContent = $this->cleanTestContent($testInfo['test_content']);
 
@@ -385,14 +399,13 @@ declare(strict_types=1);
 
 /**
  * Promoted from TDDraft
+ * 
  * Original Reference: {$testInfo['reference']}
  * Original Name: {$testInfo['name']}
+ * Promoted: " . now()->format('Y-m-d H:i:s') . "
  */
 
-class {$className} extends TestCase
-{
 {$cleanTestContent}
-}
 ";
     }
 }
