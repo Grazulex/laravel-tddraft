@@ -87,9 +87,97 @@ PHP;
 
 echo $exampleTest . "\n\n";
 
-// Example 4: Running Tests with Status Tracking
-echo "4. Running Tests with tdd:test (Status Tracking)\n";
+// Example 4: Advanced Filtering and Group Options
+echo "4. Advanced Filtering and Group Options\n";
+echo "=======================================\n";
+echo "Laravel TDDraft provides powerful filtering capabilities across all commands:\n\n";
+
+echo "A. tdd:test Command Filtering:\n";
+echo "------------------------------\n";
+echo "  # Filter by test name or description\n";
+echo "  php artisan tdd:test --filter=\"registration\"\n";
+echo "  php artisan tdd:test --filter=\"user login\"\n\n";
+
+echo "  # Filter by specific reference (exact)\n";
+echo "  php artisan tdd:test --filter=\"tdd-20250727142530-Abc123\"\n\n";
+
+echo "  # Filter by partial reference (time-based)\n";
+echo "  php artisan tdd:test --filter=\"tdd-20250727\"        # All tests from specific day\n";
+echo "  php artisan tdd:test --filter=\"tdd-202507271425\"    # Tests from specific time\n\n";
+
+echo "  # Combine with performance options\n";
+echo "  php artisan tdd:test --filter=\"api\" --coverage --parallel\n";
+echo "  php artisan tdd:test --filter=\"authentication\" --stop-on-failure\n\n";
+
+echo "B. Pest Group System Filtering:\n";
+echo "-------------------------------\n";
+echo "Every test gets multiple groups for flexible filtering:\n";
+echo "  • 'tddraft' - All TDDraft tests\n";
+echo "  • 'feature' or 'unit' - Test type\n";
+echo "  • 'tdd-YYYYMMDDHHMMSS-RANDOM' - Unique reference\n\n";
+
+echo "  # Run only feature draft tests\n";
+echo "  pest --testsuite=tddraft --group=feature\n\n";
+
+echo "  # Run only unit draft tests\n";
+echo "  pest --testsuite=tddraft --group=unit\n\n";
+
+echo "  # Run specific test by reference\n";
+echo "  pest --testsuite=tddraft --group=tdd-20250727142530-Abc123\n\n";
+
+echo "  # Combine groups and options\n";
+echo "  pest --testsuite=tddraft --group=feature,unit --parallel\n";
+echo "  pest --testsuite=tddraft --group=feature --coverage\n\n";
+
+echo "C. tdd:list Command Filtering:\n";
+echo "------------------------------\n";
+echo "  # Filter by test type\n";
+echo "  php artisan tdd:list --type=feature\n";
+echo "  php artisan tdd:list --type=unit\n\n";
+
+echo "  # Filter by directory path\n";
+echo "  php artisan tdd:list --path=Auth\n";
+echo "  php artisan tdd:list --path=Api/V1\n";
+echo "  php artisan tdd:list --path=Services/Payment\n\n";
+
+echo "  # Show detailed view with status information\n";
+echo "  php artisan tdd:list --details\n\n";
+
+echo "  # Combine filters for precise results\n";
+echo "  php artisan tdd:list --type=feature --path=Auth --details\n";
+echo "  php artisan tdd:list --type=unit --path=Services\n\n";
+
+echo "D. Status-Based Filtering (for test management):\n";
 echo "------------------------------------------------\n";
+echo "  # Find tests ready for promotion\n";
+echo "  php artisan tdd:list --details | grep \"✅ Passed\"\n\n";
+
+echo "  # Find tests needing attention\n";
+echo "  php artisan tdd:list --details | grep \"❌ Failed\"\n\n";
+
+echo "  # Get references for batch operations\n";
+echo "  php artisan tdd:list --type=feature | grep \"tdd-\"\n\n";
+
+echo "E. Reference-Based Operations:\n";
+echo "------------------------------\n";
+echo "Each test gets a unique reference for precise tracking:\n\n";
+
+echo "  # Create test (generates unique reference)\n";
+echo "  php artisan tdd:make \"User login validation\"\n";
+echo "  # Output: Reference: tdd-20250727142530-Abc123\n\n";
+
+echo "  # Run specific test by exact reference\n";
+echo "  php artisan tdd:test --filter=\"tdd-20250727142530-Abc123\"\n\n";
+
+echo "  # Promote specific test by reference\n";
+echo "  php artisan tdd:promote tdd-20250727142530-Abc123\n\n";
+
+echo "  # Find references using list command\n";
+echo "  php artisan tdd:list | grep \"tdd-\" | head -5\n\n";
+
+// Example 5: Running Tests with Status Tracking
+echo "5. Running Tests with Status Tracking\n";
+echo "=====================================\n";
 echo "Use the dedicated test command with automatic status tracking:\n\n";
 
 echo "  # Run all draft tests (with automatic status tracking)\n";
@@ -156,9 +244,9 @@ echo "  pest --testsuite=tddraft          # Draft tests only\n";
 echo "  pest                              # Main tests only (excludes drafts)\n";
 echo "  pest --testsuite=default,tddraft  # All tests\n\n";
 
-// Example 5: TDD Workflow with Reference Tracking and Promotion
-echo "5. Complete TDD Workflow with All Commands\n";
-echo "------------------------------------------\n";
+// Example 6: TDD Workflow with Reference Tracking and Promotion
+echo "6. Complete TDD Workflow with All Commands\n";
+echo "==========================================\n";
 echo "1. INIT: Set up environment with tdd:init\n";
 echo "2. CREATE: Write failing test using tdd:make\n";
 echo "3. RED: Run test and see it fail with tdd:test\n";
@@ -193,22 +281,72 @@ echo "  php artisan tdd:promote tdd-20250718142530-Abc123\n\n";
 echo "  # Verify promoted test works\n";
 echo "  pest tests/Feature/UserCanRegisterTest.php\n\n";
 
-// Example 6: Advanced Filtering
-echo "6. Advanced Filtering with References\n";
-echo "-------------------------------------\n";
-echo "Filter by test type:\n";
-echo "  php artisan tdd:test --group=feature\n";
-echo "  pest --testsuite=tddraft --group=unit\n\n";
+// Example 7: Real-World Filtering Examples
+echo "7. Real-World Filtering Examples\n";
+echo "================================\n";
+echo "Practical examples of using filters in development workflows:\n\n";
 
-echo "Filter by specific reference:\n";
-echo "  pest --testsuite=tddraft --group=tdd-20250718142530-Abc123\n\n";
+echo "Scenario A: Feature Development\n";
+echo "-------------------------------\n";
+echo "  # Create tests for authentication feature\n";
+echo "  php artisan tdd:make \"User can login\" --path=Auth/Login\n";
+echo "  php artisan tdd:make \"User can logout\" --path=Auth/Login\n";
+echo "  php artisan tdd:make \"Login validation\" --type=unit --path=Auth\n\n";
 
-echo "Filter by name pattern:\n";
-echo "  php artisan tdd:test --filter=\"password\"\n\n";
+echo "  # Run all authentication tests\n";
+echo "  php artisan tdd:test --filter=\"login\"\n";
+echo "  php artisan tdd:list --path=Auth --details\n\n";
 
-// Example 7: List and Manage Tests
-echo "7. List and Manage Tests with tdd:list\n";
-echo "--------------------------------------\n";
+echo "  # Run only login feature tests\n";
+echo "  php artisan tdd:list --type=feature --path=Auth/Login\n";
+echo "  php artisan tdd:test --filter=\"login\" --coverage\n\n";
+
+echo "Scenario B: API Development\n";
+echo "---------------------------\n";
+echo "  # Create API tests\n";
+echo "  php artisan tdd:make \"API user registration\" --path=Api/V1\n";
+echo "  php artisan tdd:make \"API validation rules\" --type=unit --path=Api\n\n";
+
+echo "  # Filter and test API functionality\n";
+echo "  php artisan tdd:list --path=Api --details\n";
+echo "  php artisan tdd:test --filter=\"api\" --parallel\n\n";
+
+echo "Scenario C: Bug Fixing\n";
+echo "----------------------\n";
+echo "  # Create test for specific bug\n";
+echo "  php artisan tdd:make \"Password reset bug fix\"\n";
+echo "  # Reference: tdd-20250727142530-Bug123\n\n";
+
+echo "  # Test specific bug fix\n";
+echo "  php artisan tdd:test --filter=\"tdd-20250727142530-Bug123\"\n\n";
+
+echo "  # Monitor until fixed, then promote\n";
+echo "  php artisan tdd:promote tdd-20250727142530-Bug123\n\n";
+
+echo "Scenario D: Batch Management\n";
+echo "----------------------------\n";
+echo "  # Find all stable feature tests\n";
+echo "  php artisan tdd:list --type=feature --details | grep \"✅ Passed\"\n\n";
+
+echo "  # Batch promote stable tests\n";
+echo "  # (copy references from above output)\n";
+echo "  php artisan tdd:promote tdd-20250727142530-Abc123\n";
+echo "  php artisan tdd:promote tdd-20250727142531-Def456\n\n";
+
+echo "Scenario E: Time-Based Analysis\n";
+echo "------------------------------\n";
+echo "  # Tests created today\n";
+echo "  php artisan tdd:list | grep \"tdd-20250727\"\n\n";
+
+echo "  # Tests from specific hour (debugging session)\n";
+echo "  php artisan tdd:test --filter=\"tdd-202507271425\"\n\n";
+
+echo "  # All tests from morning work session\n";
+echo "  php artisan tdd:list --details | grep \"09:\"\n\n";
+
+// Example 8: List and Manage Tests
+echo "8. List and Manage Tests with tdd:list\n";
+echo "======================================\n";
 echo "Use the list command to view and manage your draft tests:\n\n";
 
 echo "  # List all draft tests\n";
@@ -246,8 +384,9 @@ OUTPUT;
 
 echo $listOutput . "\n\n";
 
-// Example 8: Promote Tests
-echo "8. Promote Tests with tdd:promote\n";
+// Example 9: Promote Tests
+echo "9. Promote Tests with tdd:promote\n";
+echo "=================================\n";
 echo "---------------------------------\n";
 echo "Use the promote command to move ready tests to CI suite:\n\n";
 
