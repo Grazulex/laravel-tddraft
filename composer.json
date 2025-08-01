@@ -65,7 +65,8 @@
         "issues": "https://github.com/Grazulex/laravel-tddraft/issues",
         "source": "https://github.com/Grazulex/laravel-tddraft",
         "forum": "https://github.com/Grazulex/laravel-tddraft/discussions",
-        "docs": "https://github.com/Grazulex/laravel-tddraft#readme"
+        "docs": "https://github.com/Grazulex/laravel-tddraft/wiki",
+        "wiki": "https://github.com/Grazulex/laravel-tddraft/wiki"
     },
     "scripts": {
         "test": [

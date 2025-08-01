@@ -381,104 +381,50 @@ php artisan tdd:list --details | grep "❌ Failed"   # Find tests needing attent
 
 ## 📚 Documentation
 
-For detailed documentation, examples, and advanced usage:
+For detailed documentation, examples, and advanced usage, please visit our comprehensive wiki:
 
-- 📚 [Full Documentation](docs/README.md)
-- 🎯 [Examples](examples/README.md)
-- 🔧 [Configuration](docs/configuration.md)
-- 🧪 [Test Templates](docs/templates.md)
-- 📊 [Coverage Reports](docs/coverage.md)
+**🌟 [Complete Documentation & Examples Wiki](https://github.com/Grazulex/laravel-tddraft/wiki)**
+
+### Quick Links:
+- � [Full Documentation](https://github.com/Grazulex/laravel-tddraft/wiki)
+- 🚀 [Quick Start Guide](https://github.com/Grazulex/laravel-tddraft/wiki/Quick-Start)
+- 🔧 [Configuration](https://github.com/Grazulex/laravel-tddraft/wiki/Configuration)
+- 💡 [Advanced Examples](https://github.com/Grazulex/laravel-tddraft/wiki/Examples)
+- 🎯 [Best Practices](https://github.com/Grazulex/laravel-tddraft/wiki/Best-Practices)
+- 🧪 [Test Templates](https://github.com/Grazulex/laravel-tddraft/wiki/Templates)
+- 📊 [Coverage & Reporting](https://github.com/Grazulex/laravel-tddraft/wiki/Coverage)
 
 ## 💡 Examples
 
-### Complete TDD Workflow Example
+### Basic TDD Workflow
 
 ```bash
 # 1. Setup (one-time)
 php artisan tdd:init
 
-# 2. Red Phase - Create failing tests
+# 2. Create failing test (Red phase)
 php artisan tdd:make "User can register with valid email"
-php artisan tdd:make "User registration validates email format" --type=unit
-php artisan tdd:make "User registration sends welcome email"
 
-# 3. Green Phase - Iterate with filtering
-php artisan tdd:test --filter="registration"           # Run all registration tests
-php artisan tdd:test --filter="email format"          # Run validation test
-php artisan tdd:test --filter="tdd-20250727142530"     # Run specific test by reference
+# 3. Run tests and implement code (Green phase)
+php artisan tdd:test --filter="register"
 
-# 4. Review Phase - Manage with advanced filtering
-php artisan tdd:list                                   # Overview of all tests
-php artisan tdd:list --type=feature --details          # Feature tests with status
-php artisan tdd:list --path=Auth                       # Tests in Auth directory
+# 4. List and manage your tests
+php artisan tdd:list --details
 
-# 5. Promotion Phase - Graduate mature tests
-php artisan tdd:promote tdd-20250727142530-Abc123     # Basic promotion
-php artisan tdd:promote tdd-20250727142531-Def456 --target=Unit --new-file=EmailValidationTest
+# 5. Promote stable tests to CI
+php artisan tdd:promote tdd-20250727142530-Abc123
 ```
 
-### Advanced Filtering Examples
+### Advanced Usage
 
-```bash
-# Organization by feature
-php artisan tdd:make "User login validation" --path=Auth/Login
-php artisan tdd:make "Password reset flow" --path=Auth/Password
-php artisan tdd:make "API authentication" --path=Auth/Api
+For comprehensive examples including:
+- **Real-world TDD workflows**
+- **Advanced filtering techniques**
+- **Team collaboration patterns**
+- **Integration with CI/CD**
+- **Performance optimization**
 
-# Filter by organization
-php artisan tdd:list --path=Auth/Login --details
-php artisan tdd:test --filter="login"
-
-# Type-based filtering
-php artisan tdd:list --type=unit                       # All unit tests
-php artisan tdd:list --type=feature --path=Api         # Feature tests in Api directory
-
-# Status-based management
-php artisan tdd:list --details | grep "✅ Passed"      # Find tests ready for promotion
-php artisan tdd:list --details | grep "❌ Failed"      # Find tests needing attention
-```
-
-### Group-Based Pest Commands
-
-```bash
-# Direct Pest filtering (alternative to tdd:test)
-pest --testsuite=tddraft --group=feature              # All feature drafts
-pest --testsuite=tddraft --group=unit                 # All unit drafts
-pest --testsuite=tddraft --group=tdd-20250727142530   # Specific test by reference
-
-# Combined with standard Pest options
-pest --testsuite=tddraft --group=feature --parallel   # Parallel execution
-pest --testsuite=tddraft --group=unit --coverage      # With coverage
-```
-
-### Real-World TDD Session
-
-```bash
-# Starting a new feature: User Profile Management
-php artisan tdd:make "User can view their profile"
-php artisan tdd:make "User can update profile information" 
-php artisan tdd:make "Profile validation rules" --type=unit
-
-# Iterative development with filtering
-php artisan tdd:test --filter="profile"               # Run all profile tests
-# ❌ Tests fail - this is expected (Red phase)
-
-# Implement minimal code to make tests pass
-# ... code implementation ...
-
-php artisan tdd:test --filter="profile"               # Run again
-# ✅ Tests pass (Green phase)
-
-# Review and manage
-php artisan tdd:list --details                        # Check status of all tests
-php artisan tdd:list --path=Profile                   # Focus on profile tests
-
-# Graduate to CI when ready
-php artisan tdd:list | grep "✅ Passed"               # Find stable tests
-php artisan tdd:promote tdd-20250727142530-Abc123     # Promote specific test
-```
-
-Check out the [examples directory](examples) for more detailed examples and patterns.
+**👉 Visit our [Examples Wiki](https://github.com/Grazulex/laravel-tddraft/wiki/Examples)**
 
 ## 🧪 Testing
 
@@ -563,7 +509,7 @@ Laravel TDDraft is open-sourced software licensed under the [MIT license](LICENS
 
 ### Resources
 
-- [📖 Documentation](docs/README.md)
+- [📖 Documentation Wiki](https://github.com/Grazulex/laravel-tddraft/wiki)
 - [💬 Discussions](https://github.com/Grazulex/laravel-tddraft/discussions)
 - [🐛 Issue Tracker](https://github.com/Grazulex/laravel-tddraft/issues)
 - [📦 Packagist](https://packagist.org/packages/grazulex/laravel-tddraft)
