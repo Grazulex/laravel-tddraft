@@ -93,7 +93,6 @@ it('can extract reference from test data using private method', function (): voi
     $tracker = new StatusTracker;
     $reflection = new ReflectionClass($tracker);
     $method = $reflection->getMethod('extractReference');
-    $method->setAccessible(true);
 
     // Test with groups
     $testData = [
@@ -125,7 +124,6 @@ it('can determine test status using private method', function (): void {
     $tracker = new StatusTracker;
     $reflection = new ReflectionClass($tracker);
     $method = $reflection->getMethod('determineStatus');
-    $method->setAccessible(true);
 
     // Test passed
     $testData = ['status' => 'passed'];

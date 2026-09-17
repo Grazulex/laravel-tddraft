@@ -160,11 +160,11 @@ final class ListCommand extends Command
         $pathFilter = $this->option('path');
 
         if ($typeFilter) {
-            $drafts = array_filter($drafts, fn ($draft): bool => strtolower($draft['type']) === strtolower($typeFilter));
+            $drafts = array_filter($drafts, fn (array $draft): bool => strtolower($draft['type']) === strtolower($typeFilter));
         }
 
         if ($pathFilter) {
-            return array_filter($drafts, fn ($draft): bool => str_contains(strtolower($draft['path']), strtolower($pathFilter)));
+            return array_filter($drafts, fn (array $draft): bool => str_contains(strtolower($draft['path']), strtolower($pathFilter)));
         }
 
         return $drafts;

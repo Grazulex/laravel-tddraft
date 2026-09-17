@@ -50,7 +50,6 @@ it('can parse draft file metadata using private method', function (): void {
     $command = new ListCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('parseDraftFile');
-    $method->setAccessible(true);
 
     // Create a mock draft file content
     $draftContent = "<?php
@@ -94,7 +93,6 @@ it('can apply type filter using private method', function (): void {
     $command = new ListCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('applyFilters');
-    $method->setAccessible(true);
 
     $drafts = [
         'ref1' => ['reference' => 'ref1', 'name' => 'Test 1', 'type' => 'feature', 'file' => 'Test1.php', 'path' => 'Test1.php', 'created' => null],
@@ -103,7 +101,7 @@ it('can apply type filter using private method', function (): void {
     ];
 
     // Test the filter logic directly without mocking
-    $filtered = array_filter($drafts, fn ($draft): bool => strtolower((string) $draft['type']) === 'feature');
+    $filtered = array_filter($drafts, fn (array $draft): bool => strtolower((string) $draft['type']) === 'feature');
 
     expect($filtered)->toHaveCount(2);
     expect($filtered)->toHaveKeys(['ref1', 'ref3']);
@@ -113,7 +111,6 @@ it('can truncate text using private method', function (): void {
     $command = new ListCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('truncate');
-    $method->setAccessible(true);
 
     $shortText = 'Short text';
     $longText = 'This is a very long text that should be truncated';
@@ -126,7 +123,6 @@ it('can collect drafts from directory using private method', function (): void {
     $command = new ListCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('collectDrafts');
-    $method->setAccessible(true);
 
     // Create temporary directory and files
     $tempDir = sys_get_temp_dir() . '/tdd_test_' . uniqid();
@@ -166,7 +162,6 @@ it('returns null for invalid draft files using private method', function (): voi
     $command = new ListCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('parseDraftFile');
-    $method->setAccessible(true);
 
     // Create a file without TDDraft metadata
     $invalidContent = "<?php
