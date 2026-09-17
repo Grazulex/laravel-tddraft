@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Applied Rector suggestions: removed redundant `ReflectionMethod::setAccessible()` / `ReflectionProperty::setAccessible()` calls in tests (no-op since PHP 8.1), added `array` type hints on filter closures in `ListCommand`, and used `??=` when initialising a test entry in `StatusTracker`.
+- GitHub Actions: `actions/checkout` bumped to v5 and `softprops/action-gh-release` to v2.
+
+### Removed
+
+- Unused `doctrine/dbal` development dependency.
+
 ## [v1.3.0] - 2026-09-17
 
 ### Added

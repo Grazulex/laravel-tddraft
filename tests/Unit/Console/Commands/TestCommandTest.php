@@ -95,7 +95,6 @@ it('can test command construction and properties', function (): void {
     $reflection = new ReflectionClass($command);
 
     $signatureProperty = $reflection->getProperty('signature');
-    $signatureProperty->setAccessible(true);
     $signature = $signatureProperty->getValue($command);
 
     expect($signature)->toContain('tdd:test');
@@ -105,7 +104,6 @@ it('can test command construction and properties', function (): void {
     expect($signature)->toContain('--stop-on-failure');
 
     $descriptionProperty = $reflection->getProperty('description');
-    $descriptionProperty->setAccessible(true);
     $description = $descriptionProperty->getValue($command);
 
     expect($description)->toBe('Run TDDraft tests only (alias for pest --testsuite=tddraft)');

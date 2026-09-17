@@ -136,7 +136,6 @@ it('can show manual phpunit instructions using private method', function (): voi
     $command = new InitCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('showManualPhpUnitInstructions');
-    $method->setAccessible(true);
 
     // This method just outputs instructions, we can test it doesn't throw
     expect(fn (): mixed => $method->invoke($command))->not()->toThrow(Exception::class);
@@ -146,7 +145,6 @@ it('can show manual pest instructions using private method', function (): void {
     $command = new InitCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('showManualPestInstructions');
-    $method->setAccessible(true);
 
     // This method just outputs instructions, we can test it doesn't throw
     expect(fn (): mixed => $method->invoke($command))->not()->toThrow(Exception::class);

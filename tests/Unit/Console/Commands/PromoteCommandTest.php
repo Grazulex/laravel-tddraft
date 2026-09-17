@@ -44,7 +44,6 @@ it('can parse draft file content using private method', function (): void {
     $command = new PromoteCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('parseDraftFile');
-    $method->setAccessible(true);
 
     // Create a mock draft file content
     $draftContent = "/**
@@ -80,7 +79,6 @@ it('can determine target directory using private method', function (): void {
     $command = new PromoteCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('determineTargetDirectory');
-    $method->setAccessible(true);
 
     // Test with explicit target
     expect($method->invoke($command, 'feature', null))->toBe('Feature');
@@ -99,7 +97,6 @@ it('can clean test content using private method', function (): void {
     $command = new PromoteCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('cleanTestContent');
-    $method->setAccessible(true);
 
     $draftContent = "it('user can login', function (): void {
     // TODO: Implement your test scenario here
@@ -127,7 +124,6 @@ it('can generate promoted test content using private method', function (): void 
     $command = new PromoteCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('generatePromotedTestContent');
-    $method->setAccessible(true);
 
     $testInfo = [
         'reference' => 'tdd-20240101120000-abc123',

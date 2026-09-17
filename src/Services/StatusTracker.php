@@ -102,13 +102,11 @@ final readonly class StatusTracker
         $timestamp = date('c'); // ISO 8601 format string
 
         // Initialize test entry if not exists
-        if (! isset($data[$reference])) {
-            $data[$reference] = [
-                'status' => $status,
-                'updated_at' => $timestamp,
-                'history' => [],
-            ];
-        }
+        $data[$reference] ??= [
+            'status' => $status,
+            'updated_at' => $timestamp,
+            'history' => [],
+        ];
 
         // Update status if different
         if ($data[$reference]['status'] !== $status) {

@@ -119,7 +119,6 @@ it('can generate unique reference using private method', function (): void {
     $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('generateUniqueReference');
-    $method->setAccessible(true);
 
     $reference = $method->invoke($command);
 
@@ -136,7 +135,6 @@ it('can determine file path using private method', function (): void {
     $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('determineFilePath');
-    $method->setAccessible(true);
 
     // Test without custom path
     $filePath = $method->invoke($command, 'User login test', null);
@@ -152,7 +150,6 @@ it('can generate filename using private method', function (): void {
     $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('generateFilename');
-    $method->setAccessible(true);
 
     expect($method->invoke($command, 'user can login'))->toBe('UserCanLoginTest.php');
     expect($method->invoke($command, 'password validation'))->toBe('PasswordValidationTest.php');
@@ -164,7 +161,6 @@ it('can determine class name using private method', function (): void {
     $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('determineClassName');
-    $method->setAccessible(true);
 
     // Test without custom class
     $className = $method->invoke($command, 'user registration', null);
@@ -179,7 +175,6 @@ it('can generate test content using private method', function (): void {
     $command = new MakeCommand;
     $reflection = new ReflectionClass($command);
     $method = $reflection->getMethod('generateTestContent');
-    $method->setAccessible(true);
 
     $content = $method->invoke($command, 'User login test', 'feature', 'tdd-20240101120000-abc123');
 
