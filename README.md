@@ -8,7 +8,7 @@ A Laravel package that enables safe Test-Driven Development with isolated draft 
 [![Total Downloads](https://img.shields.io/packagist/dt/grazulex/laravel-tddraft.svg?style=flat-square)](https://packagist.org/packages/grazulex/laravel-tddraft)
 [![License](https://img.shields.io/github/license/grazulex/laravel-tddraft.svg?style=flat-square)](https://github.com/Grazulex/laravel-tddraft/blob/main/LICENSE.md)
 [![PHP Version](https://img.shields.io/packagist/php-v/grazulex/laravel-tddraft.svg?style=flat-square)](https://php.net/)
-[![Laravel Version](https://img.shields.io/badge/laravel-12.x-ff2d20?style=flat-square&logo=laravel)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/laravel-12.x%20%7C%2013.x-ff2d20?style=flat-square&logo=laravel)](https://laravel.com/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/grazulex/laravel-tddraft/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/Grazulex/laravel-tddraft/actions)
 [![Code Style](https://img.shields.io/badge/code%20style-pint-000000?style=flat-square&logo=laravel)](https://github.com/laravel/pint)
 
@@ -483,12 +483,12 @@ The package tests itself using the standard Laravel/Pest approach, while providi
 ## 🔧 Requirements
 
 - **PHP**: ^8.3
-- **Laravel**: ^12.0
-- **Pest**: ^3.0 (for testing framework)
+- **Laravel**: ^12.0 or ^13.0
+- **Pest**: ^3.0 or ^4.0 (for testing framework)
 
 ### Optional Dependencies
 
-- **PHPUnit**: ^11.0 (alternative to Pest)
+- **PHPUnit**: ^11.0 or ^12.0 (alternative to Pest)
 - **Docker**: For containerized development (optional)
 
 ## 🤝 Contributing
