@@ -74,11 +74,9 @@ final class TestCommand extends Command
         $process->setTty(false);
         $output = '';
 
-        $exitCode = $process->run(function ($type, $buffer) use (&$output): void {
-            if (is_string($buffer)) {
-                echo $buffer;
-                $output .= $buffer;
-            }
+        $exitCode = $process->run(function (string $type, string $buffer) use (&$output): void {
+            echo $buffer;
+            $output .= $buffer;
         });
 
         // Update test statuses based on results
