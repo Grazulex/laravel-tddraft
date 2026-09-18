@@ -2,6 +2,12 @@
 
 <img src="new_logo.png" alt="Laravel TDDraft" width="200">
 
+> [!TIP]
+> **What Laravel TDDraft does for you** — Practice real Test-Driven Development without breaking the team build: write red draft tests in an isolated suite, promote them to the real test suite once they pass, and track their status along the way.
+>
+> **This package is free and maintained on my own time.** If it saves you hours, a small contribution helps me keep it going:
+> [💖 GitHub Sponsors](https://github.com/sponsors/Grazulex) · [☕ Buy Me a Coffee](https://buymeacoffee.com/grazulex) · [PayPal](https://paypal.me/strauven)
+
 A Laravel package that enables safe Test-Driven Development with isolated draft testing, unique reference tracking, and powerful filtering options for professional TDD workflows.
 
 [![Latest Version](https://img.shields.io/packagist/v/grazulex/laravel-tddraft.svg?style=flat-square)](https://packagist.org/packages/grazulex/laravel-tddraft)
@@ -498,6 +504,14 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ## 🔒 Security
 
 If you discover a security vulnerability, please review our [Security Policy](SECURITY.md) before disclosing it.
+
+## 💖 Support This Package
+
+Laravel TDDraft is free, open source and maintained on my own time. If it saves you hours, here is how you can give back:
+
+- ⭐ **Star the repository** — it helps other developers find it
+- 🐦 **Share it** with your team and network
+- 💖 **[Sponsor on GitHub](https://github.com/sponsors/Grazulex)**, **[buy me a coffee](https://buymeacoffee.com/grazulex)** or **[donate via PayPal](https://paypal.me/strauven)** — every contribution funds maintenance, new features and Laravel upgrades
 
 ## 📄 License
 
