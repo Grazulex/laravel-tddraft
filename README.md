@@ -392,7 +392,7 @@ For detailed documentation, examples, and advanced usage, please visit our compr
 **🌟 [Complete Documentation & Examples Wiki](https://github.com/Grazulex/laravel-tddraft/wiki)**
 
 ### Quick Links:
-- � [Full Documentation](https://github.com/Grazulex/laravel-tddraft/wiki)
+- 📚 [Full Documentation](https://github.com/Grazulex/laravel-tddraft/wiki)
 - 🚀 [Quick Start Guide](https://github.com/Grazulex/laravel-tddraft/wiki/Quick-Start)
 - 🔧 [Configuration](https://github.com/Grazulex/laravel-tddraft/wiki/Configuration)
 - 💡 [Advanced Examples](https://github.com/Grazulex/laravel-tddraft/wiki/Examples)
