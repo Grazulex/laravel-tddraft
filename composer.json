@@ -1,6 +1,6 @@
 {
     "name": "grazulex/laravel-tddraft",
-    "description": "A powerful Laravel package that provides LaravelTddraft functionality with modern PHP 8.3+ features.",
+    "description": "A powerful Laravel package that provides LaravelTddraft functionality with modern PHP 8.4+ features.",
     "keywords": [
         "laravel",
         "tdd",
@@ -11,14 +11,14 @@
         "exploratory-testing",
         "red-green-refactor",
         "clean-code",
-        "php8.3",
+        "php8.4",
         "laravel12",
         "laravel13"
     ],
     "type": "library",
     "homepage": "https://github.com/grazulex/laravel-tddraft",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "illuminate/support": "^12.0|^13.0",
         "nesbot/carbon": "^3.10",
         "illuminate/contracts": "^12.0|^13.0"
