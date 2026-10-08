@@ -488,7 +488,7 @@ The package tests itself using the standard Laravel/Pest approach, while providi
 
 ## 🔧 Requirements
 
-- **PHP**: ^8.3
+- **PHP**: ^8.4
 - **Laravel**: ^12.0 or ^13.0
 - **Pest**: ^3.0 or ^4.0 (for testing framework)
 
