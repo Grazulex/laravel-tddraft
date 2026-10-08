@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.0] - 2026-10-08
+
 ### Changed
 
+- **Minimum PHP version is now 8.4**: PHP 8.3 is no longer supported (#36)
+- CI test matrix now runs PHP 8.4 and 8.5 (#36)
 - Applied Rector suggestions: removed redundant `ReflectionMethod::setAccessible()` / `ReflectionProperty::setAccessible()` calls in tests (no-op since PHP 8.1), added `array` type hints on filter closures in `ListCommand`, and used `??=` when initialising a test entry in `StatusTracker`.
 - GitHub Actions: `actions/checkout` bumped to v5 and `softprops/action-gh-release` to v2.
 
@@ -39,5 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Previous release. See the [GitHub releases](https://github.com/Grazulex/laravel-tddraft/releases) for details.
 
+[v1.4.0]: https://github.com/Grazulex/laravel-tddraft/compare/v1.3.0...v1.4.0
 [v1.3.0]: https://github.com/Grazulex/laravel-tddraft/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/Grazulex/laravel-tddraft/releases/tag/v1.2.0
