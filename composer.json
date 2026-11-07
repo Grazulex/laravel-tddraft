@@ -32,7 +32,7 @@
         "orchestra/testbench": "^10.0|^11.0"
     },
     "suggest": {
-        "pestphp/pest": "Required to run and generate TDDraft tests (version >=3.0, Pest 4 supported)"
+        "pestphp/pest": "Required to run and generate TDDraft tests (Pest 3.8+, 4.7+ or 5 supported)"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
