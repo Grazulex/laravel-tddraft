@@ -9,17 +9,24 @@ use Grazulex\LaravelTddraft\Services\StatusTracker;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Symfony\Component\Process\Process;
 
 final class PromoteCommand extends Command
 {
-    protected $signature = 'tdd:promote 
+    /**
+     * Last recorded status a draft test needs before it can be promoted.
+     */
+    private const string REQUIRED_STATUS = 'passed';
+
+    protected $signature = 'tdd:promote
                            {reference : The unique reference of the TDDraft test to promote}
                            {--target= : Target directory (Feature|Unit) - if not specified, uses the test type}
                            {--file= : Existing file to append to (optional)}
                            {--new-file= : New file name to create (optional)}
                            {--class= : Target test class name (optional)}
-                           {--force : Overwrite existing files without confirmation}
-                           {--keep-draft : Keep the original draft file after promotion}';
+                           {--force : Overwrite existing files without confirmation and promote even if the last status is not passed}
+                           {--keep-draft : Keep the original draft file after promotion}
+                           {--run : Run the promoted test in its target suite after promotion}';
 
     protected $description = 'Promote a TDDraft test to the CI test suite (tests/Feature or tests/Unit)';
 
@@ -48,6 +55,11 @@ final class PromoteCommand extends Command
         if (! $testInfo) {
             $this->error('❌ Could not parse the draft test file');
 
+            return self::FAILURE;
+        }
+
+        // Refuse to promote a test that is not known to pass
+        if (! $this->passesPromotionGuard($testInfo['reference'], (bool) $force)) {
             return self::FAILURE;
         }
 
@@ -89,7 +101,78 @@ final class PromoteCommand extends Command
         $this->info("✅ Successfully promoted test to: {$targetPath['file']}");
         $this->info("🎯 Test class: {$targetPath['class']}");
 
+        // Optionally verify the promoted test in its target suite
+        if ($this->option('run') && ! $this->runPromotedTest($targetPath['file'])) {
+            return self::FAILURE;
+        }
+
         return self::SUCCESS;
+    }
+
+    /**
+     * Check that the draft test last passed before promoting it.
+     */
+    private function passesPromotionGuard(string $reference, bool $force): bool
+    {
+        if (! config('tddraft.status_tracking.enabled', true)) {
+            $this->comment('ℹ️  Status tracking is disabled: the test status was not checked before promotion');
+
+            return true;
+        }
+
+        $status = (new StatusTracker)->getTestStatus($reference);
+
+        if ($status === self::REQUIRED_STATUS) {
+            return true;
+        }
+
+        $statusLabel = $status ?? 'never run';
+
+        if ($force) {
+            $this->warn("⚠️  Promoting despite last status '{$statusLabel}' (--force)");
+
+            return true;
+        }
+
+        $this->error("❌ Cannot promote {$reference}: last status is '{$statusLabel}', expected '" . self::REQUIRED_STATUS . "'");
+        $this->line("  • Run the test first: php artisan tdd:test --filter={$reference}");
+        $this->line('  • Or use --force to promote anyway');
+
+        return false;
+    }
+
+    /**
+     * Run the promoted test file in its target suite.
+     */
+    private function runPromotedTest(string $targetFile): bool
+    {
+        if (! file_exists(base_path('vendor/bin/pest'))) {
+            $this->error('❌ Pest is not installed: the promoted test could not be run');
+
+            return false;
+        }
+
+        $relativePath = ltrim(Str::after($targetFile, base_path()), '/\\');
+
+        $this->info("🧪 Running promoted test: {$relativePath}");
+
+        $process = new Process(['./vendor/bin/pest', $relativePath], base_path());
+        $process->setTty(false);
+        $process->setTimeout(null);
+
+        $exitCode = $process->run(function (string $type, string $buffer): void {
+            $this->output->write($buffer);
+        });
+
+        if ($exitCode !== 0) {
+            $this->error('❌ The promoted test failed in its target suite');
+
+            return false;
+        }
+
+        $this->info('✅ The promoted test passes in its target suite');
+
+        return true;
     }
 
     private function findDraftFile(string $reference): ?string

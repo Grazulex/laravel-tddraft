@@ -262,9 +262,10 @@ php artisan tdd:promote <reference> [options]
 - `--new-file=TestName` - Custom file name
 - `--class=ClassName` - Custom class name
 - `--keep-draft` - Keep original draft file
-- `--force` - Overwrite without confirmation
+- `--force` - Overwrite without confirmation and promote even if the last status is not `passed`
+- `--run` - Run the promoted test in its target suite after promotion
 
-Promotes mature tests to main test suite with audit trail preservation.
+Promotes mature tests to main test suite with audit trail preservation. Only tests whose last status recorded by `tdd:test` is `passed` are promoted, unless `--force` is given.
 
 ## 🔍 Filter and Group Options
 
