@@ -363,6 +363,9 @@ final class PromoteCommand extends Command
             if (str_contains($line, "expect(true)->toBeTrue('Replace this")) {
                 continue;
             }
+            if (str_contains($line, "\$this->fail('Not implemented yet")) {
+                continue;
+            }
 
             // Clean up TDDraft groups - remove tddraft group and reference-specific groups
             if (str_contains($line, '->group(')) {

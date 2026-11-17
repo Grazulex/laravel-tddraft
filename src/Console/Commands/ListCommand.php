@@ -257,6 +257,7 @@ final class ListCommand extends Command
     private function formatStatus(string $status): string
     {
         return match ($status) {
+            'red' => '🔴 Red',
             'passed' => '✅ Passed',
             'failed' => '❌ Failed',
             'error' => '💥 Error',

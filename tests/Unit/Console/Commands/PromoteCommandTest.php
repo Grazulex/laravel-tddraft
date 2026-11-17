@@ -120,6 +120,22 @@ it('can clean test content using private method', function (): void {
     expect($cleaned)->not()->toContain("expect(true)->toBeTrue('Replace this");
 });
 
+it('removes the failing placeholder when cleaning test content', function (): void {
+    $command = new PromoteCommand;
+    $reflection = new ReflectionClass($command);
+    $method = $reflection->getMethod('cleanTestContent');
+
+    $draftContent = "it('user can login', function (): void {
+    \$this->fail('Not implemented yet: user can login');
+    expect(\$user->login())->toBeTrue();
+});";
+
+    $cleaned = $method->invoke($command, $draftContent);
+
+    expect($cleaned)->toContain('expect($user->login())->toBeTrue()');
+    expect($cleaned)->not()->toContain('Not implemented yet');
+});
+
 it('can generate promoted test content using private method', function (): void {
     $command = new PromoteCommand;
     $reflection = new ReflectionClass($command);

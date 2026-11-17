@@ -161,10 +161,12 @@ Creates a draft test with unique reference tracking:
 
 it('user can register', function (): void {
     // TODO: Implement your test scenario here
-    expect(true)->toBeTrue('Replace this with your actual test implementation');
+    $this->fail('Not implemented yet: user can register');
 })
 ->group('tddraft', 'feature', 'tdd-20250727142530-Abc123');
 ```
+
+The new test is red by default: it fails until you write the real scenario, and its `red` status is recorded right away (shown as `🔴 Red` by `tdd:list`).
 
 ### 3. Run Draft Tests with Filtering
 
