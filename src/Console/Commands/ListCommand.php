@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Grazulex\LaravelTddraft\Console\Commands;
 
 use Grazulex\LaravelTddraft\Services\StatusTracker;
+use Grazulex\LaravelTddraft\Support\StatusFormatter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -256,15 +257,6 @@ final class ListCommand extends Command
      */
     private function formatStatus(string $status): string
     {
-        return match ($status) {
-            'passed' => '✅ Passed',
-            'failed' => '❌ Failed',
-            'error' => '💥 Error',
-            'skipped' => '⏭️  Skipped',
-            'incomplete' => '⏸️  Incomplete',
-            'promoted' => '🎯 Promoted',
-            'unknown' => '❓ Unknown',
-            default => '❓ ' . ucfirst($status),
-        };
+        return StatusFormatter::label($status);
     }
 }

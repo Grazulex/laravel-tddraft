@@ -13,6 +13,13 @@ it('has correct signature and description', function (): void {
     expect($command->getDescription())->toBe('List all TDDraft tests with their references and metadata');
 });
 
+it('formats the red status', function (): void {
+    $command = new ListCommand;
+    $method = (new ReflectionClass($command))->getMethod('formatStatus');
+
+    expect($method->invoke($command, 'red'))->toBe('🔴 Red');
+});
+
 it('has correct options defined', function (): void {
     $command = new ListCommand;
     $definition = $command->getDefinition();

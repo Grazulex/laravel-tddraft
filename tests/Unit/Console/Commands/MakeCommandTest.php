@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Grazulex\LaravelTddraft\Console\Commands\MakeCommand;
+use Grazulex\LaravelTddraft\Services\StatusTracker;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
 it('has correct signature and description', function (): void {
@@ -183,4 +185,59 @@ it('can generate test content using private method', function (): void {
     expect($content)->toContain('Type: feature');
     expect($content)->toContain('it(\'user login test\'');
     expect($content)->toContain('->group(\'tddraft\', \'feature\', \'tdd-20240101120000-abc123\')');
+});
+
+it('generates a placeholder test that fails by default', function (): void {
+    $command = new MakeCommand;
+    $reflection = new ReflectionClass($command);
+    $method = $reflection->getMethod('generateTestContent');
+
+    $content = $method->invoke($command, 'User login test', 'feature', 'tdd-20240101120000-abc123');
+
+    expect($content)->toContain("\$this->fail('Not implemented yet: user login test');");
+    expect($content)->not()->toContain('expect(true)->toBeTrue(');
+    expect($content)->not()->toContain('->todo(');
+});
+
+it('records the red status when creating a draft test', function (): void {
+    $tddraftPath = base_path('tests/TDDraft');
+    if (File::exists($tddraftPath)) {
+        File::deleteDirectory($tddraftPath);
+    }
+
+    try {
+        $exitCode = Artisan::call('tdd:make', ['name' => 'Red by default']);
+        expect($exitCode)->toBe(0);
+
+        $filePath = $tddraftPath . '/RedByDefaultTest.php';
+        expect(File::exists($filePath))->toBeTrue();
+
+        preg_match('/Reference: (tdd-\d{14}-[a-zA-Z0-9]{6})/', File::get($filePath), $matches);
+        $reference = $matches[1] ?? null;
+        expect($reference)->toBeString();
+
+        $tracker = new StatusTracker;
+        expect($tracker->getTestStatus((string) $reference))->toBe('red');
+    } finally {
+        File::deleteDirectory($tddraftPath);
+    }
+});
+
+it('does not record a status on creation when status tracking is disabled', function (): void {
+    config()->set('tddraft.status_tracking.enabled', false);
+
+    $tddraftPath = base_path('tests/TDDraft');
+    if (File::exists($tddraftPath)) {
+        File::deleteDirectory($tddraftPath);
+    }
+
+    try {
+        $exitCode = Artisan::call('tdd:make', ['name' => 'Untracked draft']);
+        expect($exitCode)->toBe(0);
+
+        expect(File::exists($tddraftPath . '/UntrackedDraftTest.php'))->toBeTrue();
+        expect(File::exists($tddraftPath . '/.status.json'))->toBeFalse();
+    } finally {
+        File::deleteDirectory($tddraftPath);
+    }
 });

@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace Grazulex\LaravelTddraft\Console\Commands;
 
+use Grazulex\LaravelTddraft\Services\StatusTracker;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 final class MakeCommand extends Command
 {
+    /**
+     * Status recorded for a newly created draft test.
+     */
+    private const string INITIAL_STATUS = 'red';
+
     protected $signature = 'tdd:make 
                            {name : The name of the test}
                            {--type=feature : Test type (feature|unit)}
@@ -59,6 +65,9 @@ final class MakeCommand extends Command
 
         // Write file
         File::put($filePath, $content);
+
+        // A new draft starts in the TDD "red" phase
+        (new StatusTracker)->updateTestStatus($uniqueRef, self::INITIAL_STATUS);
 
         $this->newLine();
         $this->info('✅ TDDraft test created successfully!');

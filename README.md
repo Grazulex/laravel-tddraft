@@ -161,10 +161,12 @@ Creates a draft test with unique reference tracking:
 
 it('user can register', function (): void {
     // TODO: Implement your test scenario here
-    expect(true)->toBeTrue('Replace this with your actual test implementation');
+    $this->fail('Not implemented yet: user can register');
 })
 ->group('tddraft', 'feature', 'tdd-20250727142530-Abc123');
 ```
+
+The new test is red by default: it fails until you write the real scenario, and its `red` status is recorded right away (shown as `🔴 Red` by `tdd:list`).
 
 ### 3. Run Draft Tests with Filtering
 
@@ -247,9 +249,16 @@ php artisan tdd:list [options]
 **Options:**
 - `--type=feature|unit` - Filter by test type
 - `--path=directory` - Filter by directory path
-- `--details` - Show detailed view with status history
+- `--details` - Show detailed view
 
 View and filter all draft tests with their current status.
+
+#### `tdd:history` and `tdd:stats`
+```bash
+php artisan tdd:history <reference>
+php artisan tdd:stats
+```
+`tdd:history` shows every recorded status of a draft test (oldest first) with the time spent in each status. `tdd:stats` shows how many tracked tests are in each status and the number, average, fastest and slowest red to green cycles (from a `red`, `failed` or `error` status to the next `passed`).
 
 ### 5. `tdd:promote` - Graduation Phase (Move to CI)
 ```bash
@@ -260,9 +269,10 @@ php artisan tdd:promote <reference> [options]
 - `--new-file=TestName` - Custom file name
 - `--class=ClassName` - Custom class name
 - `--keep-draft` - Keep original draft file
-- `--force` - Overwrite without confirmation
+- `--force` - Overwrite without confirmation and promote even if the last status is not `passed`
+- `--run` - Run the promoted test in its target suite after promotion
 
-Promotes mature tests to main test suite with audit trail preservation.
+Promotes mature tests to main test suite with audit trail preservation. Only tests whose last status recorded by `tdd:test` is `passed` are promoted, unless `--force` is given.
 
 ## 🔍 Filter and Group Options
 

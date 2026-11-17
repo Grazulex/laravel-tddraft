@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Grazulex\LaravelTddraft;
 
+use Grazulex\LaravelTddraft\Console\Commands\HistoryCommand;
 use Grazulex\LaravelTddraft\Console\Commands\InitCommand;
 use Grazulex\LaravelTddraft\Console\Commands\ListCommand;
 use Grazulex\LaravelTddraft\Console\Commands\MakeCommand;
 use Grazulex\LaravelTddraft\Console\Commands\PromoteCommand;
+use Grazulex\LaravelTddraft\Console\Commands\StatsCommand;
 use Grazulex\LaravelTddraft\Console\Commands\TestCommand;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -32,6 +34,8 @@ final class LaravelTddraftServiceProvider extends ServiceProvider
                 TestCommand::class,
                 PromoteCommand::class,
                 ListCommand::class,
+                HistoryCommand::class,
+                StatsCommand::class,
             ]);
         }
     }

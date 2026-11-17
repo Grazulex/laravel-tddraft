@@ -17,7 +17,6 @@ it('{{testName}}', function (): void {
     // 2. Make it pass (green phase) 
     // 3. Promote it to your CI test suite (tests/{{typeUcfirst}}/)
     
-    expect(true)->toBeTrue('Replace this with your actual test implementation');
+    $this->fail('Not implemented yet: {{description}}');
 })
-->group('tddraft', '{{type}}', '{{uniqueRef}}')
-->todo('Implement the test scenario for: {{description}}');
+->group('tddraft', '{{type}}', '{{uniqueRef}}');
