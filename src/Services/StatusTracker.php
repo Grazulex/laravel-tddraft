@@ -160,6 +160,103 @@ final readonly class StatusTracker
     }
 
     /**
+     * Get the full status timeline of a test, oldest first.
+     *
+     * The recorded history entries are followed by the current status,
+     * so the last entry is always the status the test has now.
+     *
+     * @return list<array{status: string, timestamp: string}>|null Null when the test is not tracked
+     */
+    public function getTestHistory(string $reference): ?array
+    {
+        $data = $this->loadStatus();
+
+        if (! isset($data[$reference])) {
+            return null;
+        }
+
+        return $this->buildTimeline($data[$reference]);
+    }
+
+    /**
+     * Get the durations, in seconds, of every red to green cycle per test.
+     *
+     * A cycle starts at the first red status (red, failed or error) and ends
+     * at the next passed status. Entries with unreadable timestamps are ignored.
+     *
+     * @return array<string, list<int>> Array of reference => list of durations
+     */
+    public function getRedToGreenDurations(): array
+    {
+        $durations = [];
+
+        foreach ($this->loadStatus() as $reference => $info) {
+            $durations[$reference] = $this->computeRedToGreenDurations($this->buildTimeline($info));
+        }
+
+        return $durations;
+    }
+
+    /**
+     * Build the chronological timeline from a status entry.
+     *
+     * @param  array{status: string, updated_at: string, history: array<array{status: string, timestamp: string}>}  $info
+     *
+     * @return list<array{status: string, timestamp: string}>
+     */
+    private function buildTimeline(array $info): array
+    {
+        $timeline = [];
+
+        foreach ($info['history'] as $entry) {
+            $timeline[] = [
+                'status' => $entry['status'],
+                'timestamp' => $entry['timestamp'],
+            ];
+        }
+
+        $timeline[] = [
+            'status' => $info['status'],
+            'timestamp' => $info['updated_at'],
+        ];
+
+        return $timeline;
+    }
+
+    /**
+     * Compute red to green cycle durations from a timeline.
+     *
+     * @param  list<array{status: string, timestamp: string}>  $timeline
+     *
+     * @return list<int>
+     */
+    private function computeRedToGreenDurations(array $timeline): array
+    {
+        $durations = [];
+        $redSince = null;
+
+        foreach ($timeline as $entry) {
+            $time = strtotime($entry['timestamp']);
+            if ($time === false) {
+                continue;
+            }
+
+            if (in_array($entry['status'], ['red', 'failed', 'error'], true)) {
+                $redSince ??= $time;
+
+                continue;
+            }
+
+            if ($entry['status'] === 'passed' && $redSince !== null) {
+                $durations[] = max(0, $time - $redSince);
+                $redSince = null;
+            }
+        }
+
+        return $durations;
+    }
+
+    /**
      * Remove a test from status tracking.
      */
     public function removeTest(string $reference): void

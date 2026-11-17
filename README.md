@@ -249,9 +249,16 @@ php artisan tdd:list [options]
 **Options:**
 - `--type=feature|unit` - Filter by test type
 - `--path=directory` - Filter by directory path
-- `--details` - Show detailed view with status history
+- `--details` - Show detailed view
 
 View and filter all draft tests with their current status.
+
+#### `tdd:history` and `tdd:stats`
+```bash
+php artisan tdd:history <reference>
+php artisan tdd:stats
+```
+`tdd:history` shows every recorded status of a draft test (oldest first) with the time spent in each status. `tdd:stats` shows how many tracked tests are in each status and the number, average, fastest and slowest red to green cycles (from a `red`, `failed` or `error` status to the next `passed`).
 
 ### 5. `tdd:promote` - Graduation Phase (Move to CI)
 ```bash

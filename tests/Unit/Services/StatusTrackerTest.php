@@ -155,6 +155,75 @@ it('persists status data to file', function (): void {
     expect($status)->toBe('passed');
 });
 
+it('returns null history for an untracked test', function (): void {
+    expect((new StatusTracker)->getTestHistory('tdd-20240101120000-nope00'))->toBeNull();
+});
+
+it('returns the history followed by the current status', function (): void {
+    $tracker = new StatusTracker;
+    $tracker->saveStatus([
+        'tdd-20240101120000-abc123' => [
+            'status' => 'passed',
+            'updated_at' => '2024-01-01T12:10:00+00:00',
+            'history' => [
+                ['status' => 'red', 'timestamp' => '2024-01-01T12:00:00+00:00'],
+                ['status' => 'failed', 'timestamp' => '2024-01-01T12:05:00+00:00'],
+            ],
+        ],
+    ]);
+
+    expect($tracker->getTestHistory('tdd-20240101120000-abc123'))->toBe([
+        ['status' => 'red', 'timestamp' => '2024-01-01T12:00:00+00:00'],
+        ['status' => 'failed', 'timestamp' => '2024-01-01T12:05:00+00:00'],
+        ['status' => 'passed', 'timestamp' => '2024-01-01T12:10:00+00:00'],
+    ]);
+});
+
+it('computes red to green durations per test', function (): void {
+    $tracker = new StatusTracker;
+    $tracker->saveStatus([
+        'tdd-20240101120000-abc123' => [
+            'status' => 'passed',
+            'updated_at' => '2024-01-01T14:00:00+00:00',
+            'history' => [
+                ['status' => 'red', 'timestamp' => '2024-01-01T12:00:00+00:00'],
+                ['status' => 'failed', 'timestamp' => '2024-01-01T12:05:00+00:00'],
+                ['status' => 'passed', 'timestamp' => '2024-01-01T12:10:00+00:00'],
+                ['status' => 'skipped', 'timestamp' => '2024-01-01T12:20:00+00:00'],
+                ['status' => 'error', 'timestamp' => '2024-01-01T13:00:00+00:00'],
+            ],
+        ],
+        'tdd-20240101120001-def456' => [
+            'status' => 'red',
+            'updated_at' => '2024-01-01T12:00:00+00:00',
+            'history' => [],
+        ],
+    ]);
+
+    expect($tracker->getRedToGreenDurations())->toBe([
+        'tdd-20240101120000-abc123' => [600, 3600],
+        'tdd-20240101120001-def456' => [],
+    ]);
+});
+
+it('ignores entries with unreadable timestamps when computing durations', function (): void {
+    $tracker = new StatusTracker;
+    $tracker->saveStatus([
+        'tdd-20240101120000-abc123' => [
+            'status' => 'passed',
+            'updated_at' => '2024-01-01T12:10:00+00:00',
+            'history' => [
+                ['status' => 'red', 'timestamp' => 'not a date'],
+                ['status' => 'failed', 'timestamp' => '2024-01-01T12:08:00+00:00'],
+            ],
+        ],
+    ]);
+
+    expect($tracker->getRedToGreenDurations())->toBe([
+        'tdd-20240101120000-abc123' => [120],
+    ]);
+});
+
 it('respects configuration for status tracking', function (): void {
     config(['tddraft.status_tracking.enabled' => false]);
 
